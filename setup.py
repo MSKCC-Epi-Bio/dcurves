@@ -13,7 +13,7 @@ LONG_DESCRIPTION = 'A package that allows to build simple streams of video, audi
 
 # Setting up
 setup(
-    name="dcanal",
+    name="dcurves",
     version=VERSION,
     author="Shaun Porwal",
     author_email="<shaun.porwal@gmail.com>",
@@ -21,8 +21,8 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['pandas', 'numpy', 'statsmodels'],
-    keywords=['python', 'dcanal', 'decision', 'curve', 'analysis', 'MSK'],
+    install_requires=['pandas', 'numpy', 'statsmodels', 'lifelines', 'matplotlib'],
+    keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK'],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",

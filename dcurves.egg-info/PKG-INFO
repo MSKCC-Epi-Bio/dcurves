@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: dcurves
+Version: 0.0.1
+Summary: Python package for Andrew Vickers' Decision Curve Analysis method to evaluate prediction models and diagnostic tests
+Home-page: UNKNOWN
+Author: Shaun Porwal
+Author-email: <shaun.porwal@gmail.com>
+License: UNKNOWN
+Keywords: python,dcurves,decision,curve,analysis,MSK
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+
+# dcanal
+Python package for Andrew Vickers' Decision Curve Analysis method to evaluate prediction models and diagnostic tests
+
+

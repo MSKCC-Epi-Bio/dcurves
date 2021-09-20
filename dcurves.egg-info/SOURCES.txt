@@ -3,6 +3,7 @@ README.md
 setup.py
 dcurves/__init__.py
 dcurves/dca.py
+dcurves/load_test_data.py
 dcurves.egg-info/PKG-INFO
 dcurves.egg-info/SOURCES.txt
 dcurves.egg-info/dependency_links.txt

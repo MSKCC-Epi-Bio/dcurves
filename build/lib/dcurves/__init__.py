@@ -4,6 +4,7 @@ import statsmodels.api as sm
 import lifelines
 import matplotlib.pyplot as plt
 import dcurves.dca
+import dcurves.load_test_data
 
 
 

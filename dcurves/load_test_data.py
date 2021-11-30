@@ -7,7 +7,6 @@ def load_binary_df():
 
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
-
     stream = pkg_resources.resource_stream(__name__, 'data/df_binary.csv')
     return pd.read_csv(stream, encoding='latin-1')
 

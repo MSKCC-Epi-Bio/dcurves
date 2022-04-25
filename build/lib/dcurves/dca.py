@@ -4,6 +4,12 @@ import statsmodels.api as sm
 import lifelines
 import matplotlib.pyplot as plt
 
+from . import validate
+
+# from test import resources
+
+#### TODOSP: include input checks locally as I did below for
+#### Ccvert_to_risk_input_checks
 
 def convert_to_risk(model_frame: pd.DataFrame,
                     outcome: str,
@@ -28,6 +34,13 @@ def convert_to_risk(model_frame: pd.DataFrame,
     dataframe
     """
 
+    # validate._convert_to_risk_input_checks(model_frame=model_frame,
+    #                                        outcome=outcome,
+    #                                        predictor=predictor,
+    #                                        prevalence=prevalence,
+    #                                        time=time,
+    #                                        time_to_outcome_col=time_to_outcome_col)
+
     if not time_to_outcome_col:
         predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
                                         data=model_frame).fit().predict()
@@ -46,23 +59,24 @@ def convert_to_risk(model_frame: pd.DataFrame,
         new_model_frame[predictor] = predicted_vals
         return new_model_frame
 
-
-
 #### Things to input into CTC
 #### inputs:
 def calculate_test_consequences(model_frame: pd.DataFrame,
                                 outcome: str,
                                 predictor: str,
                                 thresholds: list,
-                                harm: float,
                                 prevalence: float,
                                 time: float,
                                 time_to_outcome_col: str) -> pd.DataFrame:
     """Computes tpr and fpr from outcome values and a predictor with provided thresholds
 
+    #### TODOSP: Below is redundant, since already specified in input arguments
+    #### Instead, add more relevant info to below so that user can be self-sufficient in
+    #### using this module
+
     Parameters
     ----------
-    model_frame : dataframe
+    model_frame : dataframe of source data after
     outcome : string
     predictor : string
     thresholds : string
@@ -74,6 +88,16 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
     -------
     dataframe
     """
+
+    # validate._calculate_test_consequences_input_checks(
+    #     model_frame=model_frame,
+    #     outcome=outcome,
+    #     predictor=predictor,
+    #     thresholds=thresholds,
+    #     prevalence=prevalence,
+    #     time=time,
+    #     time_to_outcome_col=time_to_outcome_col
+    # )
 
     #### Handle prevalence values
 
@@ -92,9 +116,9 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
 
     #### If survival
     elif time_to_outcome_col:
+
         kmf = lifelines.KaplanMeierFitter()
         kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
-
         prevalence = 1 - kmf.survival_function_at_times(time)
         prevalence = prevalence[1]
         #### Convert survival to risk by doing 1 - x (Figure out why)
@@ -166,9 +190,9 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
         tp_rate = []
         fp_rate = []
 
-        #### For each threshold, get outcomes where risk value is greater than threshold, insert as formula
+        # For each threshold, get outcomes where risk value is greater than threshold, insert as formula
         for threshold in thresholds:
-            #             test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
+            # test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
 
             try:
                 test_pos_rate.append(
@@ -214,6 +238,7 @@ def dca(data: pd.DataFrame,
         time: float,
         prevalence: float,
         time_to_outcome_col: str) -> pd.DataFrame:
+
     '''
     Sequence of events
     1. convert to risk (convert to probabilities)
@@ -223,6 +248,20 @@ def dca(data: pd.DataFrame,
         c. calculate net benefit based on other columns
             i. nb = tpr - thresh / (1 - thresh) * fpr - harm
     '''
+
+    validate._dca_input_checks(
+        model_frame=data,
+        outcome=outcome,
+        predictors=predictors,
+        thresh_lo=thresh_lo,
+        thresh_hi=thresh_hi,
+        thresh_step=thresh_step,
+        harm=harm,
+        probabilities=probabilities,
+        time=time,
+        prevalence=prevalence,
+        time_to_outcome_col=time_to_outcome_col
+    )
 
     model_frame = data[np.append(outcome, predictors)]
 
@@ -256,7 +295,6 @@ def dca(data: pd.DataFrame,
             outcome=outcome,
             predictor=covariate,
             thresholds=thresholds,
-            harm=harm,
             prevalence=prevalence,
             time=time,
             time_to_outcome_col=time_to_outcome_col
@@ -276,6 +314,9 @@ def dca(data: pd.DataFrame,
 
 
 def plot_net_benefit_graphs(output_df: pd.DataFrame) -> (list, list):
+
+    # validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
+
     predictor_names = output_df['predictor'].value_counts().index
     color_names = ['blue', 'purple', 'red', 'green']
     x_val_list = []

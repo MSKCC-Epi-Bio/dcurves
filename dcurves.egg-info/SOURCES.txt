@@ -4,8 +4,12 @@ setup.py
 dcurves/__init__.py
 dcurves/dca.py
 dcurves/load_test_data.py
+dcurves/validate.py
 dcurves.egg-info/PKG-INFO
 dcurves.egg-info/SOURCES.txt
 dcurves.egg-info/dependency_links.txt
 dcurves.egg-info/requires.txt
 dcurves.egg-info/top_level.txt
+dcurves/test/__init__.py
+dcurves/test/test_dca.py
+dcurves/test/test_validate.py

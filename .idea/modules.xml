@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../dcapy/.idea/dcapy.iml" filepath="$PROJECT_DIR$/../../dcapy/.idea/dcapy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dcapy/.idea/dcapy.iml" filepath="$PROJECT_DIR$/../dcapy/.idea/dcapy.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/dcurves.iml" filepath="$PROJECT_DIR$/.idea/dcurves.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../iwillscrapeyou/.idea/iwillscrapeyou.iml" filepath="$PROJECT_DIR$/../../iwillscrapeyou/.idea/iwillscrapeyou.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../example_package/.idea/packaging_tutorial.iml" filepath="$PROJECT_DIR$/../example_package/.idea/packaging_tutorial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../testpack/.idea/testpack.iml" filepath="$PROJECT_DIR$/../testpack/.idea/testpack.iml" />
     </modules>
   </component>
 </project>

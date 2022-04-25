@@ -1,0 +1,6 @@
+
+
+Even though I exported dcurves path to python path (
+used this in parent directory of dcurves: export PYTHONPATH=.:$PYTHONPATH),
+dcurves doesn't show up in sys.path, why? Shouldn't all packages exported to PYTHONPATH
+show up in sys.path (run sys.path in python console in pycharm)

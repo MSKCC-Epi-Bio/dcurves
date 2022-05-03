@@ -4,12 +4,13 @@ import statsmodels.api as sm
 import lifelines
 import matplotlib.pyplot as plt
 import dcurves.dca as dca
-import dcurves.load_test_data
+import dcurves.load_test_data as load_data
 import dcurves.validate as val
-from dcapy.validate import DCAError
 
 import pandas as pd
+# Turn off warnings
 pd.options.mode.chained_assignment = None  # default='warn'
+
 
 # __all__ = ['DecisionCurveAnalysis']  # only public member should be the class
 #

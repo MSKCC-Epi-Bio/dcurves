@@ -437,28 +437,47 @@ def _validate_outcome(outcome: str):
         raise TypeError("outcome must be of type: string")
 
 
-def _validate_predictor(predictor: str or list):
+def _validate_predictor(predictor: str):
 
     if not isinstance(predictor, str):
         raise TypeError("predictor must be of type: string")
 
-
 def _validate_prevalence(prevalence: float):
-    if not (prevalence is None):
-        if not isinstance(prevalence, float):
-            raise TypeError("prevalence must be of type: float")
+    if prevalence is None:
+        pass
+    elif isinstance(prevalence, float) or isinstance(prevalence, int):
+        pass
+    else:
+        raise TypeError("prevalence must be of type: float or int")
 
+    # if not (prevalence is None):3
+    #     if not isinstance(prevalence, float) or isinstance(prevalence, int):
+    #         raise TypeError("prevalence must be of type: float")
 
-def _validate_time(time: float):
-    if not (time is None):
-        if not isinstance(time, float):
-            raise TypeError("time must be of type: float")
+def _validate_time(time: float or int):
+    if time is None:
+        pass
+    elif isinstance(time, float) or isinstance(time, int):
+        pass
+    else:
+        raise TypeError("time must be of type: float or int")
+
+    # if not (time is None):
+    #     if (not isinstance(time, float)) or (not isinstance(time, int)):
+    #         raise TypeError("time must be of type: float or int")
 
 
 def _validate_time_to_outcome_col(time_to_outcome_col: str):
-    if not (time_to_outcome_col is None):
-        if not isinstance(time_to_outcome_col, str):
-            raise TypeError("time_to_outcome_col must be of type: string")
+    if time_to_outcome_col is None:
+        pass
+    elif isinstance(time_to_outcome_col, str):
+        pass
+    else:
+        raise TypeError("time_to_outcome_col must be of type: str")
+
+    # if not (time_to_outcome_col is None):
+    #     if not isinstance(time_to_outcome_col, str):
+    #         raise TypeError("time_to_outcome_col must be of type: string")
 
 def _convert_to_risk_input_checks(
                     model_frame: pd.DataFrame,
@@ -479,7 +498,7 @@ def _validate_thresholds(thresholds: list):
 
     for i in thresholds:
         if not isinstance(i, float):
-            raise TypeError("time_to_outcome_col must be of type: string")
+            raise TypeError("time_to_outcome_col must be of type: float")
 
     if not (len(thresholds) > 0):
         raise ValueError("Thresholds must contain at least 1 value")
@@ -501,18 +520,21 @@ def _calculate_test_consequences_input_checks(
     _validate_time(time=time)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
+
 def _validate_predictors(predictors: list):
     for i in predictors:
         if not isinstance(i, str):
             raise TypeError('All elements in predictors list must be of type str')
 
+
 def _validate_thresh_vals(thresh_vals: list):
     for i in thresh_vals:
-        if not isinstance(i, float):
-            raise TypeError("thresh_vals must be of type: string")
+        if not (isinstance(i,float) or isinstance(i,int)):
+            raise TypeError("thresh_vals contents must be of type: float/int")
 
     if not (len(thresh_vals) == 3):
         raise ValueError("Thresholds must contain 3 values")
+
 
 def _validate_harm(harm: dict):
     if not(harm is None):
@@ -520,11 +542,11 @@ def _validate_harm(harm: dict):
             raise TypeError('harm input not of type dict')
 
 
-
 def _validate_probabilities(probabilities: list):
     for i in probabilities:
         if not isinstance(i, bool):
             raise TypeError('All elements in probabilities must be of type bool')
+
 
 def _dca_input_checks(
         model_frame: pd.DataFrame,
@@ -543,15 +565,11 @@ def _dca_input_checks(
     _validate_outcome(outcome=outcome)
     _validate_predictors(predictors=predictors)
     _validate_thresh_vals(thresh_vals=[thresh_lo,thresh_hi,thresh_step])
-
-    # TODOSP: Check harm dict below vs harm float from calculate_test_consequences
-    # print(harm)
-
     _validate_harm(harm=harm)
     _validate_probabilities(probabilities=probabilities)
-    # _validate_time(time=time)
-    # _validate_prevalence(prevalence=prevalence)
-    # _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
+    _validate_time(time=time)
+    _validate_prevalence(prevalence=prevalence)
+    _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
 def _plot_net_benefit_graphs_input_checks(output_df: pd.DataFrame):
     _validate_dataframe(data=output_df)

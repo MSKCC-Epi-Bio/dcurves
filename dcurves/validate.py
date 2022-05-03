@@ -128,13 +128,18 @@ def _validate_harm(harm: dict):
             raise TypeError('harm input not of type dict')
 
 
-def _validate_probabilities(probabilities: list):
+def _validate_probabilities(probabilities: list, predictors: list):
+
+    _validate_predictors(predictors=predictors)
 
     if probabilities is None:
         pass
     elif not isinstance(probabilities, list):
         raise TypeError('probabilities must be of type list')
     else:
+        if not (len(probabilities) == len(predictors)):
+            raise ValueError('probabilities input and predictors input must be of same length')
+
         for i in probabilities:
             if not isinstance(i, bool):
                 raise TypeError('All elements in probabilities must be of type bool')
@@ -158,7 +163,7 @@ def _dca_input_checks(
     _validate_predictors(predictors=predictors)
     _validate_thresh_vals(thresh_vals=[thresh_lo,thresh_hi,thresh_step])
     _validate_harm(harm=harm)
-    _validate_probabilities(probabilities=probabilities)
+    _validate_probabilities(probabilities=probabilities, predictors=predictors)
     _validate_time(time=time)
     _validate_prevalence(prevalence=prevalence)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)

@@ -127,9 +127,6 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
 
         prevalence_values = [prevalence] * len(thresholds)
 
-    #### paths:
-    #### 1. survival or binary
-    #### 2. if survival and
     n = len(model_frame.index)
     df = pd.DataFrame({'predictor': predictor,
                        'threshold': thresholds,
@@ -165,8 +162,8 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
             except:
                 test_pos_rate.append(0 / len(model_frame.index))
 
-            #             #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
-            #             #### Have to try/except this so that when indexing doesn't work, can input 0
+            #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
+            #### Have to try/except this so that when indexing doesn't work, can input 0
 
             try:
                 tp_rate.append(
@@ -241,6 +238,9 @@ def dca(data: pd.DataFrame,
         prevalence: float,
         time_to_outcome_col: str) -> pd.DataFrame:
 
+
+    #NOTESP: Make probabilities, thresh's, time, prevalence, time_to_outcome_col default to something
+
     '''
     Sequence of events
     1. convert to risk (convert to probabilities)
@@ -264,7 +264,7 @@ def dca(data: pd.DataFrame,
         upper bound for threshold probabilities (defaults to 0.99)
     thresh_step : float OR int
         step size for the set of threshold probabilities [x_start:x_stop]
-    probability : bool or list(bool)
+    probabilities : bool or list(bool)
         whether the outcome is coded as a probability
         probability must have the same length as the predictors list
     harm : float or list(float)
@@ -285,7 +285,6 @@ def dca(data: pd.DataFrame,
         interventions_avoided : TODO
 
     '''
-
 
     validate._dca_input_checks(
         model_frame=data,
@@ -308,7 +307,6 @@ def dca(data: pd.DataFrame,
     #### If survival, then time_to_outcome_col contains name of col
     #### Otherwise, time_to_outcome_col will not be set (will = None), which means we're doing Binary DCA
 
-
     if time_to_outcome_col:
         model_frame[time_to_outcome_col] = data[time_to_outcome_col]
 
@@ -323,8 +321,6 @@ def dca(data: pd.DataFrame,
                                           prevalence,
                                           time,
                                           time_to_outcome_col)
-
-    model_frame.to_csv('/Users/ShaunPorwal/Desktop/p_model_frame_post_C2R.csv')
 
     model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
     model_frame['none'] = [0 for i in range(0, len(model_frame.index))]

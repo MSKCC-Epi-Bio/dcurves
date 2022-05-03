@@ -241,6 +241,9 @@ def dca(data: pd.DataFrame,
         prevalence: float,
         time_to_outcome_col: str) -> pd.DataFrame:
 
+
+    #nOTESP: Make probabilities, thresh's, time, prevalence, time_to_outcome_col default to something
+
     '''
     Sequence of events
     1. convert to risk (convert to probabilities)
@@ -308,7 +311,6 @@ def dca(data: pd.DataFrame,
     #### If survival, then time_to_outcome_col contains name of col
     #### Otherwise, time_to_outcome_col will not be set (will = None), which means we're doing Binary DCA
 
-
     if time_to_outcome_col:
         model_frame[time_to_outcome_col] = data[time_to_outcome_col]
 
@@ -323,8 +325,6 @@ def dca(data: pd.DataFrame,
                                           prevalence,
                                           time,
                                           time_to_outcome_col)
-
-    model_frame.to_csv('/Users/ShaunPorwal/Desktop/p_model_frame_post_C2R.csv')
 
     model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
     model_frame['none'] = [0 for i in range(0, len(model_frame.index))]

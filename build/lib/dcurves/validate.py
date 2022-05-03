@@ -521,10 +521,16 @@ def _calculate_test_consequences_input_checks(
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
 
-def _validate_predictors(predictors: list):
-    for i in predictors:
-        if not isinstance(i, str):
-            raise TypeError('All elements in predictors list must be of type str')
+def _validate_predictors(predictors: list(str)):
+
+    if predictors is None:
+        pass
+    elif not isinstance(predictors, list):
+        raise TypeError('Predictors must be of type list')
+    else:
+        for i in predictors:
+            if not isinstance(i, str):
+                raise TypeError('All elements in predictors list must be of type str')
 
 
 def _validate_thresh_vals(thresh_vals: list):
@@ -543,9 +549,15 @@ def _validate_harm(harm: dict):
 
 
 def _validate_probabilities(probabilities: list):
-    for i in probabilities:
-        if not isinstance(i, bool):
-            raise TypeError('All elements in probabilities must be of type bool')
+
+    if probabilities is None:
+        pass
+    elif not isinstance(probabilities, list):
+        raise TypeError('probabilities must be of type list')
+    else:
+        for i in probabilities:
+            if not isinstance(i, bool):
+                raise TypeError('All elements in probabilities must be of type bool')
 
 
 def _dca_input_checks(

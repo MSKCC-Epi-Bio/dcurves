@@ -12,6 +12,10 @@ path.join(resources_dir, 'df_case_control.csv')
 # simdata_dir = path.join(resources_dir, 'sim_data')
 # r_results_dir = path.join(resources_dir, 'r_results')
 
+# Note: after speaking with Dan, can host data online on dropbox/s3/googledrive and pull using python script
+
+# Do try/except on pulling data if it's not in expected location
+
 def load_binary_df():
     """Return a dataframe containing the binary data
     """

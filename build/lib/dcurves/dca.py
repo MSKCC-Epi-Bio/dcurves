@@ -13,9 +13,9 @@ from dcurves import validate
 def convert_to_risk(model_frame: pd.DataFrame,
                     outcome: str,
                     predictor: str,
-                    prevalence: float,
-                    time: float,
-                    time_to_outcome_col: str) -> pd.DataFrame:
+                    prevalence: float = None,
+                    time: float = None,
+                    time_to_outcome_col: str = None) -> pd.DataFrame:
 
     """Converts indicated predictor columns in dataframe into probabilities from 0 to 1
 
@@ -66,10 +66,10 @@ def convert_to_risk(model_frame: pd.DataFrame,
 def calculate_test_consequences(model_frame: pd.DataFrame,
                                 outcome: str,
                                 predictor: str,
-                                thresholds: list,
-                                prevalence: float,
-                                time: float,
-                                time_to_outcome_col: str) -> pd.DataFrame:
+                                thresholds: list = [0.01, 1, 0.01],
+                                prevalence: float = None,
+                                time: float = None,
+                                time_to_outcome_col: str = None) -> pd.DataFrame:
     """Computes tpr and fpr from outcome values and a predictor with provided thresholds
 
     #### TODOSP: Below is redundant, since already specified in input arguments
@@ -229,15 +229,16 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
 def dca(data: pd.DataFrame,
         outcome: str,
         predictors: list,
-        thresh_lo: float,
-        thresh_hi: float,
-        thresh_step: float,
-        harm: dict,
-        probabilities: list,
-        time: float,
-        prevalence: float,
-        time_to_outcome_col: str) -> pd.DataFrame:
+        thresh_lo: float = 0.01,
+        thresh_hi: float = 1,
+        thresh_step: float = 0.01,
+        harm: dict = None,
+        probabilities: list = [False],
+        time: float = None,
+        prevalence: float = None,
+        time_to_outcome_col: str = None) -> pd.DataFrame:
 
+    probabilities = probabilities * len(predictors)
 
     #NOTESP: Make probabilities, thresh's, time, prevalence, time_to_outcome_col default to something
 

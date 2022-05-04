@@ -1,9 +1,7 @@
-import pandas as pd
 import numpy as np
 import unittest
-from dcurves import validate
-import dcurves
-from dcurves.load_test_data import load_binary_df, load_survival_df
+from dcurves.test.load_test_data import load_binary_df
+
 
 class TestCTCInputValidation(unittest.TestCase):
 

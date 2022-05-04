@@ -1,11 +1,8 @@
 # Load packages to be used:
-import dcurves
 from dcurves.dca import dca
 import pandas as pd
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.dca import plot_net_benefit_graphs
-import numpy as np
-import matplotlib.pyplot as plt
+from dcurves.test.load_test_data import load_binary_df, load_survival_df
+
 # ---------------------------------------------------------------------
 
 pd.set_option('display.max_rows', 500)

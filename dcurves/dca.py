@@ -237,11 +237,6 @@ def dca(data: pd.DataFrame,
         time: float = None,
         prevalence: float = None,
         time_to_outcome_col: str = None) -> pd.DataFrame:
-
-    probabilities = probabilities * len(predictors)
-
-    #NOTESP: Make probabilities, thresh's, time, prevalence, time_to_outcome_col default to something
-
     '''
     Sequence of events
     1. convert to risk (convert to probabilities)
@@ -286,6 +281,9 @@ def dca(data: pd.DataFrame,
         interventions_avoided : TODO
 
     '''
+
+    probabilities = probabilities * len(predictors)
+
 
     validate._dca_input_checks(
         model_frame=data,

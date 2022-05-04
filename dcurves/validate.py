@@ -163,7 +163,7 @@ def _dca_input_checks(
     _validate_predictors(predictors=predictors)
     _validate_thresh_vals(thresh_vals=[thresh_lo,thresh_hi,thresh_step])
     _validate_harm(harm=harm)
-    _validate_probabilities(probabilities=probabilities)
+    _validate_probabilities(probabilities=probabilities, predictors=predictors)
     _validate_time(time=time)
     _validate_prevalence(prevalence=prevalence)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)

@@ -2,6 +2,7 @@
 
 import pandas as pd
 from os import path
+import load_test_data
 
 #useful directories
 root_test_dir = path.dirname(path.realpath(__file__))

@@ -3,7 +3,7 @@ import numpy as np
 import statsmodels.api as sm
 import lifelines
 import matplotlib.pyplot as plt
-from dcurves import validate
+from dcurves import _validate
 
 # from test import resources
 
@@ -33,12 +33,12 @@ def convert_to_risk(model_frame: pd.DataFrame,
     dataframe
     """
 
-    validate._convert_to_risk_input_checks(model_frame=model_frame,
-                                           outcome=outcome,
-                                           predictor=predictor,
-                                           prevalence=prevalence,
-                                           time=time,
-                                           time_to_outcome_col=time_to_outcome_col)
+    _validate._convert_to_risk_input_checks(model_frame=model_frame,
+                                            outcome=outcome,
+                                            predictor=predictor,
+                                            prevalence=prevalence,
+                                            time=time,
+                                            time_to_outcome_col=time_to_outcome_col)
 
     # Binary DCA
     if not time_to_outcome_col:
@@ -91,7 +91,7 @@ def calculate_test_consequences(model_frame: pd.DataFrame,
     dataframe
     """
 
-    validate._calculate_test_consequences_input_checks(
+    _validate._calculate_test_consequences_input_checks(
         model_frame=model_frame,
         outcome=outcome,
         predictor=predictor,
@@ -282,7 +282,7 @@ def dca(data: pd.DataFrame,
 
     '''
 
-    validate._dca_input_checks(
+    _validate._dca_input_checks(
         model_frame=data,
         outcome=outcome,
         predictors=predictors,
@@ -358,7 +358,7 @@ def dca(data: pd.DataFrame,
 
 def plot_net_benefit_graphs(output_df: pd.DataFrame) -> (list, list):
 
-    validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
+    _validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
 
     predictor_names = output_df['predictor'].value_counts().index
     color_names = ['blue', 'purple', 'red', 'green']

@@ -1,5 +1,4 @@
 # import operator as opr
-import pandas as pd
 # import statsmodels.api as sm
 from .dca import *
 

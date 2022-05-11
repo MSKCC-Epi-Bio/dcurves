@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from dcurves.test.load_test_data import load_binary_df
+from dcurves.load_test_data import load_binary_df
 
 
 class TestCTCInputValidation(unittest.TestCase):

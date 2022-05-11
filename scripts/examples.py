@@ -1,7 +1,7 @@
 # Load packages to be used:
 from dcurves.dca import dca
 import pandas as pd
-from dcurves.test.load_test_data import load_binary_df, load_survival_df
+from dcurves.load_test_data import load_binary_df, load_survival_df
 
 # ---------------------------------------------------------------------
 
@@ -103,6 +103,8 @@ df_surv = load_survival_df()
 # print(cwd)
 # files = os.listdir(cwd)
 # print("Files in %r: %s" % (cwd, files))
+# import numpy as np
+# np.arange()
 
 df_dan_test = pd.read_csv('/Users/ShaunPorwal/Desktop/df_cancer_dx.csv')
 

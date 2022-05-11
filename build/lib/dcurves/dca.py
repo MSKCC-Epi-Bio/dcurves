@@ -10,7 +10,7 @@ from dcurves import _validate
 #### TODOSP: include input checks locally as I did below for
 #### Ccvert_to_risk_input_checks
 
-def convert_to_risk(model_frame: pd.DataFrame,
+def _convert_to_risk(model_frame: pd.DataFrame,
                     outcome: str,
                     predictor: str,
                     prevalence: float = None,
@@ -34,11 +34,11 @@ def convert_to_risk(model_frame: pd.DataFrame,
     """
 
     _validate._convert_to_risk_input_checks(model_frame=model_frame,
-                                            outcome=outcome,
-                                            predictor=predictor,
-                                            prevalence=prevalence,
-                                            time=time,
-                                            time_to_outcome_col=time_to_outcome_col)
+                                           outcome=outcome,
+                                           predictor=predictor,
+                                           prevalence=prevalence,
+                                           time=time,
+                                           time_to_outcome_col=time_to_outcome_col)
 
     # Binary DCA
     if not time_to_outcome_col:
@@ -63,7 +63,7 @@ def convert_to_risk(model_frame: pd.DataFrame,
 
 #### Things to input into CTC
 #### inputs:
-def calculate_test_consequences(model_frame: pd.DataFrame,
+def _calculate_test_consequences(model_frame: pd.DataFrame,
                                 outcome: str,
                                 predictor: str,
                                 thresholds: list = [0.01, 1, 0.01],
@@ -241,7 +241,7 @@ def dca(data: pd.DataFrame,
     Sequence of events
     1. convert to risk (convert to probabilities)
     2. calculate net benefit
-        a. calculate_test_consequences for each predictor
+        a. _calculate_test_consequences for each predictor
         b. merge all dfs (one for each predictor)
         c. calculate net benefit based on other columns
             i. nb = tpr - thresh / (1 - thresh) * fpr - harm
@@ -311,7 +311,7 @@ def dca(data: pd.DataFrame,
 
     for i in range(0, len(predictors)):
         if probabilities[i]:
-            model_frame = convert_to_risk(model_frame,
+            model_frame = _convert_to_risk(model_frame,
                                           outcome,
                                           predictors[i],
                                           prevalence,
@@ -333,7 +333,7 @@ def dca(data: pd.DataFrame,
 
     testcons_list = []
     for covariate in covariate_names:
-        temp_testcons_df = calculate_test_consequences(
+        temp_testcons_df = _calculate_test_consequences(
             model_frame=model_frame,
             outcome=outcome,
             predictor=covariate,
@@ -362,14 +362,11 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame) -> (list, list):
 
     predictor_names = output_df['predictor'].value_counts().index
     color_names = ['blue', 'purple', 'red', 'green']
-    x_val_list = []
-    y_val_list = []
 
     for predictor_name, color_name in zip(predictor_names, color_names):
         single_pred_df = output_df[output_df['predictor'] == predictor_name]
         x_vals = single_pred_df['threshold']
         y_vals = single_pred_df['net_benefit']
-        # print(pd.DataFrame([x_vals,y_vals]))
         plt.plot(x_vals, y_vals, color=color_name)
 
         plt.ylim([-0.05, 0.2])
@@ -409,4 +406,8 @@ if '__name__' == '__main__':
         prevalence=dan_test_inputs['prevalence'],
         time_to_outcome_col=dan_test_inputs['time_to_outcome_col'])
 
-    print(dan_test_output_df)
+    print(' ')
+    print('asdf')
+    print(' ')
+
+    # print(__file__)

@@ -1,6 +1,6 @@
 import unittest
 from dcurves.dca import dca
-from dcurves.test.load_test_data import load_binary_df, load_survival_df
+from dcurves.load_test_data import load_binary_df, load_survival_df
 
 class TestBinaryDCA(unittest.TestCase):
 
@@ -32,6 +32,8 @@ class TestBinaryDCA(unittest.TestCase):
                                time=binary_inputs['time'],
                                prevalence=binary_inputs['prevalence'],
                                time_to_outcome_col=binary_inputs['time_to_outcome_col'])
+
+
 
         # print(binary_output_df)
 

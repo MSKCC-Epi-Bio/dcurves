@@ -5,11 +5,6 @@ import lifelines
 import matplotlib.pyplot as plt
 from dcurves import _validate
 
-# from test import resources
-
-#### TODOSP: include input checks locally as I did below for
-#### Ccvert_to_risk_input_checks
-
 def _convert_to_risk(model_frame: pd.DataFrame,
                     outcome: str,
                     predictor: str,
@@ -17,21 +12,7 @@ def _convert_to_risk(model_frame: pd.DataFrame,
                     time: float = None,
                     time_to_outcome_col: str = None) -> pd.DataFrame:
 
-    """Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-
-    Parameters
-    ----------
-    model_frame : dataframe
-    outcome : string
-    predictor : string
-    prevalence : float
-    time : float
-    time_to_outcome_col : string
-
-    Returns
-    -------
-    dataframe
-    """
+    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
 
     _validate._convert_to_risk_input_checks(model_frame=model_frame,
                                            outcome=outcome,
@@ -63,6 +44,7 @@ def _convert_to_risk(model_frame: pd.DataFrame,
 
 #### Things to input into CTC
 #### inputs:
+
 def _calculate_test_consequences(model_frame: pd.DataFrame,
                                 outcome: str,
                                 predictor: str,
@@ -70,26 +52,12 @@ def _calculate_test_consequences(model_frame: pd.DataFrame,
                                 prevalence: float = None,
                                 time: float = None,
                                 time_to_outcome_col: str = None) -> pd.DataFrame:
-    """Computes tpr and fpr from outcome values and a predictor with provided thresholds
 
-    #### TODOSP: Below is redundant, since already specified in input arguments
-    #### Instead, add more relevant info to below so that user can be self-sufficient in
-    #### using this module
-
-    Parameters
-    ----------
-    model_frame : dataframe of source data after
-    outcome : string
-    predictor : string
-    thresholds : string
-    prevalence : float
-    time : float
-    time_to_outcome_col : string
-
-    Returns
-    -------
-    dataframe
-    """
+    # This function calculates the following and outputs them in a pandas DataFrame
+        # For binary evaluation:
+            # will calculate [tpr, fpr]
+        # For survival evaluation
+            # will calculate [tpr, fpr, 'test_pos_rate', risk_rate_among_test_pos]
 
     _validate._calculate_test_consequences_input_checks(
         model_frame=model_frame,
@@ -136,6 +104,7 @@ def _calculate_test_consequences(model_frame: pd.DataFrame,
     count = 0
 
     # If no time_to_outcome_col, it means binary
+
     if not time_to_outcome_col:
 
         true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
@@ -179,11 +148,13 @@ def _calculate_test_consequences(model_frame: pd.DataFrame,
 
         df['tpr'] = tp_rate
         df['fpr'] = fp_rate
+
     #### If time_to_outcome_col, then survival
     elif time_to_outcome_col:
 
         #         true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
         #         false_outcome = model_frame[model_frame[outcome] == False][[predictor]]
+
         test_pos_rate = []
         risk_rate_among_test_pos = []
         tp_rate = []
@@ -225,10 +196,10 @@ def _calculate_test_consequences(model_frame: pd.DataFrame,
 
     return df
 
-
 def dca(data: pd.DataFrame,
         outcome: str,
         predictors: list,
+        thresh_vals: list = [0.01, 1, 0.01],
         thresh_lo: float = 0.01,
         thresh_hi: float = 1,
         thresh_step: float = 0.01,
@@ -238,6 +209,36 @@ def dca(data: pd.DataFrame,
         prevalence: float = None,
         time_to_outcome_col: str = None) -> pd.DataFrame:
     '''
+    Perform Decision Curve Analysis
+
+
+    Diagnostic and prognostic models are typically evaluated with measures of
+    accuracy that do not address clinical consequences.
+
+    |
+
+    Decision-analytic techniques allow assessment of clinical outcomes but often
+    require collection of additional information may be cumbersome to apply to
+    models that yield a continuous result. Decision curve analysis is a method
+    for evaluating and comparing prediction models that incorporates clinical
+    consequences, requires only the data set on which the models are tested,
+    and can be applied to models that have either continuous or dichotomous
+    results.
+    The dca function performs decision curve analysis for binary outcomes.
+
+    |
+
+    Review the
+    [DCA Vignette](http://www.danieldsjoberg.com/dcurves/articles/dca.html)
+    for a detailed walk-through of various applications.
+
+    |
+
+    Also, see [www.decisioncurveanalysis.org]
+    (https://www.mskcc.org/departments/epidemiology-biostatistics/biostatistics/decision-curve-analysis) for more information.
+
+    |
+
     Sequence of events
     1. convert to risk (convert to probabilities)
     2. calculate net benefit
@@ -245,6 +246,8 @@ def dca(data: pd.DataFrame,
         b. merge all dfs (one for each predictor)
         c. calculate net benefit based on other columns
             i. nb = tpr - thresh / (1 - thresh) * fpr - harm
+
+    |
 
     Parameters
     ----------
@@ -254,6 +257,8 @@ def dca(data: pd.DataFrame,
         the column name of the data frame to use as the outcome
     predictors : str OR list(str)
         the column(s) that will be used to predict the outcome
+    thresh_vals : list(float OR int)
+        threshold probability lower/upper bound, then step size, respectively
     thresh_lo : float OR int
         lower bound for threshold probabilities (defaults to 0.01)
     thresh_hi : float OR int
@@ -266,21 +271,66 @@ def dca(data: pd.DataFrame,
     harm : float or list(float)
         the harm associated with each predictor
         harm must have the same length as the predictors list
-    intervention_per : int
-        interventions per `intervention_per` patients
-    smooth_results : bool
-        use lowess smoothing to smooth the result data series
-    lowess_frac : float
-        the fraction of the data used when estimating each endogenous value
+
+    |
+
+    Examples
+    ----------
+    >>> df_binary = dcurves.load_test_data.load_binary_df()
+    >>> print(df_binary)
+|         patientid  cancer  ...    marker cancerpredmarker
+|    0            1   False  ...  0.776309         0.037201
+|    1            2   False  ...  0.267086         0.578907
+|    2            3   False  ...  0.169621         0.021551
+|    3            4   False  ...  0.023996         0.003910
+|    4            5   False  ...  0.070910         0.018790
+|    ..         ...     ...  ...       ...              ...
+|    745        746   False  ...  0.654782         0.057813
+|    746        747    True  ...  1.030259         0.160424
+|    747        748   False  ...  0.151616         0.108838
+|    748        749   False  ...  0.624602         0.015285
+|    749        750   False  ...  0.270679         0.011938
+|
+|    [750 rows x 8 columns]
+
+    >>> print(dcurves.dca(data=dcurves.load_test_data.load_binary_df(), outcome='cancer', predictors=['famhistory']))
+|         predictor     threshold    n  prevalence    tpr       fpr    variable  harm  net_benefit
+|   0    famhistory  1.000000e-09  750        0.14  0.032  0.121333  famhistory     0     0.032000
+|   1    famhistory  1.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.030774
+|   2    famhistory  2.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.029524
+|   3    famhistory  3.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.028247
+|   4    famhistory  4.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.026944
+|   ..          ...           ...  ...         ...    ...       ...         ...   ...          ...
+|   96         none  9.600000e-01  750        0.14  0.000  0.000000        none     0     0.000000
+|   97         none  9.700000e-01  750        0.14  0.000  0.000000        none     0     0.000000
+|   98         none  9.800000e-01  750        0.14  0.000  0.000000        none     0     0.000000
+|   99         none  9.900000e-01  750        0.14  0.000  0.000000        none     0     0.000000
+|   100        none  1.000000e+00  750        0.14  0.000  0.000000        none     0          NaN
+
+    >>> print(dcurves.dca(data=dcurves.load_test_data.load_survival_df(), outcome='cancer', predictors=['cancerpredmarker']))
+|               predictor     threshold    n  prevalence       tpr       fpr          variable  harm  net_benefit
+|   0    cancerpredmarker  1.000000e-09  750        0.14  0.140000  0.860000  cancerpredmarker     0     0.140000
+|   1    cancerpredmarker  1.000000e-02  750        0.14  0.140000  0.749333  cancerpredmarker     0     0.132431
+|   2    cancerpredmarker  2.000000e-02  750        0.14  0.138667  0.620000  cancerpredmarker     0     0.126014
+|   3    cancerpredmarker  3.000000e-02  750        0.14  0.134667  0.529333  cancerpredmarker     0     0.118296
+|   4    cancerpredmarker  4.000000e-02  750        0.14  0.132000  0.478667  cancerpredmarker     0     0.112056
+|   ..                ...           ...  ...         ...       ...       ...               ...   ...          ...
+|   96               none  9.600000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
+|   97               none  9.700000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
+|   98               none  9.800000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
+|   99               none  9.900000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
+|   100              none  1.000000e+00  750        0.14  0.000000  0.000000              none     0          NaN
+
+| [303 rows x 9 columns]
+
 
     Returns
     -------
-    tuple(pd.DataFrame, pd.DataFrame)
-        A tuple of length 2 with net_benefit, interventions_avoided
-        net_benefit : TODO
-        interventions_avoided : TODO
+    pd.DataFrame
+        A dataframe containing calculated net benefit values and threshold values for plotting
 
     '''
+
 
     _validate._dca_input_checks(
         model_frame=data,
@@ -356,7 +406,27 @@ def dca(data: pd.DataFrame,
     return all_covariates_df
 
 
-def plot_net_benefit_graphs(output_df: pd.DataFrame) -> (list, list):
+def plot_net_benefit_graphs(output_df: pd.DataFrame) -> None:
+    """
+    Plot the outputted dataframe from dca() of this library. Specifically, this function
+    will plot the calculated net benefit values for each threshold value from those
+    indicated in the dca() function.
+
+    |
+
+    Parameters
+    __________
+    output_df : pandas.DataFrame
+        dataframe outputted by dca function in the dcurves library
+
+
+
+    Returns
+    -------
+    pd.DataFrame
+        A dataframe containing calculated net benefit values and threshold values for plotting
+
+    """
 
     _validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
 
@@ -374,36 +444,3 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame) -> (list, list):
         plt.grid(b=True, which='both', axis='both')
 
     return
-
-
-if '__name__' == '__main__':
-    df_dan_test = pd.read_csv('/Users/ShaunPorwal/Desktop/df_cancer_dx.csv')
-
-    dan_test_inputs = {
-        'data': df_dan_test,
-        'outcome': 'cancer',
-        'predictors': ['famhistory'],
-        'thresh_lo': 0.01,
-        'thresh_hi': 1,
-        'thresh_step': 0.01,
-        'harm': None,
-        'probabilities': [True],
-        'time': None,
-        'prevalence': None,
-        'time_to_outcome_col': None
-    }
-
-    dan_test_output_df = dca(
-        data=df_dan_test,
-        outcome=dan_test_inputs['outcome'],
-        predictors=dan_test_inputs['predictors'],
-        thresh_lo=dan_test_inputs['thresh_lo'],
-        thresh_hi=dan_test_inputs['thresh_hi'],
-        thresh_step=dan_test_inputs['thresh_step'],
-        harm=dan_test_inputs['harm'],
-        probabilities=dan_test_inputs['probabilities'],
-        time=dan_test_inputs['time'],
-        prevalence=dan_test_inputs['prevalence'],
-        time_to_outcome_col=dan_test_inputs['time_to_outcome_col'])
-
-    print(dan_test_output_df)

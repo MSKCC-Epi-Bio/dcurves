@@ -1,6 +1,6 @@
 import unittest
 from dcurves.dca import dca
-from dcurves.test.load_test_data import load_binary_df, load_survival_df
+from dcurves.load_test_data import load_binary_df, load_survival_df
 
 class TestBinaryDCA(unittest.TestCase):
 

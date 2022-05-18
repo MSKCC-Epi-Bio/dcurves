@@ -338,23 +338,26 @@ def dca(data: pd.DataFrame,
     ...   dcurves.dca(
     ...     data = dcurves.load_test_data.load_survival_df(),
     ...     outcome = 'cancer',
-    ...     predictors = ['cancerpredmarker']
+    ...     predictors = ['cancerpredmarker'],
+    ...     thresh_vals = [0.01, 1.0, 0.01],
+    ...     probabilities = [False],
+    ...     time = 1,
+    ...     time_to_outcome_col = 'ttcancer'
     ...   )
     ... )
-                predictor     threshold    n  prevalence       tpr       fpr          variable  harm  net_benefit
-    0    cancerpredmarker  1.000000e-09  750        0.14  0.140000  0.860000  cancerpredmarker     0     0.140000
-    1    cancerpredmarker  1.000000e-02  750        0.14  0.140000  0.749333  cancerpredmarker     0     0.132431
-    2    cancerpredmarker  2.000000e-02  750        0.14  0.138667  0.620000  cancerpredmarker     0     0.126014
-    3    cancerpredmarker  3.000000e-02  750        0.14  0.134667  0.529333  cancerpredmarker     0     0.118296
-    4    cancerpredmarker  4.000000e-02  750        0.14  0.132000  0.478667  cancerpredmarker     0     0.112056
-    ..                ...           ...  ...         ...       ...       ...               ...   ...          ...
-    96               none  9.600000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
-    97               none  9.700000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
-    98               none  9.800000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
-    99               none  9.900000e-01  750        0.14  0.000000  0.000000              none     0     0.000000
-    100              none  1.000000e+00  750        0.14  0.000000  0.000000              none     0          NaN
 
-    [303 rows x 9 columns]
+                predictor     threshold    n  prevalence  ...       fpr          variable  harm  net_benefit
+    0    cancerpredmarker  1.000000e-09  750    0.147287  ...  0.852713  cancerpredmarker     0     0.147287
+    1    cancerpredmarker  1.000000e-02  750    0.147287  ...  0.742181  cancerpredmarker     0     0.139656
+    2    cancerpredmarker  2.000000e-02  750    0.147287  ...  0.613444  cancerpredmarker     0     0.132703
+    3    cancerpredmarker  3.000000e-02  750    0.147287  ...  0.523820  cancerpredmarker     0     0.123979
+    4    cancerpredmarker  4.000000e-02  750    0.147287  ...  0.474956  cancerpredmarker     0     0.115921
+    ..                ...           ...  ...         ...  ...       ...               ...   ...          ...
+    96               none  9.600000e-01  750    0.147287  ...  0.000000              none     0     0.000000
+    97               none  9.700000e-01  750    0.147287  ...  0.000000              none     0     0.000000
+    98               none  9.800000e-01  750    0.147287  ...  0.000000              none     0     0.000000
+    99               none  9.900000e-01  750    0.147287  ...  0.000000              none     0     0.000000
+    100              none  1.000000e+00  750    0.147287  ...  0.000000              none     0          NaN
 
 
     Parameters
@@ -367,7 +370,8 @@ def dca(data: pd.DataFrame,
         the column(s) that will be used to predict the outcome
     thresh_vals : list(float OR int)
         3 values in list - threshold probability lower bound, upper bound,
-        then step size, respectively (defaults to [0.01, 1, 0.01]
+        then step size, respectively (defaults to [0.01, 1, 0.01]). The lower
+        bound must be >0.
     harm : float or list(float)
         the harm associated with each predictor
         harm must have the same length as the predictors list

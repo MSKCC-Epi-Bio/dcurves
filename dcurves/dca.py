@@ -345,7 +345,6 @@ def dca(data: pd.DataFrame,
     ...     time_to_outcome_col = 'ttcancer'
     ...   )
     ... )
-
                 predictor     threshold    n  prevalence  ...       fpr          variable  harm  net_benefit
     0    cancerpredmarker  1.000000e-09  750    0.147287  ...  0.852713  cancerpredmarker     0     0.147287
     1    cancerpredmarker  1.000000e-02  750    0.147287  ...  0.742181  cancerpredmarker     0     0.139656

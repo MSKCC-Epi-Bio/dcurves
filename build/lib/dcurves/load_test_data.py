@@ -17,7 +17,10 @@ from os import path
 # Do try/except on pulling data if it's not in expected location
 
 def load_binary_df():
-    """Return a dataframe containing the binary data
+    """Return a dataframe containing a binary simulation dataset
+
+    Parameters
+    ----------
     """
 
     # This is a stream-like object. If you want the actual info, call
@@ -36,7 +39,7 @@ def load_binary_df():
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_cancerdx_df():
-    """Return a dataframe containing the binary data
+    """Return a dataframe containing a second simulation binary dataset
     """
 
     # This is a stream-like object. If you want the actual info, call
@@ -55,7 +58,7 @@ def load_cancerdx_df():
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_survival_df():
-    """Return a dataframe containing the survival data
+    """Return a dataframe containing a simulation survival data
     """
 
     # This is a stream-like object. If you want the actual info, call
@@ -68,7 +71,9 @@ def load_survival_df():
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_case_control_df():
-    """Return a dataframe containing the case-control data
+    """Return a dataframe containing a case-control dataset
+
+
     """
 
     # This is a stream-like object. If you want the actual info, call

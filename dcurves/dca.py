@@ -503,7 +503,7 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame,
     color_names : list[str]
         list of colors specified by user (defaults to ['blue', 'purple', 'red',
         'green', 'hotpink', 'orange', 'saddlebrown', 'lime', 'magenta']
-    
+
 
     """
 

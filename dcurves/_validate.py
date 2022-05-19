@@ -181,7 +181,9 @@ def _dca_input_checks(
     _validate_prevalence(prevalence=prevalence)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
-def _plot_net_benefit_graphs_input_checks(output_df: pd.DataFrame):
+def _plot_net_benefit_graphs_input_checks(output_df: pd.DataFrame,
+                                          y_limits: list,
+                                          color_names: list):
     # make sure output_df input is pandas DataFrame
 
     _validate_dataframe(data=output_df)

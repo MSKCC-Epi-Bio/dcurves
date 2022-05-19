@@ -468,7 +468,8 @@ def dca(data: pd.DataFrame,
     return all_covariates_df
 
 
-def plot_net_benefit_graphs(output_df: pd.DataFrame) -> None:
+def plot_net_benefit_graphs(output_df: pd.DataFrame,
+                            y_limits: list = [-0.05, 0.2]) -> None:
     """
     |
     |  Plot the outputted dataframe from dca() of this library.
@@ -492,18 +493,17 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame) -> None:
     __________
     output_df : pandas.DataFrame
         dataframe outputted by dca function in the dcurves library
-
-    Returns
-    -------
-    pd.DataFrame
-        A dataframe containing calculated net benefit values and threshold values for plotting
+    y_limits : list[float]
+        list of float that control graph lower and upper y-axis limits
 
     """
 
     _validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
 
     predictor_names = output_df['predictor'].value_counts().index
-    color_names = ['blue', 'purple', 'red', 'green']
+    color_names = ['blue', 'purple','red',
+                   'green', 'hotpink', 'orange',
+                   'saddlebrown', 'lime', 'magenta']
 
     for predictor_name, color_name in zip(predictor_names, color_names):
         single_pred_df = output_df[output_df['predictor'] == predictor_name]
@@ -511,8 +511,11 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame) -> None:
         y_vals = single_pred_df['net_benefit']
         plt.plot(x_vals, y_vals, color=color_name)
 
-        plt.ylim([-0.05, 0.2])
+
+        plt.ylim(y_limits)
         plt.legend(predictor_names)
         plt.grid(b=True, which='both', axis='both')
+        plt.xlabel('Threshold Values')
+        plt.ylabel('Calculated Net Benefit')
 
     return

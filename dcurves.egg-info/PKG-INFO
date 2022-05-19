@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: dcurves
-Version: 0.0.2.2
+Version: 0.0.2.3
 Summary: Python package for Andrew Vickers' Decision Curve Analysis method to evaluate prediction models and diagnostic tests
 Home-page: UNKNOWN
 Author: Shaun Porwal

@@ -469,7 +469,11 @@ def dca(data: pd.DataFrame,
 
 
 def plot_net_benefit_graphs(output_df: pd.DataFrame,
-                            y_limits: list = [-0.05, 0.2]) -> None:
+                            y_limits: list = [-0.05, 0.2],
+                            color_names: list = ['blue', 'purple', 'red',
+                                                 'green', 'hotpink', 'orange',
+                                                 'saddlebrown', 'lime', 'magenta']
+                            ) -> None:
     """
     |
     |  Plot the outputted dataframe from dca() of this library.
@@ -495,15 +499,22 @@ def plot_net_benefit_graphs(output_df: pd.DataFrame,
         dataframe outputted by dca function in the dcurves library
     y_limits : list[float]
         list of float that control graph lower and upper y-axis limits
+        (defaults to [-0.05, 0.2])
+    color_names : list[str]
+        list of colors specified by user (defaults to ['blue', 'purple', 'red',
+        'green', 'hotpink', 'orange', 'saddlebrown', 'lime', 'magenta']
+
 
     """
 
-    _validate._plot_net_benefit_graphs_input_checks(output_df=output_df)
+    _validate._plot_net_benefit_graphs_input_checks(output_df=output_df,
+                                                    y_limits=y_limits,
+                                                    color_names=color_names)
 
     predictor_names = output_df['predictor'].value_counts().index
-    color_names = ['blue', 'purple','red',
-                   'green', 'hotpink', 'orange',
-                   'saddlebrown', 'lime', 'magenta']
+    # color_names = ['blue', 'purple','red',
+    #                'green', 'hotpink', 'orange',
+    #                'saddlebrown', 'lime', 'magenta']
 
     for predictor_name, color_name in zip(predictor_names, color_names):
         single_pred_df = output_df[output_df['predictor'] == predictor_name]

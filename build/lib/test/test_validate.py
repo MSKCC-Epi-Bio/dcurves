@@ -10,17 +10,14 @@ class TestCTCInputValidation(unittest.TestCase):
         'data': df_binary,
         'outcome': 'cancer',
         'predictors': ['cancerpredmarker', 'marker'],
-        'thresh_lo': 0.01,
-        'thresh_hi': 0.35,
-        'thresh_step': 0.01,
-        'harm': None,
-        'probabilities': [False, True],
-        'time': None,
-        'prevalence': None,
-        'time_to_outcome_col': None
+        'thresh_vals': [0.01, 0.35, 0.01],
+        'probabilities': [False, True]
     }
 
-    thresholds = np.arange(binary_inputs['thresh_lo'], binary_inputs['thresh_hi'], binary_inputs['thresh_step'], binary_inputs['thresh_step'])  # array of values
+    thresholds = np.arange(binary_inputs['thresh_vals'][0],
+                           binary_inputs['thresh_vals'][1] + binary_inputs['thresh_vals'][2],
+                           binary_inputs['thresh_step'])  # array of values
+
     thresholds = np.insert(thresholds, 0, 0.1 ** 9)
 
     # CTC = Calculate Test Consequences

@@ -2,6 +2,7 @@ import unittest
 from dcurves.dca import dca
 from dcurves.load_test_data import load_binary_df, load_survival_df
 
+
 class TestBinaryDCA(unittest.TestCase):
 
     def testBinaryOutput(self):
@@ -11,9 +12,7 @@ class TestBinaryDCA(unittest.TestCase):
             'data': df_binary,
             'outcome': 'cancer',
             'predictors': ['cancerpredmarker', 'marker'],
-            'thresh_lo': 0.01,
-            'thresh_hi': 0.35,
-            'thresh_step': 0.01,
+            'thresh_vals': [0.01, 0.50, 0.01],
             'harm': None,
             'probabilities': [False, True],
             'time': None,
@@ -24,18 +23,14 @@ class TestBinaryDCA(unittest.TestCase):
         binary_output_df = dca(data=binary_inputs['data'],
                                outcome=binary_inputs['outcome'],
                                predictors=binary_inputs['predictors'],
-                               thresh_lo=binary_inputs['thresh_lo'],
-                               thresh_hi=binary_inputs['thresh_hi'],
-                               thresh_step=binary_inputs['thresh_step'],
+                               thresh_vals=binary_inputs['thresh_vals'],
                                harm=binary_inputs['harm'],
                                probabilities=binary_inputs['probabilities'],
                                time=binary_inputs['time'],
                                prevalence=binary_inputs['prevalence'],
                                time_to_outcome_col=binary_inputs['time_to_outcome_col'])
 
-
-
-        # print(binary_output_df)
+        print(binary_output_df)
 
         # assert (isinstance(type(binary_output_df), pd.core.frame.DataFrame)), "should be TRUE"
 
@@ -48,9 +43,7 @@ class TestSurvivalDCA(unittest.TestCase):
             'data': df_surv,
             'outcome': 'cancer',
             'predictors': ['cancerpredmarker'],
-            'thresh_lo': 0.01,
-            'thresh_hi': 0.50,
-            'thresh_step': 0.01,
+            'thresh_vals': [0.01, 0.50, 0.01],
             'harm': None,
             'probabilities': [False],
             'time': 1,
@@ -61,9 +54,7 @@ class TestSurvivalDCA(unittest.TestCase):
         survival_output_df = dca(data=survival_inputs['data'],
                                  outcome=survival_inputs['outcome'],
                                  predictors=survival_inputs['predictors'],
-                                 thresh_lo=survival_inputs['thresh_lo'],
-                                 thresh_hi=survival_inputs['thresh_hi'],
-                                 thresh_step=survival_inputs['thresh_step'],
+                                 thresh_vals=survival_inputs['thresh_vals'],
                                  harm=survival_inputs['harm'],
                                  probabilities=survival_inputs['probabilities'],
                                  time=survival_inputs['time'],
@@ -162,6 +153,5 @@ class TestSurvivalDCA(unittest.TestCase):
 #         pass
 #     pass
 
-# if __name__ == '__main__':
-#
-#     print(DecisionCurveAnalysis.__init__().data)
+if __name__ == '__main__':
+    unittest.main()

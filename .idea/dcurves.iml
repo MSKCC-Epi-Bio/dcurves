@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="packaging_tutorial" />
     <orderEntry type="module" module-name="dcapy" />
     <orderEntry type="module" module-name="dcapy" />
+    <orderEntry type="module" module-name="autoclicks" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="pytest" />

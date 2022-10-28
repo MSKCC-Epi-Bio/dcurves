@@ -1,65 +1,76 @@
-import unittest
-from dcurves.dca import dca
+import pytest
+from dcurves.binary_dca import _binary_convert_to_risk, _binary_calculate_test_consequences, binary_dca
 from dcurves.load_test_data import load_binary_df, load_survival_df
 
+def test_scratch():
+    print(load_binary_df())
+    # assert load_binary_df() == load_binary_df()
 
-class TestBinaryDCA(unittest.TestCase):
 
-    def testBinaryOutput(self):
 
-        df_binary = load_binary_df()
-        binary_inputs = {
-            'data': df_binary,
-            'outcome': 'cancer',
-            'predictors': ['cancerpredmarker', 'marker'],
-            'thresh_vals': [0.01, 0.50, 0.01],
-            'harm': None,
-            'probabilities': [False, True],
-            'time': None,
-            'prevalence': None,
-            'time_to_outcome_col': None
-        }
 
-        binary_output_df = dca(data=binary_inputs['data'],
-                               outcome=binary_inputs['outcome'],
-                               predictors=binary_inputs['predictors'],
-                               thresh_vals=binary_inputs['thresh_vals'],
-                               harm=binary_inputs['harm'],
-                               probabilities=binary_inputs['probabilities'],
-                               time=binary_inputs['time'],
-                               prevalence=binary_inputs['prevalence'],
-                               time_to_outcome_col=binary_inputs['time_to_outcome_col'])
 
-        print(binary_output_df)
 
-        # assert (isinstance(type(binary_output_df), pd.core.frame.DataFrame)), "should be TRUE"
 
-class TestSurvivalDCA(unittest.TestCase):
 
-    def testSurvivalOutput(self):
-
-        df_surv = load_survival_df()
-        survival_inputs = {
-            'data': df_surv,
-            'outcome': 'cancer',
-            'predictors': ['cancerpredmarker'],
-            'thresh_vals': [0.01, 0.50, 0.01],
-            'harm': None,
-            'probabilities': [False],
-            'time': 1,
-            'prevalence': None,
-            'time_to_outcome_col': 'ttcancer'
-        }
-
-        survival_output_df = dca(data=survival_inputs['data'],
-                                 outcome=survival_inputs['outcome'],
-                                 predictors=survival_inputs['predictors'],
-                                 thresh_vals=survival_inputs['thresh_vals'],
-                                 harm=survival_inputs['harm'],
-                                 probabilities=survival_inputs['probabilities'],
-                                 time=survival_inputs['time'],
-                                 prevalence=survival_inputs['prevalence'],
-                                 time_to_outcome_col=survival_inputs['time_to_outcome_col'])
+#
+# class TestBinaryDCA(unittest.TestCase):
+#
+#     def testBinaryOutput(self):
+#
+#         df_binary = load_binary_df()
+#         binary_inputs = {
+#             'data': df_binary,
+#             'outcome': 'cancer',
+#             'predictors': ['cancerpredmarker', 'marker'],
+#             'thresh_vals': [0.01, 0.50, 0.01],
+#             'harm': None,
+#             'probabilities': [False, True],
+#             'time': None,
+#             'prevalence': None,
+#             'time_to_outcome_col': None
+#         }
+#
+#         binary_output_df = dca(data=binary_inputs['data'],
+#                                outcome=binary_inputs['outcome'],
+#                                predictors=binary_inputs['predictors'],
+#                                thresh_vals=binary_inputs['thresh_vals'],
+#                                harm=binary_inputs['harm'],
+#                                probabilities=binary_inputs['probabilities'],
+#                                time=binary_inputs['time'],
+#                                prevalence=binary_inputs['prevalence'],
+#                                time_to_outcome_col=binary_inputs['time_to_outcome_col'])
+#
+#         print(binary_output_df)
+#
+#         # assert (isinstance(type(binary_output_df), pd.core.frame.DataFrame)), "should be TRUE"
+#
+# class TestSurvivalDCA(unittest.TestCase):
+#
+#     def testSurvivalOutput(self):
+#
+#         df_surv = load_survival_df()
+#         survival_inputs = {
+#             'data': df_surv,
+#             'outcome': 'cancer',
+#             'predictors': ['cancerpredmarker'],
+#             'thresh_vals': [0.01, 0.50, 0.01],
+#             'harm': None,
+#             'probabilities': [False],
+#             'time': 1,
+#             'prevalence': None,
+#             'time_to_outcome_col': 'ttcancer'
+#         }
+#
+#         survival_output_df = dca(data=survival_inputs['data'],
+#                                  outcome=survival_inputs['outcome'],
+#                                  predictors=survival_inputs['predictors'],
+#                                  thresh_vals=survival_inputs['thresh_vals'],
+#                                  harm=survival_inputs['harm'],
+#                                  probabilities=survival_inputs['probabilities'],
+#                                  time=survival_inputs['time'],
+#                                  prevalence=survival_inputs['prevalence'],
+#                                  time_to_outcome_col=survival_inputs['time_to_outcome_col'])
 
         # assert (isinstance(type(binary_output_df), pd.core.frame.DataFrame)), "should be TRUE"
 

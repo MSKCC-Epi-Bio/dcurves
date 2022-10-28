@@ -6,49 +6,6 @@ import matplotlib.pyplot as plt
 from dcurves import _validate
 
 
-def _binary_convert_to_risk(model_frame: pd.DataFrame,
-                            outcome: str,
-                            predictor: str,
-                            prevalence: float = None,
-                            time: float = None,
-                            time_to_outcome_col: str = None) -> pd.DataFrame:
-    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-    # For binary, not survival
-
-    # Binary DCA
-    if not time_to_outcome_col:
-        predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
-                                        data=model_frame).fit().predict()
-        model_frame[predictor] = [(1 - val) for val in predicted_vals]
-        # model_frame.loc[model_frame['predictor']]
-        return model_frame
-
-
-def _survival_convert_to_risk(model_frame: pd.DataFrame,
-                              outcome: str,
-                              predictor: str,
-                              prevalence: float = None,
-                              time: float = None,
-                              time_to_outcome_col: str = None) -> pd.DataFrame:
-    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-    # For survival, not binary
-
-    # Survival DCA
-    if time_to_outcome_col:
-        #### From lifelines dataframe
-        cph = lifelines.CoxPHFitter()
-        cph_df = model_frame[['ttcancer', 'cancer', 'cancerpredmarker']]
-        cph.fit(cph_df, 'ttcancer', 'cancer')
-
-        new_cph_df = cph_df
-        new_cph_df['ttcancer'] = [time for i in range(0, len(cph_df))]
-        predicted_vals = cph.predict_survival_function(new_cph_df, times=time).values[
-            0]  #### all values in list of single list, so just dig em out with [0]
-        new_model_frame = model_frame
-        new_model_frame[predictor] = predicted_vals
-        return new_model_frame
-
-
 def _convert_to_risk(model_frame: pd.DataFrame,
                      outcome: str,
                      predictor: str,
@@ -479,8 +436,10 @@ def dca(data: object,
     return all_covariates_df
 
 
-def net_intervention_avoided(after_dca_df: pd.DataFrame,
-                             nper: int = 100):
+def net_intervention_avoided(
+        after_dca_df: pd.DataFrame,
+        nper: int = 100
+):
     """
 
     |

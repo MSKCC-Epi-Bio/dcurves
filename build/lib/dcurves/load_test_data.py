@@ -38,25 +38,6 @@ def load_binary_df():
     stream = pkg_resources.resource_stream(__name__, 'data/df_binary.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-def load_cancerdx_df():
-    """Return a dataframe containing a second simulation binary dataset
-    """
-
-    # This is a stream-like object. If you want the actual info, call
-    # stream.read()
-
-    # with pkg_resources.resource_stream(__name__, 'data/df_binary.csv') as stream:
-    #     # stream path:
-    #     # '/Users/ShaunPorwal/Documents/GitHub/python_packages/dcurves/dcurves/data/df_binary.csv'
-    #
-    #     data = pd.read_csv(stream, encoding='latin-
-
-    # data_path = path.join(resources_dir, 'df_binary.csv')
-    # data = pd.read_csv(data_path)
-
-    stream = pkg_resources.resource_stream(__name__, 'data/df_cancer_dx.csv')
-    return pd.read_csv(stream, encoding='latin-1')
-
 def load_survival_df():
     """Return a dataframe containing a simulation survival data
     """
@@ -84,3 +65,29 @@ def load_case_control_df():
 
     stream = pkg_resources.resource_stream(__name__, 'data/df_case_control.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_bin_dca_result_1():
+    """For binary case, return a dataframe containing calculated net benefit values for default settings
+    model_frame: load_binary_df() from load_test_data
+    outcome: cancer
+    predictor(s): cancerpredmarker, marker
+    thresholds: 0.01 to 0.99
+    harm: None
+    probabilities = [False, True] # False for cancerpredmarker, True for marker
+
+    :return:
+    """
+
+    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_result_1.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_bctr_result_1():
+
+    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_ctr_result_1.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
+
+
+
+
+

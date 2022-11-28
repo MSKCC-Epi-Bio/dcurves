@@ -39,29 +39,8 @@ def test_b_dca_result_df():
             probabilities=[False, True]
         )
 
-    del r_b_dca_result_df['label']
-
-    r_b_dca_result_df = r_b_dca_result_df.round(5)
-    p_b_dca_result_df = p_b_dca_result_df.round(5)
-
-    p_b_dca_result_df = p_b_dca_result_df.rename(columns={'fpr': 'fp_rate',
-                                                          'tpr': 'tp_rate'})
-
-    for i in range(0, len(r_b_dca_result_df['net_benefit'].values)):
-        print('r and p nb values: ' +
-              str(r_b_dca_result_df['net_benefit'].values[i]) +
-              ' and ' +
-              str(p_b_dca_result_df['net_benefit'].values[i]) +
-              ' at index: ' +
-              str(i))
-        assert r_b_dca_result_df['net_benefit'].values[i] == p_b_dca_result_df['net_benefit'].values[i]
-
-
-    # assert np.array_equal(r_b_dca_result_df['net_benefit'].values,
-    #                       p_b_dca_result_df['net_benefit'].values)
-
-    # print(np.sort(r_b_dca_result_df.columns))
-    # print(np.sort(p_b_dca_result_df.columns))
+    print(np.sort(r_b_dca_result_df.columns))
+    print(np.sort(p_b_dca_result_df.columns))
 
     # assert np.array_equal(np.sort(r_b_dca_result_df.columns), np.sort(p_b_dca_result_df.columns))
 

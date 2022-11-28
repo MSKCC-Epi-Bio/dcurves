@@ -106,34 +106,7 @@ df_surv = load_survival_df()
 # import numpy as np
 # np.arange()
 
-df_dan_test = pd.read_csv('/Users/ShaunPorwal/Desktop/df_cancer_dx.csv')
 
-dan_test_inputs = {
-    'data': df_dan_test,
-    'outcome': 'cancer',
-    'predictors': ['famhistory'],
-    'thresh_lo': 0.01,
-    'thresh_hi': 1,
-    'thresh_step': 0.01,
-    'harm': None,
-    'probabilities': [False],
-    'time': None,
-    'prevalence': None,
-    'time_to_outcome_col': None
-}
-
-dan_test_output_df = dca(
-        data=df_dan_test,
-        outcome=dan_test_inputs['outcome'],
-        predictors=dan_test_inputs['predictors'],
-        thresh_lo=dan_test_inputs['thresh_lo'],
-        thresh_hi=dan_test_inputs['thresh_hi'],
-        thresh_step=dan_test_inputs['thresh_step'],
-        harm=dan_test_inputs['harm'],
-        probabilities=dan_test_inputs['probabilities'],
-        time=dan_test_inputs['time'],
-        prevalence=dan_test_inputs['prevalence'],
-        time_to_outcome_col=dan_test_inputs['time_to_outcome_col'])
 
 
 

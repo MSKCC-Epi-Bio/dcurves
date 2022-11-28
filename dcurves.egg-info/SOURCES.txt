@@ -15,9 +15,10 @@ dcurves.egg-info/dependency_links.txt
 dcurves.egg-info/requires.txt
 dcurves.egg-info/top_level.txt
 dcurves/data/df_binary.csv
-dcurves/data/df_cancer_dx.csv
 dcurves/data/df_case_control.csv
 dcurves/data/df_surv.csv
+dcurves/data/r_bin_dca_ctr_result_1.csv
+dcurves/data/r_bin_dca_result_1.csv
 tests/__init__.py
 tests/test_dca.py
 tests/test_validate.py

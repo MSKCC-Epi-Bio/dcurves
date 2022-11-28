@@ -1,0 +1,9 @@
+221113
+
+TODO: 
+- Figure out why survival DCA convert to risk has specific predictor/outcome names 
+	- Compare with Dan's R DCA package to see if he does same
+- Figure out what to do with prevalence default value of none, expected type of float w/ type-hint if there is 
+value, and beartype which will not allow these 2 things to concurrently exist
+- Write basic unit test for binary convert to risk
+

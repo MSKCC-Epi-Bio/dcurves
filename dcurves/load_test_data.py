@@ -86,7 +86,28 @@ def load_r_bctr_result_1():
     stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_ctr_result_1.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
+def load_r_bin_dca_result_2():
+    """For binary case, return a dataframe containing calculated test consequences values for custom settings:
+    R DCA Command: dca(cancer ~ age, data = df_binary, as_probability = "age", prevalence = 0.5)
 
+    model_frame: load_binary_df() from load_test_data
+    outcome: cancer
+    predictor(s): age
+    thresholds: 0.01 to 0.99
+    harm: None
+    probabilities = [True]
+    prevalence = 0.5
+
+    :return:
+    """
+
+    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_result_2.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_bctr_result_2():
+
+    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_ctr_result_2.csv')
+    return pd.read_csv(stream, encoding='latin-1')
 
 
 

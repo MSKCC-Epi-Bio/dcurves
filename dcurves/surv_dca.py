@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
 import lifelines
 from dcurves import _validate
 import beartype
@@ -12,13 +11,11 @@ def _surv_convert_to_risk(
         outcome: str,
         predictor: str,
         time: float,
-        time_to_outcome_col: str,
-        prevalence: float = None
+        time_to_outcome_col: str
 ) -> pd.DataFrame:
     # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
     # pass
     # _validate._surv_convert_to_risk_input_checks(
-    #     prevalence=prevalence,
     #     time=time,
     #     time_to_outcome_col=time_to_outcome_col)
 
@@ -35,26 +32,6 @@ def _surv_convert_to_risk(
     new_model_frame[predictor] = predicted_vals
     return new_model_frame
 
-@beartype
-def _surv_prevalence_calc(
-        model_frame: pd.DataFrame,
-        outcome: str,
-        thresholds: list,
-        time: float,
-        time_to_outcome_col: str,
-        prevalence: object = None
-):
-    if prevalence != None:
-        prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
-    else:
-        kmf = lifelines.KaplanMeierFitter()
-        kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
-        prevalence = 1 - kmf.survival_function_at_times(time)
-        prevalence = prevalence[1]
-        #### Convert survival to risk by doing 1 - x (Figure out why)
-
-    return prevalence
-
 
 @beartype
 def _surv_calculate_test_consequences(
@@ -64,7 +41,7 @@ def _surv_calculate_test_consequences(
         thresholds: list,
         time: float,
         time_to_outcome_col: str,
-        prevalence: float = None
+        prevalence: float = -1.0
 ) -> pd.DataFrame:
     # This function calculates the following and outputs them in a pandas DataFrame
     # For binary evaluation:
@@ -74,29 +51,22 @@ def _surv_calculate_test_consequences(
 
     _validate._surv_calculate_test_consequences_input_checks(
         thresholds=thresholds,
-        prevalence=prevalence,
         time=time,
         time_to_outcome_col=time_to_outcome_col
     )
 
+    # Handle prevalence values
+    # If provided: use user-supplied prev value for outcome (case-control)
+    # If not provided: calculate
 
-    prevalence_values = \
-    _surv_prevalence_calc(
-        model_frame=model_frame,
-        outcome=outcome,
-        thresholds=thresholds,
-        time=time
-    )
-
-    #### Handle prevalence values
-
-    kmf = lifelines.KaplanMeierFitter()
-    kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
-    prevalence = 1 - kmf.survival_function_at_times(time)
-    prevalence = prevalence[1]
-    #### Convert survival to risk by doing 1 - x (Figure out why)
-
-    prevalence_values = [prevalence] * len(thresholds)
+    if prevalence != -1.0:
+        prevalence_values = [prevalence] * len(thresholds)  # need prevalence list to be as long as len(thresholds)
+    else:
+        kmf = lifelines.KaplanMeierFitter()
+        kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
+        prevalence = 1 - kmf.survival_function_at_times(time)
+        prevalence = prevalence[1]
+        prevalence_values = [prevalence] * len(thresholds)
 
     n = len(model_frame.index)
     df = pd.DataFrame({'predictor': predictor,
@@ -108,8 +78,7 @@ def _surv_calculate_test_consequences(
 
     test_pos_rate = []
     risk_rate_among_test_pos = []
-    # tp_rate = []
-    # fp_rate = []
+
 
     # For each threshold, get outcomes where risk value is greater than threshold, insert as formula
     for threshold in thresholds:
@@ -149,14 +118,14 @@ def _surv_calculate_test_consequences(
 
 
 def surv_dca(
-        data: object,
-        outcome: object,
-        predictors: object,
-        thresh_vals: object = [0.01, 0.99, 0.01],
-        harm: object = None,
-        probabilities: object = [False],
-        time: object = None,
-        prevalence: object = None,
+        data: pd.DataFrame,
+        outcome: str,
+        predictors: list,
+        thresh_vals: list = [0.01, 0.99, 0.01],
+        harm: list = None,
+        probabilities: list = [False],
+        time: float = 1.0,
+        prevalence: float = -1.0,
         time_to_outcome_col: object = None
 ) -> object:
 

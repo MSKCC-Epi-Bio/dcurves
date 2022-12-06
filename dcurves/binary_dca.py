@@ -16,13 +16,9 @@ from beartype import beartype
 def _binary_convert_to_risk(
         model_frame: pd.DataFrame,
         outcome: str,
-        predictor: str,
-        prevalence: object = None
+        predictor: str
 ) -> pd.DataFrame:
     # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-
-    _validate._binary_convert_to_risk_input_checks(
-        prevalence=prevalence)
 
     predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
                                     data=model_frame).fit().predict()
@@ -31,22 +27,6 @@ def _binary_convert_to_risk(
     return model_frame
 
 
-@beartype
-def _binary_prevalence_calc(
-        model_frame: pd.DataFrame,
-        outcome: str,
-        thresholds: list,
-        prevalence: object = None
-):
-
-    if prevalence != None:
-        prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
-    else:
-        outcome_values = model_frame[outcome].values.flatten().tolist()
-        prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
-            thresholds)  #### need list to be as long as len(thresholds)
-
-    return prevalence_values
 
 
 # 221113 SP: Go back and fix prevalence type hinting
@@ -62,30 +42,26 @@ def _binary_calculate_test_consequences(
         outcome: str,
         predictor: str,
         thresholds: list,
-        prevalence: object = None) -> pd.DataFrame:
+        prevalence: float = -1.0) -> pd.DataFrame:
     # This function calculates the following and outputs them in a pandas DataFrame
     # For binary evaluation:
     # will calculate [tpr, fpr]
 
     _validate._binary_calculate_test_consequences_input_checks(
-        thresholds=thresholds,
-        prevalence=prevalence
+        thresholds=thresholds
     )
 
-    #### Handle prevalence values
-
-    # If provided - case-control
-    # If not provided
-    # if not time_to_outcome_col - binary
-    # if time_to_outcome_col - survival
+    # Handle prevalence values
+    # If provided: use user-supplied prev value for outcome (case-control)
+    # If not provided: calculate
 
     #### If case-control prevalence:
-    if prevalence != None:
+    if prevalence != -1.0:
         prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
     else:
         outcome_values = model_frame[outcome].values.flatten().tolist()
         prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
-            thresholds)  #### need list to be as long as len(thresholds)
+            thresholds)  # need list to be as long as len(thresholds)
 
 
     n = len(model_frame.index)
@@ -150,17 +126,9 @@ def binary_dca(
         outcome: object,
         predictors: object,
         thresh_vals: object = [0.01, 0.99, 0.01],
-        harm: object = None,
-        probabilities: object = [False],
-        prevalence: object = None) -> object:
-
-    _validate._binary_dca_input_checks(
-        predictors=predictors,
-        thresh_vals=thresh_vals,
-        harm=harm,
-        probabilities=probabilities,
-        prevalence=prevalence
-    )
+        harm: list = [False],
+        probabilities: list = [False],
+        prevalence: float = -1.0) -> object:
 
     # make model_frame df of outcome and predictor cols from data
 
@@ -175,8 +143,7 @@ def binary_dca(
                 _binary_convert_to_risk(
                     model_frame,
                     outcome,
-                    predictors[i],
-                    prevalence
+                    predictors[i]
                 )
 
     model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
@@ -194,18 +161,19 @@ def binary_dca(
     covariate_names = [i for i in model_frame.columns if i not in outcome]
 
     testcons_list = []
-    for covariate in covariate_names:
+
+    for i in range(0, len(covariate_names)):
         temp_testcons_df = _binary_calculate_test_consequences(
             model_frame=model_frame,
             outcome=outcome,
-            predictor=covariate,
+            predictor=covariate_names[i],
             thresholds=thresholds,
             prevalence=prevalence
         )
 
-        temp_testcons_df['variable'] = [covariate] * len(temp_testcons_df.index)
+        temp_testcons_df['variable'] = [covariate_names[i]] * len(temp_testcons_df.index)
 
-        temp_testcons_df['harm'] = [harm[covariate] if harm != None else 0] * len(temp_testcons_df.index)
+        temp_testcons_df['harm'] = [harm[i] if harm != None else 0] * len(temp_testcons_df.index)
         testcons_list.append(temp_testcons_df)
 
     all_covariates_df = pd.concat(testcons_list)
@@ -253,6 +221,11 @@ binary_dca.__doc__ = """
 
     Examples
     ________
+    
+    |
+    
+    from dcurves.binary_dca import binary_dca, surv_dca
+    
 
     |
 
@@ -261,53 +234,27 @@ binary_dca.__doc__ = """
     |
 
     >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> print(df_binary)
-         patientid  cancer  ...    marker cancerpredmarker
-    0            1   False  ...  0.776309         0.037201
-    1            2   False  ...  0.267086         0.578907
-    2            3   False  ...  0.169621         0.021551
-    3            4   False  ...  0.023996         0.003910
-    4            5   False  ...  0.070910         0.018790
-    ..         ...     ...  ...       ...              ...
-    745        746   False  ...  0.654782         0.057813
-    746        747    True  ...  1.030259         0.160424
-    747        748   False  ...  0.151616         0.108838
-    748        749   False  ...  0.624602         0.015285
-    749        750   False  ...  0.270679         0.011938
-
-    [750 rows x 8 columns]
-
+ 
     |
 
     Run DCA on simulation binary data. Print the results.
 
     |
 
-    >>> print(
+    >>> bin_dca_result_df = \
     ...   dcurves.dca(
     ...     data = df_binary,
     ...     outcome = 'cancer',
     ...     predictors = ['famhistory']
     ...    )
-    ... )
-          predictor     threshold    n  prevalence    tpr       fpr    variable  harm  net_benefit
-    0    famhistory  1.000000e-09  750        0.14  0.032  0.121333  famhistory     0     0.032000
-    1    famhistory  1.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.030774
-    2    famhistory  2.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.029524
-    3    famhistory  3.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.028247
-    4    famhistory  4.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.026944
-    ..          ...           ...  ...         ...    ...       ...         ...   ...          ...
-    96         none  9.600000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    97         none  9.700000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    98         none  9.800000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    99         none  9.900000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    100        none  1.000000e+00  750        0.14  0.000  0.000000        none     0          NaN
 
     |
 
     Load simulation survival data and run DCA on it. Print the results.
 
     |
+    
+    >>> df_surv = load
 
 
     Parameters

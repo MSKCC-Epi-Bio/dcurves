@@ -171,6 +171,7 @@ def binary_dca(
             prevalence=prevalence
         )
 
+
         temp_testcons_df['variable'] = [covariate_names[i]] * len(temp_testcons_df.index)
 
         temp_testcons_df['harm'] = [harm[i] if harm != None else 0] * len(temp_testcons_df.index)

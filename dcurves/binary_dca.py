@@ -16,14 +16,14 @@ from beartype import beartype
 def _binary_convert_to_risk(
         model_frame: pd.DataFrame,
         outcome: str,
-        predictor: str
+        predictors_to_prob: list
 ) -> pd.DataFrame:
     # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-
-    predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
-                                    data=model_frame).fit().predict()
-    model_frame[predictor] = [(1 - val) for val in predicted_vals]
-    # model_frame.loc[model_frame['predictor']]
+    for predictor in predictors_to_prob:
+        predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
+                                        data=model_frame).fit().predict()
+        model_frame[predictor] = [(1 - val) for val in predicted_vals]
+        # model_frame.loc[model_frame['predictor']]
     return model_frame
 
 
@@ -43,9 +43,6 @@ def _binary_calculate_test_consequences(
         predictor: str,
         thresholds: list,
         prevalence: float = -1.0) -> pd.DataFrame:
-    # This function calculates the following and outputs them in a pandas DataFrame
-    # For binary evaluation:
-    # will calculate [tpr, fpr]
 
     _validate._binary_calculate_test_consequences_input_checks(
         thresholds=thresholds
@@ -58,11 +55,10 @@ def _binary_calculate_test_consequences(
     #### If case-control prevalence:
     if prevalence != -1.0:
         prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
-    else:
+    elif prevalence == -1.0:
         outcome_values = model_frame[outcome].values.flatten().tolist()
         prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
             thresholds)  # need list to be as long as len(thresholds)
-
 
     n = len(model_frame.index)
     df = pd.DataFrame({'predictor': predictor,
@@ -70,36 +66,22 @@ def _binary_calculate_test_consequences(
                        'n': [n] * len(thresholds),
                        'prevalence': prevalence_values})
 
-    count = 0
-
-    # If no time_to_outcome_col, it means binary
-
     true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
     false_outcome = model_frame[model_frame[outcome] == False][[predictor]]
+
     test_pos_rate = []
     tp_rate = []
     fp_rate = []
 
     for (threshold, prevalence) in zip(thresholds, prevalence_values):
 
-        count += 1
-
-        #### Debugging try/except
-
-        # test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
-        # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
-
         #### Indexing [1] doesn't work w/ value_counts when only index is 0, so [1] gives error, have to try/except so that when [1] doesn't work can input 0
 
         try:
             test_pos_rate.append(
                 pd.Series(model_frame[predictor] >= threshold).value_counts()[1] / len(model_frame.index))
-            # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
-        except:
+        except KeyError:
             test_pos_rate.append(0 / len(model_frame.index))
-
-        #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
-        #### Have to try/except this so that when indexing doesn't work, can input 0
 
         try:
             tp_rate.append(
@@ -120,14 +102,15 @@ def _binary_calculate_test_consequences(
 
     return df
 
+
 @beartype
 def binary_dca(
-        data: object,
-        outcome: object,
-        predictors: object,
-        thresh_vals: object = [0.01, 0.99, 0.01],
-        harm: list = [False],
-        probabilities: list = [False],
+        data: pd.DataFrame,
+        outcome: str,
+        predictors: list,
+        harm: dict,
+        predictors_to_prob: list,
+        thresh_vals: list = [0.01, 0.99, 0.01],
         prevalence: float = -1.0) -> object:
 
     # make model_frame df of outcome and predictor cols from data
@@ -137,15 +120,15 @@ def binary_dca(
     #### Convert to risk
     #### Convert selected columns to risk scores
 
-    for i in range(0, len(predictors)):
-        if probabilities[i]:
-            model_frame = \
-                _binary_convert_to_risk(
-                    model_frame,
-                    outcome,
-                    predictors[i]
-                )
+    model_frame = \
+        _binary_convert_to_risk(
+            model_frame=model_frame,
+            outcome=outcome,
+            predictors_to_prob=predictors_to_prob
+        )
 
+    # 221218 SP: In R dcurves, vals for 'all' are 1 + epsilon, and
+    # vals for 'none' are 1 - epsilon
     model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
     model_frame['none'] = [0 for i in range(0, len(model_frame.index))]
 
@@ -173,7 +156,8 @@ def binary_dca(
 
         temp_testcons_df['variable'] = [covariate_names[i]] * len(temp_testcons_df.index)
 
-        temp_testcons_df['harm'] = [harm[i] if harm != None else 0] * len(temp_testcons_df.index)
+        temp_testcons_df['harm'] = \
+            [harm[covariate_names[i]] if covariate_names[i] in harm else 0] * len(temp_testcons_df.index)
         testcons_list.append(temp_testcons_df)
 
     all_covariates_df = pd.concat(testcons_list)

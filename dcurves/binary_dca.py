@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 import lifelines
-import matplotlib.pyplot as plt
 from dcurves import _validate
 from beartype import beartype
+from typing import Optional
 
 # 221112 SP: Go back and fix prevalence type hinting
 # Issue is that while beartype input validation decorator should be a float,
@@ -14,17 +14,21 @@ from beartype import beartype
 # For now, set prev. type hint to object to bypass issue
 @beartype
 def _binary_convert_to_risk(
-        model_frame: pd.DataFrame,
+        data: pd.DataFrame,
         outcome: str,
-        predictors_to_prob: list
+        predictors_to_prob: Optional[list] = None
 ) -> pd.DataFrame:
     # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-    for predictor in predictors_to_prob:
-        predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
-                                        data=model_frame).fit().predict()
-        model_frame[predictor] = [(1 - val) for val in predicted_vals]
-        # model_frame.loc[model_frame['predictor']]
-    return model_frame
+
+    if predictors_to_prob is None:
+        print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
+    else:
+        for predictor in predictors_to_prob:
+            print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
+            predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
+                                            data=data).fit().predict()
+            data[predictor] = [(1 - val) for val in predicted_vals]
+    return data
 
 
 
@@ -38,36 +42,34 @@ def _binary_convert_to_risk(
 
 @beartype
 def _binary_calculate_test_consequences(
-        model_frame: pd.DataFrame,
+        risks_df: pd.DataFrame,
         outcome: str,
         predictor: str,
-        thresholds: list,
-        prevalence: float = -1.0) -> pd.DataFrame:
-
-    _validate._binary_calculate_test_consequences_input_checks(
-        thresholds=thresholds
-    )
+        thresholds: np.ndarray,
+        prevalence: Optional[float] = None,
+        harm: Optional[dict] = None) -> pd.DataFrame:
 
     # Handle prevalence values
     # If provided: use user-supplied prev value for outcome (case-control)
     # If not provided: calculate
 
-    #### If case-control prevalence:
-    if prevalence != -1.0:
+    if prevalence is not None:
         prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
-    elif prevalence == -1.0:
-        outcome_values = model_frame[outcome].values.flatten().tolist()
+    elif prevalence is None:
+        # outcome_values is list of binary values, True or False for outcome in patient
+        outcome_values = risks_df[outcome].values.flatten().tolist()
+        # prevalence_values is single calculated prevalence value * len(df rows) to fit dataframe
         prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
             thresholds)  # need list to be as long as len(thresholds)
 
-    n = len(model_frame.index)
-    df = pd.DataFrame({'predictor': predictor,
+    n = len(risks_df.index)
+    test_consequences_df = pd.DataFrame({'predictor': predictor,
                        'threshold': thresholds,
                        'n': [n] * len(thresholds),
                        'prevalence': prevalence_values})
 
-    true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
-    false_outcome = model_frame[model_frame[outcome] == False][[predictor]]
+    true_outcome = risks_df[risks_df[outcome] == True][[predictor]]
+    false_outcome = risks_df[risks_df[outcome] == False][[predictor]]
 
     test_pos_rate = []
     tp_rate = []
@@ -79,9 +81,9 @@ def _binary_calculate_test_consequences(
 
         try:
             test_pos_rate.append(
-                pd.Series(model_frame[predictor] >= threshold).value_counts()[1] / len(model_frame.index))
+                pd.Series(risks_df[predictor] >= threshold).value_counts()[1] / len(risks_df.index))
         except KeyError:
-            test_pos_rate.append(0 / len(model_frame.index))
+            test_pos_rate.append(0 / len(risks_df.index))
 
         try:
             tp_rate.append(
@@ -96,80 +98,84 @@ def _binary_calculate_test_consequences(
         except KeyError:
             fp_rate.append(0 / len(false_outcome[predictor]) * (1 - prevalence))
 
-    df['test_pos_rate'] = test_pos_rate
-    df['tpr'] = tp_rate
-    df['fpr'] = fp_rate
+    test_consequences_df['test_pos_rate'] = test_pos_rate
+    test_consequences_df['tpr'] = tp_rate
+    test_consequences_df['fpr'] = fp_rate
 
-    return df
 
+    test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
+
+    test_consequences_df['harm'] = [0 if harm is None
+                                    else harm[predictor] if predictor in harm else 0]\
+                                   * len(test_consequences_df.index)
+
+    return test_consequences_df
 
 @beartype
 def binary_dca(
         data: pd.DataFrame,
         outcome: str,
         predictors: list,
-        harm: dict,
-        predictors_to_prob: list,
-        thresh_vals: list = [0.01, 0.99, 0.01],
-        prevalence: float = -1.0) -> object:
+        thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
+        predictors_to_prob: Optional[list] = None,
+        harm: Optional[dict] = None,
+        prevalence: Optional[float] = None) -> pd.DataFrame:
 
-    # make model_frame df of outcome and predictor cols from data
-
-    model_frame = data[np.append(outcome, predictors)]
-
-    #### Convert to risk
-    #### Convert selected columns to risk scores
-
-    model_frame = \
+    vars_to_risk_df = \
         _binary_convert_to_risk(
-            model_frame=model_frame,
+            data=data,
             outcome=outcome,
             predictors_to_prob=predictors_to_prob
         )
 
-    # 221218 SP: In R dcurves, vals for 'all' are 1 + epsilon, and
-    # vals for 'none' are 1 - epsilon
-    model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
-    model_frame['none'] = [0 for i in range(0, len(model_frame.index))]
+    machine_epsilon = np.finfo(float).eps
 
-    # thresh_vals input from user contains 3 values: lower threshold bound, higher threshold
-    # bound, step increment in positions [0,1,2]
+    vars_to_risk_df['all'] = [1 - machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
+    vars_to_risk_df['none'] = [0 + machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
 
-    # nr.arange takes 3 vals: start, stop + one step increment, and step increment
-    thresholds = np.arange(thresh_vals[0], thresh_vals[1] + thresh_vals[2], thresh_vals[2])  # array of values
-    #### Prep data, add placeholder for 0 (10e-10), because can't use 0  for DCA, will output incorrect (incorrect?) value
-    thresholds = np.insert(thresholds, 0, 0.1 ** 9).tolist()
+    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
+    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
-    # Get names of covariates (if survival, then will still have time_to_outcome_col
-    covariate_names = [i for i in model_frame.columns if i not in outcome]
+    covariate_names = np.append(predictors, ['all', 'none'])
 
-    testcons_list = []
-
-    for i in range(0, len(covariate_names)):
-        temp_testcons_df = _binary_calculate_test_consequences(
-            model_frame=model_frame,
-            outcome=outcome,
-            predictor=covariate_names[i],
-            thresholds=thresholds,
-            prevalence=prevalence
-        )
+    test_consequences_df = \
+        pd.concat([_binary_calculate_test_consequences(
+                        risks_df=vars_to_risk_df,
+                        outcome=outcome,
+                        predictor=predictor,
+                        thresholds=thresholds,
+                        prevalence=prevalence,
+                        harm=harm) for predictor in covariate_names])
 
 
-        temp_testcons_df['variable'] = [covariate_names[i]] * len(temp_testcons_df.index)
+    test_consequences_df['neg_rate'] = 1 - test_consequences_df['prevalence']
+    test_consequences_df['fnr'] = test_consequences_df['prevalence'] - test_consequences_df['tpr']
+    test_consequences_df['tnr'] = test_consequences_df['neg_rate'] - test_consequences_df['fpr']
 
-        temp_testcons_df['harm'] = \
-            [harm[covariate_names[i]] if covariate_names[i] in harm else 0] * len(temp_testcons_df.index)
-        testcons_list.append(temp_testcons_df)
+    test_consequences_df['net_benefit'] = test_consequences_df['tpr'] - test_consequences_df['threshold'] / (
+            1 - test_consequences_df['threshold']) * test_consequences_df['fpr'] - test_consequences_df['harm']
 
-    all_covariates_df = pd.concat(testcons_list)
+    test_consequences_df['test_neg_rate'] = test_consequences_df['fnr'] + test_consequences_df['tnr']
 
-    all_covariates_df['net_benefit'] = all_covariates_df['tpr'] - all_covariates_df['threshold'] / (
-            1 - all_covariates_df['threshold']) * all_covariates_df['fpr'] - all_covariates_df['harm']
+    test_consequences_df['ppv'] = test_consequences_df['tpr'] /\
+                                  (test_consequences_df['tpr'] + test_consequences_df['fpr'])
 
-    return all_covariates_df
+    test_consequences_df['npv'] = test_consequences_df['tnr'] /\
+                                  (test_consequences_df['tnr'] + test_consequences_df['fnr'])
 
+    test_consequences_df['sens'] = test_consequences_df['tpr'] /\
+                                   (test_consequences_df['tpr'] + test_consequences_df['fnr'])
 
+    test_consequences_df['spec'] = test_consequences_df['tnr'] /\
+                                   (test_consequences_df['tnr'] + test_consequences_df['fpr'])
 
+    test_consequences_df['lr_pos'] = test_consequences_df['sens'] /\
+                                     (1 - test_consequences_df['spec'])
+
+    test_consequences_df['lr_neg'] = (1 - test_consequences_df['sens']) /\
+                                     test_consequences_df['spec']
+
+    return test_consequences_df
 
 binary_dca.__doc__ = """
 

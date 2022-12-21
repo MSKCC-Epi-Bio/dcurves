@@ -1,75 +1,59 @@
+
 import pandas as pd
 import numpy as np
 import lifelines
 from dcurves import _validate
-import beartype
-
+from beartype import beartype
+from typing import Optional
 
 @beartype
 def _surv_convert_to_risk(
-        model_frame: pd.DataFrame,
+        data: pd.DataFrame,
         outcome: str,
-        predictor: str,
         time: float,
-        time_to_outcome_col: str
+        time_to_outcome_col: str,
+        predictors_to_prob: Optional[list] = None
 ) -> pd.DataFrame:
-    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-    # pass
-    # _validate._surv_convert_to_risk_input_checks(
-    #     time=time,
-    #     time_to_outcome_col=time_to_outcome_col)
 
-    # From lifelines dataframe
-    cph = lifelines.CoxPHFitter()
-    cph_df = model_frame[[time_to_outcome_col, outcome, predictor]]
-    cph.fit(cph_df, time_to_outcome_col, outcome)
+    if predictors_to_prob is None:
+        print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
+    else:
+        for predictor in predictors_to_prob:
+            cph = lifelines.CoxPHFitter()
+            cph_df = data[[time_to_outcome_col, outcome, predictor]]
+            cph.fit(cph_df, time_to_outcome_col, outcome)
 
-    new_cph_df = cph_df
-    new_cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
-    predicted_vals = cph.predict_survival_function(new_cph_df, times=time).values[0]
-    #### all values in list of single list, so just dig em out with [0]
-    new_model_frame = model_frame
-    new_model_frame[predictor] = predicted_vals
+            new_cph_df = cph_df
+            new_cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
+            predicted_vals = cph.predict_survival_function(new_cph_df, times=time).values[0]
+            #### all values in list of single list, so just dig em out with [0]
+            new_model_frame = data
+            new_model_frame[predictor] = predicted_vals
     return new_model_frame
 
 
 @beartype
 def _surv_calculate_test_consequences(
-        model_frame: pd.DataFrame,
+        risk_df: pd.DataFrame,
         outcome: str,
         predictor: str,
-        thresholds: list,
+        thresholds: np.ndarray,
         time: float,
         time_to_outcome_col: str,
-        prevalence: float = -1.0
+        prevalence: Optional[float] = None
 ) -> pd.DataFrame:
-    # This function calculates the following and outputs them in a pandas DataFrame
-    # For binary evaluation:
-    # will calculate [tpr, fpr]
-    # For survival evaluation
-    # will calculate [tpr, fpr, 'test_pos_rate', risk_rate_among_test_pos]
 
-    _validate._surv_calculate_test_consequences_input_checks(
-        thresholds=thresholds,
-        time=time,
-        time_to_outcome_col=time_to_outcome_col
-    )
-
-    # Handle prevalence values
-    # If provided: use user-supplied prev value for outcome (case-control)
-    # If not provided: calculate
-
-    if prevalence != -1.0:
-        prevalence_values = [prevalence] * len(thresholds)  # need prevalence list to be as long as len(thresholds)
-    else:
+    if prevalence is not None:
+        prevalence_values = [prevalence] * len(thresholds)
+    elif prevalence is None:
         kmf = lifelines.KaplanMeierFitter()
-        kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
+        kmf.fit(risk_df[time_to_outcome_col], risk_df[outcome] * 1)  # *1 to convert from boolean to int
         prevalence = 1 - kmf.survival_function_at_times(time)
         prevalence = prevalence[1]
         prevalence_values = [prevalence] * len(thresholds)
 
-    n = len(model_frame.index)
-    df = pd.DataFrame({'predictor': predictor,
+    n = len(risk_df.index)
+    test_consequences_df = pd.DataFrame({'predictor': predictor,
                        'threshold': thresholds,
                        'n': [n] * len(thresholds),
                        'prevalence': prevalence_values})
@@ -86,10 +70,10 @@ def _surv_calculate_test_consequences(
 
         try:
             test_pos_rate.append(
-                pd.Series(model_frame[predictor] >= threshold).value_counts()[1] / len(model_frame.index))
+                pd.Series(risk_df[predictor] >= threshold).value_counts()[1] / len(risk_df.index))
             # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
         except:
-            test_pos_rate.append(0 / len(model_frame.index))
+            test_pos_rate.append(0 / len(risk_df.index))
 
         #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
         #### Have to try/except this so that when indexing doesn't work, can input 0
@@ -97,8 +81,8 @@ def _surv_calculate_test_consequences(
         #### Get risk value, which is kaplan meier output at specified time, or at timepoint right before specified time given there are points after timepoint as well
         #### Input for KM:
 
-        risk_above_thresh_time = model_frame[model_frame[predictor] >= threshold][time_to_outcome_col]
-        risk_above_thresh_outcome = model_frame[model_frame[predictor] >= threshold][outcome]
+        risk_above_thresh_time = risk_df[risk_df[predictor] >= threshold][time_to_outcome_col]
+        risk_above_thresh_outcome = risk_df[risk_df[predictor] >= threshold][outcome]
 
         kmf = lifelines.KaplanMeierFitter()
         try:
@@ -108,49 +92,36 @@ def _surv_calculate_test_consequences(
 
             risk_rate_among_test_pos.append(1)
 
-    df['test_pos_rate'] = test_pos_rate
-    df['risk_rate_among_test_pos'] = risk_rate_among_test_pos
+    test_consequences_df['test_pos_rate'] = test_pos_rate
+    test_consequences_df['risk_rate_among_test_pos'] = risk_rate_among_test_pos
 
-    df['tpr'] = df['risk_rate_among_test_pos'] * test_pos_rate
-    df['fpr'] = (1 - df['risk_rate_among_test_pos']) * test_pos_rate
+    test_consequences_df['tpr'] = test_consequences_df['risk_rate_among_test_pos'] * test_pos_rate
+    test_consequences_df['fpr'] = (1 - test_consequences_df['risk_rate_among_test_pos']) * test_pos_rate
 
-    return df
+    return test_consequences_df
 
-
+@beartype
 def surv_dca(
         data: pd.DataFrame,
         outcome: str,
         predictors: list,
-        thresh_vals: list = [0.01, 0.99, 0.01],
-        harm: list = None,
-        probabilities: list = [False],
+        thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
+        harm: Optional[dict] = None,
+        predictors_to_prob: Optional[list] = None,
+        prevalence: Optional[float] = None,
         time: float = 1.0,
-        prevalence: float = -1.0,
         time_to_outcome_col: object = None
 ) -> object:
 
-    _validate._surv_dca_input_checks(
-        predictors=predictors,
-        thresh_vals=thresh_vals,
-        harm=harm,
-        probabilities=probabilities,
-        time=time,
-        prevalence=prevalence,
-        time_to_outcome_col=time_to_outcome_col
-    )
+    vars_to_risk_df = \
+        _surv_convert_to_risk(
+            data=data,
+            outcome=outcome,
+            predictors_to_prob=predictors_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
 
-    # make model_frame df of outcome and predictor cols from data
-
-    model_frame = data[np.append(outcome, predictors)]
-
-    #### If survival, then time_to_outcome_col contains name of col
-    #### Otherwise, time_to_outcome_col will not be set (will = None), which means we're doing Binary DCA
-
-    if time_to_outcome_col:
-        model_frame[time_to_outcome_col] = data[time_to_outcome_col]
-
-    #### Convert to risk
-    #### Convert selected columns to risk scores
 
     for i in range(0, len(predictors)):
         if probabilities[i]:

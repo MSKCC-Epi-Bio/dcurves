@@ -12,10 +12,6 @@ def plot_net_benefit(
                                      'saddlebrown', 'lime', 'magenta']
                 ) -> None:
 
-    _validate._plot_graphs_input_checks(after_dca_df=after_dca_df,
-                                        y_limits=y_limits,
-                                        color_names=color_names)
-
     predictor_names = after_dca_df['predictor'].value_counts().index
     # color_names = ['blue', 'purple','red',
     #                'green', 'hotpink', 'orange',
@@ -32,6 +28,7 @@ def plot_net_benefit(
         plt.grid(b=True, which='both', axis='both')
         plt.xlabel('Threshold Values')
         plt.ylabel('Calculated Net Benefit')
+    plt.show()
 
 @beartype
 def plot_net_intervention_avoided(after_dca_df: pd.DataFrame,

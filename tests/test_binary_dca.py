@@ -115,7 +115,7 @@ def test_scratch3():
 def test_scratch4():
     data = load_binary_df()
 
-    calcs_df = binary_dca(
+    bin_calcs_df = binary_dca(
         data=data,
         thresholds=np.linspace(0, 1.0, 101),
         outcome='cancer',
@@ -129,7 +129,7 @@ def test_scratch4():
     # print(calcs_df[['threshold', 'net_benefit', 'predictor']])
 
     plot_net_benefit(
-        after_dca_df=calcs_df[['threshold', 'net_benefit', 'predictor']],
+        after_dca_df=bin_calcs_df[['threshold', 'net_benefit', 'predictor']],
         y_limits=[-.05, 1]
     )
 

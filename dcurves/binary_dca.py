@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
-import lifelines
 from dcurves import _validate
 from beartype import beartype
-from typing import Optional
+from typing import Optional, Union
 
 # 221112 SP: Go back and fix prevalence type hinting
 # Issue is that while beartype input validation decorator should be a float,
@@ -46,7 +45,7 @@ def _binary_calculate_test_consequences(
         outcome: str,
         predictor: str,
         thresholds: np.ndarray,
-        prevalence: Optional[float] = None,
+        prevalence: Optional[Union[float, int]] = None,
         harm: Optional[dict] = None) -> pd.DataFrame:
 
     # Handle prevalence values
@@ -102,12 +101,10 @@ def _binary_calculate_test_consequences(
     test_consequences_df['tpr'] = tp_rate
     test_consequences_df['fpr'] = fp_rate
 
-
     test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
 
     test_consequences_df['harm'] = [0 if harm is None
-                                    else harm[predictor] if predictor in harm else 0]\
-                                   * len(test_consequences_df.index)
+                                    else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
 
     return test_consequences_df
 
@@ -119,7 +116,7 @@ def binary_dca(
         thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
         predictors_to_prob: Optional[list] = None,
         harm: Optional[dict] = None,
-        prevalence: Optional[float] = None) -> pd.DataFrame:
+        prevalence: Optional[Union[float, int]] = None) -> pd.DataFrame:
 
     vars_to_risk_df = \
         _binary_convert_to_risk(

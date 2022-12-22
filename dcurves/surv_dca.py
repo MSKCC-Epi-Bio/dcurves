@@ -1,35 +1,30 @@
-
 import pandas as pd
 import numpy as np
 import lifelines
 from dcurves import _validate
 from beartype import beartype
-from typing import Optional
+from typing import Optional, Union
 
 @beartype
 def _surv_convert_to_risk(
         data: pd.DataFrame,
         outcome: str,
-        time: float,
+        time: Union[float, int],
         time_to_outcome_col: str,
-        predictors_to_prob: Optional[list] = None
-) -> pd.DataFrame:
+        predictors_to_prob: Optional[list] = None) -> pd.DataFrame:
 
     if predictors_to_prob is None:
         print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
     else:
         for predictor in predictors_to_prob:
-            cph = lifelines.CoxPHFitter()
+            print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
             cph_df = data[[time_to_outcome_col, outcome, predictor]]
+            cph = lifelines.CoxPHFitter()
             cph.fit(cph_df, time_to_outcome_col, outcome)
-
-            new_cph_df = cph_df
-            new_cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
-            predicted_vals = cph.predict_survival_function(new_cph_df, times=time).values[0]
-            #### all values in list of single list, so just dig em out with [0]
-            new_model_frame = data
-            new_model_frame[predictor] = predicted_vals
-    return new_model_frame
+            cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
+            predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
+            data[predictor] = predicted_vals
+    return data
 
 
 @beartype
@@ -38,10 +33,10 @@ def _surv_calculate_test_consequences(
         outcome: str,
         predictor: str,
         thresholds: np.ndarray,
-        time: float,
         time_to_outcome_col: str,
-        prevalence: Optional[float] = None
-) -> pd.DataFrame:
+        time: Union[float, int] = 1,
+        prevalence: Optional[Union[float, int]] = None,
+        harm: Optional[dict] = None) -> pd.DataFrame:
 
     if prevalence is not None:
         prevalence_values = [prevalence] * len(thresholds)
@@ -58,13 +53,10 @@ def _surv_calculate_test_consequences(
                        'n': [n] * len(thresholds),
                        'prevalence': prevalence_values})
 
-    count = 0
 
     test_pos_rate = []
     risk_rate_among_test_pos = []
 
-
-    # For each threshold, get outcomes where risk value is greater than threshold, insert as formula
     for threshold in thresholds:
         # test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
 
@@ -72,11 +64,8 @@ def _surv_calculate_test_consequences(
             test_pos_rate.append(
                 pd.Series(risk_df[predictor] >= threshold).value_counts()[1] / len(risk_df.index))
             # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
-        except:
+        except KeyError:
             test_pos_rate.append(0 / len(risk_df.index))
-
-        #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
-        #### Have to try/except this so that when indexing doesn't work, can input 0
 
         #### Get risk value, which is kaplan meier output at specified time, or at timepoint right before specified time given there are points after timepoint as well
         #### Input for KM:
@@ -88,8 +77,7 @@ def _surv_calculate_test_consequences(
         try:
             kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
             risk_rate_among_test_pos.append(1 - pd.Series(kmf.survival_function_at_times(time))[1])
-        except:
-
+        except KeyError:
             risk_rate_among_test_pos.append(1)
 
     test_consequences_df['test_pos_rate'] = test_pos_rate
@@ -98,6 +86,11 @@ def _surv_calculate_test_consequences(
     test_consequences_df['tpr'] = test_consequences_df['risk_rate_among_test_pos'] * test_pos_rate
     test_consequences_df['fpr'] = (1 - test_consequences_df['risk_rate_among_test_pos']) * test_pos_rate
 
+    test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
+
+    test_consequences_df['harm'] = [0 if harm is None
+                                    else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
+
     return test_consequences_df
 
 @beartype
@@ -105,12 +98,12 @@ def surv_dca(
         data: pd.DataFrame,
         outcome: str,
         predictors: list,
+        time_to_outcome_col: str,
         thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
         harm: Optional[dict] = None,
         predictors_to_prob: Optional[list] = None,
-        prevalence: Optional[float] = None,
-        time: float = 1.0,
-        time_to_outcome_col: object = None
+        prevalence: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = 1.0
 ) -> object:
 
     vars_to_risk_df = \
@@ -122,63 +115,72 @@ def surv_dca(
             time_to_outcome_col=time_to_outcome_col
         )
 
+    machine_epsilon = np.finfo(float).eps
 
-    for i in range(0, len(predictors)):
-        if probabilities[i]:
-            model_frame = \
-                _surv_convert_to_risk(
-                    model_frame=model_frame,
-                    outcome=outcome,
-                    predictor=predictors[i],
-                    prevalence=prevalence,
-                    time=time,
-                    time_to_outcome_col=time_to_outcome_col
-                )
+    vars_to_risk_df['all'] = [1 - machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
+    vars_to_risk_df['none'] = [0 + machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
 
-    model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
-    model_frame['none'] = [0 for i in range(0, len(model_frame.index))]
+    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
+    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
-    # thresh_vals input from user contains 3 values: lower threshold bound, higher threshold
-    # bound, step increment in positions [0,1,2]
+    covariate_names = np.append(predictors, ['all', 'none'])
 
-    # nr.arange takes 3 vals: start, stop + one step increment, and step increment
-    thresholds = np.arange(thresh_vals[0], thresh_vals[1] + thresh_vals[2], thresh_vals[2])  # array of values
-    #### Prep data, add placeholder for 0 (10e-10), because can't use 0  for DCA, will output incorrect (incorrect?) value
-    thresholds = np.insert(thresholds, 0, 0.1 ** 9).tolist()
+    # testcons_list = []
+    # for covariate in covariate_names:
+    #     temp_testcons_df = _surv_calculate_test_consequences(
+    #         model_frame=model_frame,
+    #         outcome=outcome,
+    #         predictor=covariate,
+    #         thresholds=thresholds,
+    #         prevalence=prevalence,
+    #         time=time,
+    #         time_to_outcome_col=time_to_outcome_col
+    #     )
+    #
+    #     temp_testcons_df['variable'] = [covariate] * len(temp_testcons_df.index)
+    #
+    #     temp_testcons_df['harm'] = [harm[covariate] if harm != None else 0] * len(temp_testcons_df.index)
+    #     testcons_list.append(temp_testcons_df)
 
-    covariate_names = [i for i in model_frame.columns if
-                       i not in outcome]  # Get names of covariates (if survival, then will still have time_to_outcome_col
-    #### If survival, get covariate names that are not time_to_outcome_col
-    if time_to_outcome_col:
-        covariate_names = [i for i in covariate_names if i not in time_to_outcome_col]
-
-    testcons_list = []
-    for covariate in covariate_names:
-        temp_testcons_df = _surv_calculate_test_consequences(
-            model_frame=model_frame,
+    test_consequences_df = \
+        pd.concat([_surv_calculate_test_consequences(
+            risks_df=vars_to_risk_df,
             outcome=outcome,
-            predictor=covariate,
+            predictor=predictor,
             thresholds=thresholds,
             prevalence=prevalence,
             time=time,
-            time_to_outcome_col=time_to_outcome_col
-        )
+            time_to_outcome_col=time_to_outcome_col,
+            harm=harm) for predictor in covariate_names])
 
-        temp_testcons_df['variable'] = [covariate] * len(temp_testcons_df.index)
+    test_consequences_df['neg_rate'] = 1 - test_consequences_df['prevalence']
+    test_consequences_df['fnr'] = test_consequences_df['prevalence'] - test_consequences_df['tpr']
+    test_consequences_df['tnr'] = test_consequences_df['neg_rate'] - test_consequences_df['fpr']
 
-        temp_testcons_df['harm'] = [harm[covariate] if harm != None else 0] * len(temp_testcons_df.index)
-        testcons_list.append(temp_testcons_df)
+    test_consequences_df['net_benefit'] = test_consequences_df['tpr'] - test_consequences_df['threshold'] / (
+            1 - test_consequences_df['threshold']) * test_consequences_df['fpr'] - test_consequences_df['harm']
 
-    all_covariates_df = pd.concat(testcons_list)
+    test_consequences_df['test_neg_rate'] = test_consequences_df['fnr'] + test_consequences_df['tnr']
 
-    all_covariates_df['net_benefit'] = all_covariates_df['tpr'] - all_covariates_df['threshold'] / (
-            1 - all_covariates_df['threshold']) * all_covariates_df['fpr'] - all_covariates_df['harm']
+    test_consequences_df['ppv'] = test_consequences_df['tpr'] / \
+                                  (test_consequences_df['tpr'] + test_consequences_df['fpr'])
 
-    return all_covariates_df
+    test_consequences_df['npv'] = test_consequences_df['tnr'] / \
+                                  (test_consequences_df['tnr'] + test_consequences_df['fnr'])
 
+    test_consequences_df['sens'] = test_consequences_df['tpr'] / \
+                                   (test_consequences_df['tpr'] + test_consequences_df['fnr'])
 
+    test_consequences_df['spec'] = test_consequences_df['tnr'] / \
+                                   (test_consequences_df['tnr'] + test_consequences_df['fpr'])
 
+    test_consequences_df['lr_pos'] = test_consequences_df['sens'] / \
+                                     (1 - test_consequences_df['spec'])
 
+    test_consequences_df['lr_neg'] = (1 - test_consequences_df['sens']) / \
+                                     test_consequences_df['spec']
+
+    return test_consequences_df
 
 surv_dca.__doc__ = """
 

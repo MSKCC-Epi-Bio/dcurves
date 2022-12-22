@@ -5,22 +5,27 @@ from beartype import beartype
 
 @beartype
 def plot_net_benefit(
-        after_dca_df: pd.DataFrame,
+        data: pd.DataFrame,
+        model_name_colname: str = 'predictor',
         y_limits: list = [-0.05, 0.2],
         color_names: list = ['blue', 'purple', 'red',
                                      'green', 'hotpink', 'orange',
                                      'saddlebrown', 'lime', 'magenta']
                 ) -> None:
 
-    predictor_names = after_dca_df['predictor'].value_counts().index
-    # color_names = ['blue', 'purple','red',
-    #                'green', 'hotpink', 'orange',
-    #                'saddlebrown', 'lime', 'magenta']
+    predictor_names = data[model_name_colname].value_counts().index
+
+    if len(color_names) < predictor_names:
+        ValueError('More predictors than color_names, please enter more color names in color_names list and try again')
+
+    if model_name_colname not in data.columns:
+        ValueError('Column name containing model names is not a column in inputted dataframe, \
+                   please make sure model_name_colname exists in dataframe')
 
     for predictor_name, color_name in zip(predictor_names, color_names):
-        single_pred_df = after_dca_df[after_dca_df['predictor'] == predictor_name]
-        x_vals = single_pred_df['threshold']
-        y_vals = single_pred_df['net_benefit']
+        single_model_df = data[data[model_name_colname] == predictor_name]
+        x_vals = single_model_df['threshold']
+        y_vals = single_model_df['net_benefit']
         plt.plot(x_vals, y_vals, color=color_name)
 
         plt.ylim(y_limits)

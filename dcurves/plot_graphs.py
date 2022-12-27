@@ -15,7 +15,7 @@ def plot_net_benefit(
 
     predictor_names = data[model_name_colname].value_counts().index
 
-    if len(color_names) < predictor_names:
+    if len(color_names) < len(predictor_names):
         ValueError('More predictors than color_names, please enter more color names in color_names list and try again')
 
     if model_name_colname not in data.columns:
@@ -36,19 +36,17 @@ def plot_net_benefit(
     plt.show()
 
 @beartype
-def plot_net_intervention_avoided(after_dca_df: pd.DataFrame,
+def plot_net_intervention_avoided(
+                data: pd.DataFrame,
                 y_limits: list = [-0.05, 0.2],
                 color_names: list = ['blue', 'purple', 'red',
                                      'green', 'hotpink', 'orange',
                                      'saddlebrown', 'lime', 'magenta']
                 ) -> None:
-    _validate._plot_graphs_input_checks(after_dca_df=after_dca_df,
-                                        y_limits=y_limits,
-                                        color_names=color_names)
 
     # Don't want to plot 'all'/'none' for net_intervention_avoided
 
-    cleaned_after_dca_df = after_dca_df[~(after_dca_df["predictor"].isin(['all', 'none']))]
+    cleaned_after_dca_df = data[~(data["predictor"].isin(['all', 'none']))]
 
     predictor_names = cleaned_after_dca_df['predictor'].value_counts().index
 

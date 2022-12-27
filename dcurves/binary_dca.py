@@ -20,10 +20,11 @@ def _binary_convert_to_risk(
     # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
 
     if predictors_to_prob is None:
-        print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
+        # print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
+        pass
     else:
         for predictor in predictors_to_prob:
-            print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
+            # print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
             predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
                                             data=data).fit().predict()
             data[predictor] = [(1 - val) for val in predicted_vals]
@@ -48,23 +49,16 @@ def _binary_calculate_test_consequences(
         prevalence: Optional[Union[float, int]] = None,
         harm: Optional[dict] = None) -> pd.DataFrame:
 
-    # Handle prevalence values
-    # If provided: use user-supplied prev value for outcome (case-control)
-    # If not provided: calculate
-
     if prevalence is not None:
         prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
     elif prevalence is None:
-        # outcome_values is list of binary values, True or False for outcome in patient
         outcome_values = risks_df[outcome].values.flatten().tolist()
-        # prevalence_values is single calculated prevalence value * len(df rows) to fit dataframe
         prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
-            thresholds)  # need list to be as long as len(thresholds)
+            thresholds)
 
-    n = len(risks_df.index)
     test_consequences_df = pd.DataFrame({'predictor': predictor,
                        'threshold': thresholds,
-                       'n': [n] * len(thresholds),
+                       'n': [len(risks_df.index)] * len(thresholds),
                        'prevalence': prevalence_values})
 
     true_outcome = risks_df[risks_df[outcome] == True][[predictor]]
@@ -100,9 +94,7 @@ def _binary_calculate_test_consequences(
     test_consequences_df['test_pos_rate'] = test_pos_rate
     test_consequences_df['tpr'] = tp_rate
     test_consequences_df['fpr'] = fp_rate
-
     test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
-
     test_consequences_df['harm'] = [0 if harm is None
                                     else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
 

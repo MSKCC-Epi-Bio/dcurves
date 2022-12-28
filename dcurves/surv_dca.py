@@ -27,6 +27,12 @@ def _surv_convert_to_risk(
             cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
             predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
             data[predictor] = predicted_vals
+
+    machine_epsilon = np.finfo(float).eps
+
+    data['all'] = [1 - machine_epsilon for i in range(0, len(data.index))]
+    data['none'] = [0 + machine_epsilon for i in range(0, len(data.index))]
+
     return data
 
 
@@ -49,6 +55,11 @@ def _surv_calculate_test_consequences(
         prevalence = 1 - kmf.survival_function_at_times(time)
         prevalence = prevalence[1]
         prevalence_values = [prevalence] * len(thresholds)
+
+    machine_epsilon = np.finfo(float).eps
+
+    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
+    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
     test_consequences_df = pd.DataFrame({'predictor': predictor,
                                          'threshold': thresholds,
@@ -79,7 +90,6 @@ def _surv_calculate_test_consequences(
     test_consequences_df['risk_rate_among_test_pos'] = risk_rate_among_test_pos
     test_consequences_df['tpr'] = test_consequences_df['risk_rate_among_test_pos'] * test_pos_rate
     test_consequences_df['fpr'] = (1 - test_consequences_df['risk_rate_among_test_pos']) * test_pos_rate
-    test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
     test_consequences_df['harm'] = [0 if harm is None
                                     else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
 
@@ -96,7 +106,7 @@ def surv_dca(
         predictors_to_prob: Optional[list] = None,
         prevalence: Optional[Union[float, int]] = None,
         time: Optional[Union[float, int]] = 1.0
-) -> object:
+) -> pd.DataFrame:
 
     vars_to_risk_df = \
         _surv_convert_to_risk(
@@ -106,14 +116,6 @@ def surv_dca(
             time=time,
             time_to_outcome_col=time_to_outcome_col
         )
-
-    machine_epsilon = np.finfo(float).eps
-
-    vars_to_risk_df['all'] = [1 - machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
-    vars_to_risk_df['none'] = [0 + machine_epsilon for i in range(0, len(vars_to_risk_df.index))]
-
-    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
-    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
     covariate_names = np.append(predictors, ['all', 'none'])
 
@@ -134,24 +136,17 @@ def surv_dca(
 
     test_consequences_df['net_benefit'] = test_consequences_df['tpr'] - test_consequences_df['threshold'] / (
             1 - test_consequences_df['threshold']) * test_consequences_df['fpr'] - test_consequences_df['harm']
-
     test_consequences_df['test_neg_rate'] = test_consequences_df['fnr'] + test_consequences_df['tnr']
-
     test_consequences_df['ppv'] = test_consequences_df['tpr'] / \
                                   (test_consequences_df['tpr'] + test_consequences_df['fpr'])
-
     test_consequences_df['npv'] = test_consequences_df['tnr'] / \
                                   (test_consequences_df['tnr'] + test_consequences_df['fnr'])
-
     test_consequences_df['sens'] = test_consequences_df['tpr'] / \
                                    (test_consequences_df['tpr'] + test_consequences_df['fnr'])
-
     test_consequences_df['spec'] = test_consequences_df['tnr'] / \
                                    (test_consequences_df['tnr'] + test_consequences_df['fpr'])
-
     test_consequences_df['lr_pos'] = test_consequences_df['sens'] / \
                                      (1 - test_consequences_df['spec'])
-
     test_consequences_df['lr_neg'] = (1 - test_consequences_df['sens']) / \
                                      test_consequences_df['spec']
 

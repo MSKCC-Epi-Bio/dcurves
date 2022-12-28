@@ -135,9 +135,9 @@ def test_scratch4():
 
     # matplotlib.pyplot.plot(calcs_df['thresholds'])
 
-def test_famhistory_tut():
-    import dcurves
-    dcurves.binary_dca.
+# def test_famhistory_tut():
+#     import dcurves
+#     dcurves.binary_dca.
 
 
 

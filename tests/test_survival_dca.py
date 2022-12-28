@@ -10,8 +10,6 @@ import statsmodels.api as sm
 
 from dcurves.plot_graphs import plot_net_benefit
 
-from dcurves.dca import _calculate_test_consequences
-
 import statsmodels.api as sm
 
 import matplotlib.pyplot as plt
@@ -149,20 +147,96 @@ import matplotlib.pyplot as plt
 
 
 
-def test_scratch1():
+# def test_scratch1():
+#
+#     asdf = pd.read_csv('https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv')
+#     print(
+#         sm.formula.glm(
+#             formula='cancer ~ famhistory',
+#             data=asdf,
+#             family=sm.families.Binomial()
+#         ).fit().summary()
+#     )
 
-    asdf = pd.read_csv('https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv')
-    print(
-        sm.formula.glm(
-            formula='cancer ~ famhistory',
-            data=asdf,
-            family=sm.families.Binomial()
-        ).fit().summary()
+# from dcurves.dca import *
+
+# from dcurves.surv_dca import *
+# def test_new_dca_func():
+#
+#     surv_df = load_survival_df()
+#     outcome = 'cancer'
+#     predictors = ['marker', 'cancerpredmarker', 'famhistory']
+#
+#     surv_dca_results = \
+#         surv_dca(
+#             data=surv_df,
+#             outcome=outcome,
+#             predictors=predictors,
+#             predictors_to_prob=['marker'],
+#             time=1,
+#             time_to_outcome_col='ttcancer',
+#             thresholds=np.arange(0, 1, 0.5)
+#         )
+#
+#     print(surv_dca_results)
+
+
+from dcurves.dca import _create_risks_df, _calc_prevalence
+
+def test_new_dca_func_2():
+
+    data = load_survival_df()
+    outcome = 'cancer'
+    predictors = ['marker', 'famhistory', 'cancerpredmarker']
+    predictors_to_prob = ['marker']
+    time = 1
+    time_to_outcome_col = 'ttcancer'
+    thresholds = np.linspace(0.00, 1.00, 2)
+    prevalence = None
+    harm = {
+        'famhistory': 0.05,
+        'cancerpredmarker': 0.15
+    }
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            predictors_to_prob=predictors_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=risks_df,
+            outcome=outcome,
+            thresholds=thresholds,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    modelnames = np.append(predictors, ['all', 'none'])
+    test_consequences_df = pd.DataFrame(
+        {'predictor':
+             pd.Series([x for y in modelnames for x in [y] * len(thresholds)]),
+         'threshold': thresholds.tolist() * len(modelnames),
+         'n': [len(risks_df.index)] * len(thresholds) * len(modelnames),
+         'prevalence': [prevalence_value] * len(thresholds) * len(modelnames),
+         'harm': 0
+         }
     )
+    # print(test_consequences_df)
+    for harm_pred in harm.keys():
+        test_consequences_df.loc[test_consequences_df['predictor'] == harm_pred, 'harm'] = harm[harm_pred]
 
-    import
+    for model in modelnames:
 
-    binary_dca(
 
-    )
+    test_consequences_df.loc[test_consequences_df[]]
+
+    print(test_consequences_df)
+
+
 

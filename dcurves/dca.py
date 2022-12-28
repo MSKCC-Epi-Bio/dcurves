@@ -8,7 +8,7 @@ import lifelines
 
 
 @beartype
-def _convert_to_risk(
+def _create_risks_df(
         data: pd.DataFrame,
         outcome: str,
         predictors_to_prob: Optional[list] = None,
@@ -37,9 +37,15 @@ def _convert_to_risk(
             cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
             predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
             data[predictor] = predicted_vals
+
+    machine_epsilon = np.finfo(float).eps
+
+    data['all'] = [1 - machine_epsilon for i in range(0, len(data.index))]
+    data['none'] = [0 + machine_epsilon for i in range(0, len(data.index))]
+
     return data
 
-def _calc_prevalences(
+def _calc_prevalence(
         risks_df: pd.DataFrame,
         outcome: str,
         thresholds: np.ndarray,
@@ -50,70 +56,73 @@ def _calc_prevalences(
     # Binary
     if time_to_outcome_col is None:
         if prevalence is not None:
-            prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
+            pass
         elif prevalence is None:
             outcome_values = risks_df[outcome].values.flatten().tolist()
-            prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
+            prevalence = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
                 thresholds)
     # Survival
     elif time_to_outcome_col is not None:
         if prevalence is not None:
-            prevalence_values = [prevalence] * len(thresholds)
+            pass
         elif prevalence is None:
             kmf = lifelines.KaplanMeierFitter()
             kmf.fit(risks_df[time_to_outcome_col], risks_df[outcome] * 1)  # *1 to convert from boolean to int
             prevalence = 1 - kmf.survival_function_at_times(time)
             prevalence = prevalence[1]
-            prevalence_values = [prevalence] * len(thresholds)
-    return prevalence_values
+            prevalence = [prevalence] * len(thresholds)
+    return prevalence
 
 @beartype
-def _calc_surv_consequences(
+def _calc_predictor_consequences(
         risks_df: pd.DataFrame,
         outcome: str,
         predictor: str,
         thresholds: np.ndarray,
-        prevalence_values: list
-):
+        prevalence_values: list,
+        harm: Optional[dict] = None
+) -> pd.DataFrame:
+
+    machine_epsilon = np.finfo(float).eps
+    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
+    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
     test_consequences_df = pd.DataFrame({'predictor': predictor,
                                          'threshold': thresholds,
                                          'n': [len(risks_df.index)] * len(thresholds),
-                                         'prevalence': prevalence_values})
+                                         'prevalence': prevalence_values,
+                                         'harm': harm[predictor]})
 
     true_outcome = risks_df[risks_df[outcome] == True][[predictor]]
     false_outcome = risks_df[risks_df[outcome] == False][[predictor]]
-
     test_pos_rate = []
     tp_rate = []
     fp_rate = []
 
+
+
     for (threshold, prevalence) in zip(thresholds, prevalence_values):
-        #### Indexing [1] doesn't work w/ value_counts when only index is 0, so [1] gives error, have to try/except
-        # so that when [1] doesn't work can input 0
         try:
             test_pos_rate.append(
                 pd.Series(risks_df[predictor] >= threshold).value_counts()[1] / len(risks_df.index))
         except KeyError:
             test_pos_rate.append(0 / len(risks_df.index))
-
         try:
             tp_rate.append(
                 pd.Series(true_outcome[predictor] >= threshold).value_counts()[1] / len(true_outcome[predictor]) * (
                     prevalence))
         except KeyError:
             tp_rate.append(0 / len(true_outcome[predictor]) * prevalence)
-
         try:
             fp_rate.append(pd.Series(false_outcome[predictor] >= threshold).value_counts()[1] / len(
                 false_outcome[predictor]) * (1 - prevalence))
         except KeyError:
             fp_rate.append(0 / len(false_outcome[predictor]) * (1 - prevalence))
 
+
     test_consequences_df['test_pos_rate'] = test_pos_rate
     test_consequences_df['tpr'] = tp_rate
     test_consequences_df['fpr'] = fp_rate
-    test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
     test_consequences_df['harm'] = [0 if harm is None
                                     else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
     return test_consequences_df
@@ -141,75 +150,86 @@ def _calculate_test_consequences(
     test_consequences_df = pd.DataFrame({'predictor': predictor,
                                          'threshold': thresholds,
                                          'n': [len(risks_df.index)] * len(thresholds),
-                                         'prevalence': prevalence_values})
-
-    if time_to_outcome_col is None:
-
-
-        _calc_surv_consequences(
+                                         'prevalence': prevalence_values,
+                                         'harm': harm[predictor]})
 
 
+
+
+
+    return
+
+
+def dca(data: pd.DataFrame,
+        outcome: str,
+        predictors: list,
+        time_to_outcome_col: str,
+        thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
+        harm: Optional[dict] = None,
+        predictors_to_prob: Optional[list] = None,
+        prevalence: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = None) -> object:
+
+    # 1. Perform checks on inputs to see if user is high or not
+    # check_inputs(...)
+
+
+    # 2. Convert requested columns to risk scores 0 to 1
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            predictors_to_prob=predictors_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
         )
 
-    return df
-
-
-def dca(data: object,
-        outcome: object,
-        predictors: object,
-        thresh_vals: object = [0.01, 0.99, 0.01],
-        harm: object = None,
-        probabilities: object = [False],
-        time: object = None,
-        prevalence: object = None,
-        time_to_outcome_col: object = None) -> object:
-
-    model_frame = data[np.append(outcome, predictors)]
-
-    if time_to_outcome_col:
-        model_frame[time_to_outcome_col] = data[time_to_outcome_col]
-
-    for i in range(0, len(predictors)):
-        if probabilities[i]:
-            model_frame = _convert_to_risk(model_frame,
-                                           outcome,
-                                           predictors[i],
-                                           prevalence,
-                                           time,
-                                           time_to_outcome_col)
-
-    model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
-    model_frame['none'] = [0 for i in range(0, len(model_frame.index))]
-
-    thresholds = np.arange(thresh_vals[0], thresh_vals[1] + thresh_vals[2], thresh_vals[2])  # array of values
-    thresholds = np.insert(thresholds, 0, 0.1 ** 9).tolist()
-
-    covariate_names = [i for i in model_frame.columns if
-                       i not in outcome]
-    if time_to_outcome_col:
-        covariate_names = [i for i in covariate_names if i not in time_to_outcome_col]
-
-    testcons_list = []
-    for covariate in covariate_names:
-        temp_testcons_df = _calculate_test_consequences(
-            model_frame=model_frame,
+    prevalence_values = \
+        _calc_prevalence(
+            risks_df=risks_df,
             outcome=outcome,
-            predictor=covariate,
             thresholds=thresholds,
             prevalence=prevalence,
             time=time,
             time_to_outcome_col=time_to_outcome_col
         )
 
-        temp_testcons_df['variable'] = [covariate] * len(temp_testcons_df.index)
+    test_consequences_df = pd.DataFrame()
 
-        temp_testcons_df['harm'] = [harm[covariate] if harm != None else 0] * len(temp_testcons_df.index)
-        testcons_list.append(temp_testcons_df)
+    test_consequences_df['predictor'] = pd.Series([[s]*len(thresholds) ])
 
-    all_covariates_df = pd.concat(testcons_list)
+    test_consequences_df = \
+        pd.DataFrame(
+            {
+                'predictor': pd.Series()
+            }
+        )
 
-    all_covariates_df['net_benefit'] = all_covariates_df['tpr'] - all_covariates_df['threshold'] / (
-            1 - all_covariates_df['threshold']) * all_covariates_df['fpr'] - all_covariates_df['harm']
+    test_consequences_df = pd.DataFrame({'predictor': predictor,
+                                         'threshold': thresholds,
+                                         'n': [len(risks_df.index)] * len(thresholds),
+                                         'prevalence': prevalence_values,
+                                         'harm': harm[predictor]})
+
+
+    covariate_names = np.append(predictors, ['all', 'none'])
+
+    # 3. Calculate model-specific consequences
+
+    test_consequences_df = \
+        pd.concat([_calc_predictor_consequences(
+            risks_df=vars_to_risk_df,
+            outcome=outcome,
+            predictor=predictor,
+            thresholds=thresholds,
+            prevalence_values=prevalence_values,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col,
+            harm=harm) for predictor in covariate_names])
+
+    # 4. Calculate non-variable-specific consequences
+    # calc
 
     return all_covariates_df
 
@@ -259,7 +279,7 @@ def net_intervention_avoided(
     """
 
 
-    all_records = after_dca_df[after_dca_df['variable'] == 'all']
+    all_records = after_dca_df[after_dca_df['predictor'] == 'all']
     all_records = all_records[['threshold', 'net_benefit']]
     all_records = all_records.rename(columns={'net_benefit': 'net_benefit_all'})
 

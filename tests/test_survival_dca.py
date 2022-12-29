@@ -178,65 +178,180 @@ import matplotlib.pyplot as plt
 #             thresholds=np.arange(0, 1, 0.5)
 #         )
 #
-#     print(surv_dca_results)
+#     print(surv_dca_results.columns)
 
 
-from dcurves.dca import _create_risks_df, _calc_prevalence
-
-def test_new_dca_func_2():
-
-    data = load_survival_df()
+from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
+from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+from dcurves.load_test_data import load_binary_df, load_survival_df
+from dcurves.dca import dca, plot_graphs
+def test_binary_dca():
+    data = load_binary_df()
     outcome = 'cancer'
-    predictors = ['marker', 'famhistory', 'cancerpredmarker']
-    predictors_to_prob = ['marker']
-    time = 1
-    time_to_outcome_col = 'ttcancer'
-    thresholds = np.linspace(0.00, 1.00, 2)
-    prevalence = None
+    modelnames = ['marker', 'cancerpredmarker']
+    models_to_prob = ['marker']
     harm = {
-        'famhistory': 0.05,
-        'cancerpredmarker': 0.15
+        'cancerpredmarker': 0.04
     }
+    thresholds = np.linspace(0,1,100)
 
-    risks_df = \
-        _create_risks_df(
+    # dca_df = \
+    #     dca(
+    #         data=data,
+    #         outcome=outcome,
+    #         modelnames=modelnames,
+    #         models_to_prob=models_to_prob,
+    #         harm=harm
+    #     )
+    #
+    #
+    # plot_net_benefit(
+    #     data=dca_df,
+    #     model_name_colname='model'
+    # )
+
+    # risks_df = \
+    #     _create_risks_df(
+    #         data=data,
+    #         outcome=outcome,
+    #         models_to_prob=models_to_prob,
+    #         time=None,
+    #         time_to_outcome_col=None
+    #     )
+    #
+    # # 3. calculate prevalences
+    #
+    # prevalence_value = \
+    #     _calc_prevalence(
+    #         risks_df=risks_df,
+    #         outcome=outcome,
+    #         prevalence=None,
+    #         time=None,
+    #         time_to_outcome_col=None
+    #     )
+    #
+    # # 4. Create initial dataframe for binary/survival cases
+    #
+    # initial_df = \
+    #     _create_initial_df(
+    #         thresholds=thresholds,
+    #         modelnames=modelnames,
+    #         input_df_rownum=len(risks_df.index),
+    #         prevalence_value=prevalence_value,
+    #         harm=harm
+    #     )
+    #
+    # # 5. Calculate model-specific consequences
+    #
+    # initial_stats_df = \
+    #     _calc_modelspecific_stats(
+    #         initial_df=initial_df,
+    #         risks_df=risks_df,
+    #         thresholds=thresholds,
+    #         outcome=outcome,
+    #         prevalence_value=prevalence_value,
+    #         time=None,
+    #         time_to_outcome_col=None
+    #     )
+    #
+    # # 6. Generate DCA-ready df with full list of calculated statistics
+    # final_dca_df = \
+    #     _calc_nonspecific_stats(
+    #         initial_stats_df=initial_stats_df
+    #     )
+    #
+    # print(final_dca_df)
+
+def test_binary_dca2():
+
+    data = load_binary_df()
+    outcome = 'cancer'
+    modelnames = ['marker', 'cancerpredmarker']
+    models_to_prob = ['marker']
+    harm = {
+        'cancerpredmarker': 0.04
+    }
+    thresholds = np.linspace(0, 1, 100)
+
+    dca_df = \
+        dca(
             data=data,
             outcome=outcome,
-            predictors_to_prob=predictors_to_prob,
-            time=time,
-            time_to_outcome_col=time_to_outcome_col
+            modelnames=modelnames,
+            models_to_prob=models_to_prob,
+            harm=harm
         )
 
-    prevalence_value = \
-        _calc_prevalence(
-            risks_df=risks_df,
-            outcome=outcome,
-            thresholds=thresholds,
-            prevalence=prevalence,
-            time=time,
-            time_to_outcome_col=time_to_outcome_col
-        )
-
-    modelnames = np.append(predictors, ['all', 'none'])
-    test_consequences_df = pd.DataFrame(
-        {'predictor':
-             pd.Series([x for y in modelnames for x in [y] * len(thresholds)]),
-         'threshold': thresholds.tolist() * len(modelnames),
-         'n': [len(risks_df.index)] * len(thresholds) * len(modelnames),
-         'prevalence': [prevalence_value] * len(thresholds) * len(modelnames),
-         'harm': 0
-         }
+    plot_net_benefit(
+        data=dca_df,
+        model_name_colname='model'
     )
-    # print(test_consequences_df)
-    for harm_pred in harm.keys():
-        test_consequences_df.loc[test_consequences_df['predictor'] == harm_pred, 'harm'] = harm[harm_pred]
-
-    for model in modelnames:
 
 
-    test_consequences_df.loc[test_consequences_df[]]
-
-    print(test_consequences_df)
+from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
+from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+# def test_new_dca_func_2():
+#
+#     data = load_survival_df()
+#     outcome = 'cancer'
+#     modelnames = ['marker', 'cancerpredmarker']
+#     models_to_prob = ['marker']
+#     time = 1
+#     time_to_outcome_col = 'ttcancer'
+#     thresholds = np.linspace(0.00, 1.00, 100)
+#     prevalence = None
+#     harm = {
+#         'famhistory': 0,
+#         'cancerpredmarker': 0
+#     }
+#
+#     risks_df = \
+#         _create_risks_df(
+#             data=data,
+#             outcome=outcome,
+#             models_to_prob=models_to_prob,
+#             time=time,
+#             time_to_outcome_col=time_to_outcome_col
+#         )
+#
+#     prevalence_value = \
+#         _calc_prevalence(
+#             risks_df=risks_df,
+#             outcome=outcome,
+#             prevalence=prevalence,
+#             time=time,
+#             time_to_outcome_col=time_to_outcome_col
+#         )
+#
+#     initial_df = \
+#         _create_initial_df(
+#             thresholds=thresholds,
+#             modelnames=modelnames,
+#             input_df_rownum=len(risks_df.index),
+#             prevalence_value=prevalence_value,
+#             harm=harm
+#         )
+#
+#     initial_stats_df = \
+#         _calc_modelspecific_stats(
+#             initial_df=initial_df,
+#             risks_df=risks_df,
+#             thresholds=thresholds,
+#             outcome=outcome,
+#             prevalence_value=prevalence_value,
+#             time=time,
+#             time_to_outcome_col=time_to_outcome_col
+#         )
+#
+#     final_dca_df = \
+#         _calc_nonspecific_stats(
+#             initial_stats_df=initial_stats_df
+#         )
+#
+#     plot_net_benefit(
+#         data=final_dca_df,
+#         model_name_colname='model'
+#     )
 
 
 

@@ -71,15 +71,6 @@ def plot_net_intervention_avoided(
 #                                      'saddlebrown', 'lime', 'magenta']
 #                 ) -> None:
 #
-#
-#     _validate._plot_graphs_input_checks(after_dca_df=after_dca_df,
-#                                         y_limits=y_limits,
-#                                         color_names=color_names,
-#                                         graph_type=graph_type)
-#
-#     _validate._plot_net_intervention_input_checks(after_dca_df=after_dca_df,
-#                                                   graph_type=graph_type)
-#
 #     if graph_type == 'net_benefit':
 #
 #         predictor_names = after_dca_df['predictor'].value_counts().index

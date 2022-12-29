@@ -87,9 +87,11 @@ def _surv_calculate_test_consequences(
             risk_rate_among_test_pos.append(1)
 
     test_consequences_df['test_pos_rate'] = test_pos_rate
+
     test_consequences_df['risk_rate_among_test_pos'] = risk_rate_among_test_pos
     test_consequences_df['tpr'] = test_consequences_df['risk_rate_among_test_pos'] * test_pos_rate
     test_consequences_df['fpr'] = (1 - test_consequences_df['risk_rate_among_test_pos']) * test_pos_rate
+
     test_consequences_df['harm'] = [0 if harm is None
                                     else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
 

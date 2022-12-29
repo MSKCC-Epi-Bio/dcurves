@@ -94,7 +94,6 @@ def _binary_calculate_test_consequences(
     test_consequences_df['test_pos_rate'] = test_pos_rate
     test_consequences_df['tpr'] = tp_rate
     test_consequences_df['fpr'] = fp_rate
-    test_consequences_df['variable'] = [predictor] * len(test_consequences_df.index)
     test_consequences_df['harm'] = [0 if harm is None
                                     else harm[predictor] if predictor in harm else 0] * len(test_consequences_df.index)
 
@@ -143,24 +142,17 @@ def binary_dca(
 
     test_consequences_df['net_benefit'] = test_consequences_df['tpr'] - test_consequences_df['threshold'] / (
             1 - test_consequences_df['threshold']) * test_consequences_df['fpr'] - test_consequences_df['harm']
-
     test_consequences_df['test_neg_rate'] = test_consequences_df['fnr'] + test_consequences_df['tnr']
-
     test_consequences_df['ppv'] = test_consequences_df['tpr'] /\
                                   (test_consequences_df['tpr'] + test_consequences_df['fpr'])
-
     test_consequences_df['npv'] = test_consequences_df['tnr'] /\
                                   (test_consequences_df['tnr'] + test_consequences_df['fnr'])
-
     test_consequences_df['sens'] = test_consequences_df['tpr'] /\
                                    (test_consequences_df['tpr'] + test_consequences_df['fnr'])
-
     test_consequences_df['spec'] = test_consequences_df['tnr'] /\
                                    (test_consequences_df['tnr'] + test_consequences_df['fpr'])
-
     test_consequences_df['lr_pos'] = test_consequences_df['sens'] /\
                                      (1 - test_consequences_df['spec'])
-
     test_consequences_df['lr_neg'] = (1 - test_consequences_df['sens']) /\
                                      test_consequences_df['spec']
 

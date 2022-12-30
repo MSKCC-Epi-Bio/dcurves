@@ -4,40 +4,39 @@ from dcurves import _validate
 from beartype import beartype
 
 @beartype
-def plot_net_benefit(
-        data: pd.DataFrame,
-        model_name_colname: str = 'predictor',
+def _plot_net_benefit(
+        plot_df: pd.DataFrame,
         y_limits: list = [-0.05, 0.2],
         color_names: list = ['blue', 'purple', 'red',
                                      'green', 'hotpink', 'orange',
                                      'saddlebrown', 'lime', 'magenta']
                 ) -> None:
 
-    predictor_names = data[model_name_colname].value_counts().index
+    modelnames = plot_df['model'].value_counts().index
 
-    if len(color_names) < len(predictor_names):
+    if len(color_names) < len(modelnames):
         ValueError('More predictors than color_names, please enter more color names in color_names list and try again')
 
-    if model_name_colname not in data.columns:
+    if 'model' not in plot_df.columns:
         ValueError('Column name containing model names is not a column in inputted dataframe, \
                    please make sure model_name_colname exists in dataframe')
 
-    for predictor_name, color_name in zip(predictor_names, color_names):
-        single_model_df = data[data[model_name_colname] == predictor_name]
+    for modelname, color_name in zip(modelnames, color_names):
+        single_model_df = plot_df[plot_df['model'] == modelname]
         x_vals = single_model_df['threshold']
         y_vals = single_model_df['net_benefit']
         plt.plot(x_vals, y_vals, color=color_name)
 
         plt.ylim(y_limits)
-        plt.legend(predictor_names)
+        plt.legend(modelnames)
         plt.grid(b=True, which='both', axis='both')
         plt.xlabel('Threshold Values')
         plt.ylabel('Calculated Net Benefit')
     plt.show()
 
 @beartype
-def plot_net_intervention_avoided(
-                data: pd.DataFrame,
+def _plot_net_intervention_avoided(
+                plot_df: pd.DataFrame,
                 y_limits: list = [-0.05, 0.2],
                 color_names: list = ['blue', 'purple', 'red',
                                      'green', 'hotpink', 'orange',
@@ -46,73 +45,54 @@ def plot_net_intervention_avoided(
 
     # Don't want to plot 'all'/'none' for net_intervention_avoided
 
-    cleaned_after_dca_df = data[~(data["predictor"].isin(['all', 'none']))]
+    cleaned_plot_df = plot_df[~(plot_df["model"].isin(['all', 'none']))]
 
-    predictor_names = cleaned_after_dca_df['predictor'].value_counts().index
+    modelnames = cleaned_plot_df['model'].value_counts().index
 
-    for predictor_name, color_name in zip(predictor_names, color_names):
-        single_pred_df = cleaned_after_dca_df[cleaned_after_dca_df['predictor'] == predictor_name]
-        x_vals = single_pred_df['threshold']
-        y_vals = single_pred_df['net_intervention_avoided']
+    for modelname, color_name in zip(modelnames, color_names):
+        single_model_df = cleaned_plot_df[cleaned_plot_df['model'] == modelname]
+        x_vals = single_model_df['threshold']
+        y_vals = single_model_df['net_intervention_avoided']
         plt.plot(x_vals, y_vals, color=color_name)
 
         plt.ylim(y_limits)
-        plt.legend(predictor_names)
+        plt.legend(modelnames)
         plt.grid(b=True, which='both', axis='both')
         plt.xlabel('Threshold Values')
         plt.ylabel('Calculated Net Interventions Avoided')
+    plt.show()
+
+def plot_graphs(plot_df: pd.DataFrame,
+                graph_type: str = 'net_benefit',
+                y_limits: list = [-0.05, 0.5],
+                color_names: list = ['blue', 'purple', 'red',
+                                     'green', 'hotpink', 'orange',
+                                     'saddlebrown', 'lime', 'magenta']
+                ) -> None:
+
+    if graph_type not in ['net_benefit', 'net_intervention_avoided']:
+        ValueError('graph_type must be one of 2 strings: net_benefit, net_intervention_avoided')
+
+    if graph_type == 'net_benefit':
+
+        _plot_net_benefit(
+            plot_df=plot_df,
+            y_limits=y_limits,
+            color_names=color_names
+        )
+
+    elif graph_type == 'net_intervention_avoided':
+
+        _plot_net_intervention_avoided(
+            plot_df=plot_df,
+            y_limits=y_limits,
+            color_names=color_names
+        )
 
 
-# def plot_graphs(after_dca_df: pd.DataFrame,
-#                 graph_type: str = 'net_benefit',
-#                 y_limits: list = [-0.05, 0.2],
-#                 color_names: list = ['blue', 'purple', 'red',
-#                                      'green', 'hotpink', 'orange',
-#                                      'saddlebrown', 'lime', 'magenta']
-#                 ) -> None:
-#
-#     if graph_type == 'net_benefit':
-#
-#         predictor_names = after_dca_df['predictor'].value_counts().index
-#         # color_names = ['blue', 'purple','red',
-#         #                'green', 'hotpink', 'orange',
-#         #                'saddlebrown', 'lime', 'magenta']
-#
-#         for predictor_name, color_name in zip(predictor_names, color_names):
-#             single_pred_df = after_dca_df[after_dca_df['predictor'] == predictor_name]
-#             x_vals = single_pred_df['threshold']
-#             y_vals = single_pred_df['net_benefit']
-#             plt.plot(x_vals, y_vals, color=color_name)
-#
-#             plt.ylim(y_limits)
-#             plt.legend(predictor_names)
-#             plt.grid(b=True, which='both', axis='both')
-#             plt.xlabel('Threshold Values')
-#             plt.ylabel('Calculated Net Benefit')
-#
-#     elif graph_type == 'net_intervention_avoided':
-#
-#         # Don't want to plot 'all'/'none' for net_intervention_avoided
-#
-#         cleaned_after_dca_df = after_dca_df[~(after_dca_df["predictor"].isin(['all', 'none']))]
-#
-#         predictor_names = cleaned_after_dca_df['predictor'].value_counts().index
-#
-#         for predictor_name, color_name in zip(predictor_names, color_names):
-#             single_pred_df = cleaned_after_dca_df[cleaned_after_dca_df['predictor'] == predictor_name]
-#             x_vals = single_pred_df['threshold']
-#             y_vals = single_pred_df['net_intervention_avoided']
-#             plt.plot(x_vals, y_vals, color=color_name)
-#
-#             plt.ylim(y_limits)
-#             plt.legend(predictor_names)
-#             plt.grid(b=True, which='both', axis='both')
-#             plt.xlabel('Threshold Values')
-#             plt.ylabel('Calculated Net Interventions Avoided')
-#
-#     return
+    return
 
-plot_net_benefit.__doc__ = """
+_plot_net_benefit.__doc__ = """
 
     |
 
@@ -182,7 +162,7 @@ plot_net_benefit.__doc__ = """
     """
 
 
-plot_net_intervention_avoided.__doc__ = """
+_plot_net_intervention_avoided.__doc__ = """
 
     |
 
@@ -193,7 +173,7 @@ plot_net_intervention_avoided.__doc__ = """
     Specifically, this function
     will plot the calculated net interventions avoided for each threshold value.
 
-    
+
     """
 
 

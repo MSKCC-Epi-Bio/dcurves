@@ -76,7 +76,7 @@ def _create_initial_df(
         modelnames: list,
         input_df_rownum: int,
         prevalence_value: Union[float, int],
-        harm: dict
+        harm: Optional[dict] = None
 ) -> pd.DataFrame:
 
     machine_epsilon = np.finfo(float).eps
@@ -93,12 +93,15 @@ def _create_initial_df(
          'harm': 0
          }
     )
-    for model in harm.keys():
-        initial_df.loc[initial_df['model'] == model, 'harm'] = harm[model]
+    if harm is not None:
+        for model in harm.keys():
+            initial_df.loc[initial_df['model'] == model, 'harm'] = harm[model]
+    elif harm is None:
+        pass
+    else:
+        ValueError('Harm should be either None or dict')
 
     return initial_df
-
-
 
 def _calc_test_pos_rate(
         risks_df: pd.DataFrame,
@@ -280,7 +283,6 @@ def dca(data: pd.DataFrame,
     # 1. Perform checks on inputs to see if user is high or not
     # check_inputs(...)
 
-
     # 2. Convert requested columns to risk scores 0 to 1
 
     risks_df = \
@@ -341,15 +343,19 @@ def net_intervention_avoided(
 ):
     """
 
-    |
+    Calculate net interventions avoided after using the dca function
 
-    Calculate net interventions avoided after performing decision curve analysis
-
-    |
+    Parameters
+    ----------
+    after_dca_df : pd.DataFrame
+        dataframe outputted by dca function in the dcurves library
+    nper : int
+        number to report net interventions per （Defaults to 100)
 
     Examples
     ________
 
+    >>> import
     >>> df_binary = dcurves.load_test_data.load_binary_df()
 
     >>> after_dca_df = dcurves.dca(
@@ -367,146 +373,28 @@ def net_intervention_avoided(
 
     Parameters
     __________
-    after_dca_df : pd.DataFrame
-        dataframe outputted by dca function in the dcurves library
-    nper : int
-        number to report net interventions per （Defaults to 100)
 
-    Return
-    ______
+
+    :returns
+
     merged_after_dca_df: pd.DataFrame
         dataframe with calculated net_intervention_avoided field joined to the inputted after_dca_df
 
     """
 
-
-    all_records = after_dca_df[after_dca_df['predictor'] == 'all']
+    all_records = after_dca_df[after_dca_df['model'] == 'all']
     all_records = all_records[['threshold', 'net_benefit']]
     all_records = all_records.rename(columns={'net_benefit': 'net_benefit_all'})
 
     merged_after_dca_df = after_dca_df.merge(all_records, on='threshold')
 
-    merged_after_dca_df['net_intervention_avoided'] = (merged_after_dca_df['net_benefit']
-                                             - merged_after_dca_df['net_benefit_all']) \
-                                            / (merged_after_dca_df['threshold']
-                                               / (1 - merged_after_dca_df['threshold'])) * nper
+    merged_after_dca_df['net_intervention_avoided'] = \
+        (merged_after_dca_df['net_benefit']
+         - merged_after_dca_df['net_benefit_all']) \
+        / (merged_after_dca_df['threshold']
+            / (1 - merged_after_dca_df['threshold'])) * nper
 
     return merged_after_dca_df
 
 
-def plot_graphs(after_dca_df: pd.DataFrame,
-                graph_type: str = 'net_benefit',
-                y_limits: list = [-0.05, 0.2],
-                color_names: list = ['blue', 'purple', 'red',
-                                     'green', 'hotpink', 'orange',
-                                     'saddlebrown', 'lime', 'magenta']
-                ) -> None:
-    """
 
-    |
-
-    Plot the outputted dataframe from dca() of this library.
-
-    |
-
-    Specifically, this function
-    will plot the calculated net benefit values for each threshold value from those
-    indicated in the dca() function.
-
-    Examples
-    ________
-
-    |
-
-    Simple plot binary DCA example. Load binary outcome dataframe, run DCA, plot calculated predictor net benefit values
-
-    |
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> binary_dca_results = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-    >>> plot_graphs(after_dca_df = binary_dca_results)
-
-    |
-
-    Simple binary DCA example with plotting net interventions avoided. Load binary outcome dataframe, run DCA, run
-    net_intervention_avoided(), plot outputted dataframe
-
-    |
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> after_dca_df = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-    >>> after_net_interventions_avoided_df = net_intervention_avoided(after_dca_df=after_dca_df)
-    >>> plot_graphs(after_dca_df = after_net_interventions_avoided_df,
-    ...     graph_type='net_intervention_avoided',
-    ...     y_limits=[-10,100],
-    ...     color_names=['red','teal']
-    ... )
-
-    Parameters
-    __________
-    after_dca_df : pandas.DataFrame
-        dataframe outputted by dca function in the dcurves library
-    graph_type : str
-        type of graph outputted, either 'net_benefit' or 'net_intervention_avoided' (defaults to 'net_benefit')
-    y_limits : list[float]
-        list of float that control graph lower and upper y-axis limits
-        (defaults to [-0.05, 0.2] for graph_type == net_benefit. Change values for
-         graph_type == net_intervention_avoided)
-    color_names : list[str]
-        list of colors specified by user (defaults to ['blue', 'purple', 'red',
-        'green', 'hotpink', 'orange', 'saddlebrown', 'lime', 'magenta']
-
-    Returns
-    _______
-    None
-
-    """
-
-    if graph_type == 'net_benefit':
-
-        predictor_names = after_dca_df['predictor'].value_counts().index
-        # color_names = ['blue', 'purple','red',
-        #                'green', 'hotpink', 'orange',
-        #                'saddlebrown', 'lime', 'magenta']
-
-        for predictor_name, color_name in zip(predictor_names, color_names):
-            single_pred_df = after_dca_df[after_dca_df['predictor'] == predictor_name]
-            x_vals = single_pred_df['threshold']
-            y_vals = single_pred_df['net_benefit']
-            plt.plot(x_vals, y_vals, color=color_name)
-
-            plt.ylim(y_limits)
-            plt.legend(predictor_names)
-            plt.grid(b=True, which='both', axis='both')
-            plt.xlabel('Threshold Values')
-            plt.ylabel('Calculated Net Benefit')
-
-    elif graph_type == 'net_intervention_avoided':
-
-        # Don't want to plot 'all'/'none' for net_intervention_avoided
-
-        cleaned_after_dca_df = after_dca_df[~(after_dca_df["predictor"].isin(['all', 'none']))]
-
-        predictor_names = cleaned_after_dca_df['predictor'].value_counts().index
-
-        for predictor_name, color_name in zip(predictor_names, color_names):
-            single_pred_df = cleaned_after_dca_df[cleaned_after_dca_df['predictor'] == predictor_name]
-            x_vals = single_pred_df['threshold']
-            y_vals = single_pred_df['net_intervention_avoided']
-            plt.plot(x_vals, y_vals, color=color_name)
-
-            plt.ylim(y_limits)
-            plt.legend(predictor_names)
-            plt.grid(b=True, which='both', axis='both')
-            plt.xlabel('Threshold Values')
-            plt.ylabel('Calculated Net Interventions Avoided')
-
-    return

@@ -66,49 +66,17 @@ def load_case_control_df():
     stream = pkg_resources.resource_stream(__name__, 'data/df_case_control.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-def load_r_bin_dca_result_1():
-    """For binary case, return a dataframe containing calculated net benefit values for default settings
-    model_frame: load_binary_df() from load_test_data
-    outcome: cancer
-    predictor(s): cancerpredmarker, marker
-    thresholds: 0.01 to 0.99
-    harm: None
-    probabilities = [False, True] # False for cancerpredmarker, True for marker
-
-    :return:
-    """
-
-    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_result_1.csv')
+def load_tutorial_interventions():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_vals.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-def load_r_bctr_result_1():
 
-    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_ctr_result_1.csv')
-    return pd.read_csv(stream, encoding='latin-1')
-
-def load_r_bin_dca_result_2():
-    """For binary case, return a dataframe containing calculated test consequences values for custom settings:
-    R DCA Command: dca(cancer ~ age, data = df_binary, as_probability = "age", prevalence = 0.5)
-
-    model_frame: load_binary_df() from load_test_data
-    outcome: cancer
-    predictor(s): age
-    thresholds: 0.01 to 0.99
-    harm: None
-    probabilities = [True]
-    prevalence = 0.5
-
-    :return:
-    """
-
-    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_result_2.csv')
-    return pd.read_csv(stream, encoding='latin-1')
-
-def load_r_bctr_result_2():
-
-    stream = pkg_resources.resource_stream(__name__, 'data/r_bin_dca_ctr_result_2.csv')
+def load_tutorial_risk_df():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_risk_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 
 
-
+def load_tutorial_marker_risk_scores():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_marker_risk_scores.csv')
+    return pd.read_csv(stream, encoding='latin-1')

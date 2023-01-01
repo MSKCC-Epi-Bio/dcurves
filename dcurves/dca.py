@@ -4,7 +4,9 @@ from beartype import beartype
 from typing import Optional, Union
 import lifelines
 
-from dcurves.risks import _create_risks_df
+from .risks import _create_risks_df
+
+ # import _create_risks_df
 
 def _calc_prevalence(
         risks_df: pd.DataFrame,

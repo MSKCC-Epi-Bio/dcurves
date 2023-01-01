@@ -1,21 +1,21 @@
-# Load dcurves functions
-from dcurves.dca import dca
-from dcurves.dca import net_intervention_avoided
-from dcurves.plot_graphs import plot_graphs
-from dcurves.dca import _calc_prevalence, _create_initial_df
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
-from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
-
-# Load data functions
-from dcurves.load_test_data import load_binary_df, load_survival_df, load_case_control_df
-from dcurves.load_test_data import load_tutorial_interventions, load_tutorial_risk_df
-from dcurves.load_test_data import load_tutorial_marker_risk_scores
-
-# Load outside functions
-import numpy as np
-import pandas as pd
-import statsmodels.api as sm
-import matplotlib.pyplot as plt
+# # Load dcurves functions
+# from dcurves.dca import dca
+# from dcurves.dca import net_intervention_avoided
+# from dcurves.plot_graphs import plot_graphs
+# from dcurves.dca import _calc_prevalence, _create_initial_df
+# from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+# from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
+#
+# # Load data functions
+# from dcurves.load_test_data import load_binary_df, load_survival_df, load_case_control_df
+# from dcurves.load_test_data import load_tutorial_interventions, load_tutorial_risk_df
+# from dcurves.load_test_data import load_tutorial_marker_risk_scores
+#
+# # Load outside functions
+# import numpy as np
+# import pandas as pd
+# import statsmodels.api as sm
+# import matplotlib.pyplot as plt
 
 # def test_python_dca():
 #     # Test scenario from dca-tutorial r-dca_intervention code chunk
@@ -60,8 +60,8 @@ import matplotlib.pyplot as plt
 #     print('\n', r_net_int_df.to_string())
 #     print('\n', p_net_int_df.to_string())
 
-def test_dca_risk_conversion():
-    pass
+# def test_dca_risk_conversion():
+#     pass
     # r_marker_risks = load_tutorial_marker_risk_scores()
     #
     # df_cancer_dx = \
@@ -214,8 +214,8 @@ def test_dca_risk_conversion():
 #     )
 
 
-from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+# from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
+# from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
 
 # def test_new_dca_func_2():
 #     data = load_survival_df()

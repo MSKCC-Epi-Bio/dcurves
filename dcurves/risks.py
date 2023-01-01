@@ -1,4 +1,4 @@
-import beartype
+from beartype import beartype
 import pandas as pd
 import numpy as np
 from typing import Optional, Union
@@ -13,7 +13,8 @@ def _calc_binary_risks(
 ):
     predicted_vals = sm.formula.glm(outcome + '~' + model, family=sm.families.Binomial(),
                                     data=data).fit().predict()
-    return [(1 - val) for val in predicted_vals]
+    # return [(1 - val) for val in predicted_vals]
+    return [val for val in predicted_vals]
 
 @beartype
 def _calc_surv_risks(
@@ -22,7 +23,7 @@ def _calc_surv_risks(
         model: str,
         time: Union[int, float],
         time_to_outcome_col: str
-):
+) -> list:
     cph_df = data[[time_to_outcome_col, outcome, model]]
     cph = lifelines.CoxPHFitter()
     cph.fit(cph_df, time_to_outcome_col, outcome)
@@ -64,3 +65,4 @@ def _create_risks_df(
     data['none'] = [0 + machine_epsilon for i in range(0, len(data.index))]
 
     return data
+

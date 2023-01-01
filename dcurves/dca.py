@@ -1,49 +1,10 @@
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
-from dcurves import _validate
 from beartype import beartype
 from typing import Optional, Union
 import lifelines
-import matplotlib.pyplot as plt
 
-@beartype
-def _create_risks_df(
-        data: pd.DataFrame,
-        outcome: str,
-        models_to_prob: Optional[list] = None,
-        time: Optional[Union[float, int]] = None,
-        time_to_outcome_col: Optional[str] = None
-) -> pd.DataFrame:
-    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
-
-    if models_to_prob is None:
-        # print('NO PREDICTORS CONVERTED TO PROBABILITIES (BETW. 0 AND 1)')
-        pass
-    elif time_to_outcome_col is None:
-        for predictor in models_to_prob:
-            # print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
-            predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
-                                            data=data).fit().predict()
-            data[predictor] = [(1 - val) for val in predicted_vals]
-    elif time_to_outcome_col is not None:
-        for predictor in models_to_prob:
-            print(predictor + ' CONVERTED TO PROBABILITY (0 to 1)')
-
-            cph_df = data[[time_to_outcome_col, outcome, predictor]]
-            # print(cph_df)
-            cph = lifelines.CoxPHFitter()
-            cph.fit(cph_df, time_to_outcome_col, outcome)
-            cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
-            predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
-            data[predictor] = predicted_vals
-
-    machine_epsilon = np.finfo(float).eps
-
-    data['all'] = [1 - machine_epsilon for i in range(0, len(data.index))]
-    data['none'] = [0 + machine_epsilon for i in range(0, len(data.index))]
-
-    return data
+from dcurves.risks import _create_risks_df
 
 def _calc_prevalence(
         risks_df: pd.DataFrame,
@@ -62,7 +23,7 @@ def _calc_prevalence(
     # Survival
     elif time_to_outcome_col is not None:
         if prevalence is not None:
-            pass
+            ValueError('In survival outcomes, prevalence should not be supplied')
         elif prevalence is None:
             kmf = lifelines.KaplanMeierFitter()
             kmf.fit(risks_df[time_to_outcome_col], risks_df[outcome] * 1)  # *1 to convert from boolean to int
@@ -124,10 +85,10 @@ def _calc_tp_rate(
         thresholds: np.ndarray,
         model: str,
         outcome: str,
-        time: Union[float, int],
-        time_to_outcome_col: str,
         test_pos_rate: list,
-        prevalence_value: Union[float, int]
+        prevalence_value: Union[float, int],
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None
 ):
     # Survival
     if 'time' in risks_df.columns:

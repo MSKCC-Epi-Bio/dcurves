@@ -1,33 +1,125 @@
+# Load dcurves functions
+from dcurves.dca import dca
+from dcurves.dca import net_intervention_avoided
+from dcurves.plot_graphs import plot_graphs
+from dcurves.dca import _calc_prevalence, _create_initial_df
+from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
+
+# Load data functions
+from dcurves.load_test_data import load_binary_df, load_survival_df, load_case_control_df
+from dcurves.load_test_data import load_tutorial_interventions, load_tutorial_risk_df
+from dcurves.load_test_data import load_tutorial_marker_risk_scores
+
+# Load outside functions
 import numpy as np
 import pandas as pd
-
-from dcurves.load_test_data import load_survival_df
-from dcurves.load_test_data import load_case_control_df
 import statsmodels.api as sm
-
-# from dcurves.plot_graphs import plot_net_benefit
-
-import statsmodels.api as sm
-
 import matplotlib.pyplot as plt
 
-from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.dca import dca
-from dcurves.plot_graphs import plot_graphs
+# def test_python_dca():
+#     # Test scenario from dca-tutorial r-dca_intervention code chunk
+#
+#     df_cancer_dx = \
+#         pd.read_csv(
+#             "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+#         )
+#
+#     p_dca_df = \
+#         dca(
+#             data=df_cancer_dx,
+#             outcome='cancer',
+#             modelnames=['marker'],
+#             models_to_prob=['marker'],
+#             thresholds=np.arange(0.05, 0.36, 0.01)
+#         )
+#
+#     unwanted_p_cols = ['index', 'harm', 'n', 'prevalence', 'test_pos_rate', 'neg_rate',
+#                        'test_neg_rate', 'ppv', 'npv', 'sens', 'spec', 'lr_pos',
+#                        'lr_neg', 'tn_rate', 'fn_rate', 'net_benefit_all']
+#
+#     p_net_int_df = \
+#         net_intervention_avoided(
+#             after_dca_df=p_dca_df
+#         ).reset_index().sort_values(by=['model',
+#                                         'threshold'],
+#                                     ascending=[True,
+#                                                True]).reset_index(drop=True).drop(unwanted_p_cols, axis=1)
+#
+#     r_net_int_df = \
+#         load_tutorial_interventions().sort_values(by=['variable',
+#                                                       'threshold'],
+#                                                   ascending=[True,
+#                                                              True]).reset_index(drop=True).drop(['label',
+#                                                                                                  'pos_rate',
+#                                                                                                  'harm',
+#                                                                                                  'n'], axis=1)
+#
+#     assert r_net_int_df['threshold'].round(decimals=10).equals(other=p_net_int_df['threshold'].round(decimals=10))
+#
+#     print('\n', r_net_int_df.to_string())
+#     print('\n', p_net_int_df.to_string())
+
+def test_dca_risk_conversion():
+    pass
+    # r_marker_risks = load_tutorial_marker_risk_scores()
+    #
+    # df_cancer_dx = \
+    #     pd.read_csv(
+    #         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+    #     )
+    #
+    # p_marker_risks = \
+    #     _calc_binary_risks(
+    #         data=df_cancer_dx,
+    #         outcome='cancer',
+    #         model='marker'
+    #     )
+    #
+    # print(type(r_marker_risks))
+    #
+    # print(type(p_marker_risks))
+
+    # r_risk_df = load_tutorial_risk_df()
+
+    # print(r_risk_df.to_string())
+
+    # df_cancer_dx = \
+    #     pd.read_csv(
+    #         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+    #     )
+    #
+    #
+    #
+    # p_risk_df = \
+    #     _create_risks_df(
+    #         data=df_cancer_dx,
+    #         outcome='cancer',
+    #         models_to_prob=['marker']
+    #     )
 
 
-def test_binary_dca():
-    data = load_binary_df()
-    outcome = 'cancer'
-    modelnames = ['marker', 'cancerpredmarker']
-    models_to_prob = ['marker']
-    harm = {
-        'cancerpredmarker': 0.04
-    }
-    thresholds = np.linspace(0, 1, 100)
 
+
+
+
+
+
+
+
+
+
+
+# def test_binary_dca():
+#     data = load_binary_df()
+#     outcome = 'cancer'
+#     modelnames = ['marker', 'cancerpredmarker']
+#     models_to_prob = ['marker']
+#     harm = {
+#         'cancerpredmarker': 0.04
+#     }
+#     thresholds = np.linspace(0, 1, 100)
+#
     # dca_df = \
     #     dca(
     #         data=data,
@@ -215,123 +307,13 @@ from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
 #         y_limits=[-0.05, 0.3]
 #     )
 
-import dcurves
-import pandas as pd
-import statsmodels.api as sm
-
-
-def test_python_model():
-    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-
-    mod = sm.GLM.from_formula('cancer ~ famhistory', data=df_cancer_dx, family=sm.families.Binomial())
-    mod_results = mod.fit()
-
-    # print(mod_results.summary())
-
-
-# def test_python_famhistory1():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['famhistory']
-#         )
-#
-#     plot_graphs(
-#         plot_df=dca_result_df,
-#         graph_type='net_benefit'
-#     )
-
-# def test_python_famhistory2():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['famhistory'],
-#             thresholds=np.arange(0, 0.36, 0.01),
-#         )
-#
-#     plot_graphs(
-#         plot_df=dca_result_df,
-#         graph_type='net_benefit'
-#     )
-
-
-# def test_python_model_multi():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     mod = sm.GLM.from_formula('cancer ~ marker + age + famhistory', data=df_cancer_dx, family=sm.families.Binomial())
-#     mod_results = mod.fit()
-#
-#     print(mod_results.summary())
-
-# def test_python_dca_multi():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['famhistory', 'cancerpredmarker'],
-#             thresholds=np.arange(0,0.36,0.01)
-#         )
-#
-#     plot_graphs(
-#         plot_df=dca_result_df,
-#         y_limits=[-0.05, 0.2],
-#         graph_type='net_benefit'
-#     )
-
-# def test_python_pub_model():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     df_cancer_dx['logodds_brown'] = 0.75 * df_cancer_dx['famhistory'] + 0.26*df_cancer_dx['age'] - 17.5
-#     df_cancer_dx['phat_brown'] = np.exp(df_cancer_dx['logodds_brown']) / (1 + np.exp(df_cancer_dx['logodds_brown']))
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['phat_brown'],
-#             thresholds=np.arange(0,0.36,0.01),
-#         )
-#
-#     plot_graphs(
-#         plot_df=dca_result_df,
-#         y_limits=[-0.05, 0.2],
-#         graph_type='net_benefit'
-#     )
-
-def test_python_joint():
-    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-
-    df_cancer_dx['high_risk'] = np.where(df_cancer_dx['risk_group'] == "high", 1, 0)
-
-
-    # print(df_cancer_dx['cancerpredmarker'] > 0.15)
-    print(np.where((df_cancer_dx['risk_group'] == 'high') |
-                   (df_cancer_dx['cancerpredmarker'] > 0.15, 1, 0)))
-
-    # df_cancer_dx['joint'] = np.where((df_cancer_dx['risk_group'] == 'high' |
-    #                                   df_cancer_dx['cancerpredmarker'] > 0.15), 1, 0)
 
 
 
-    # [1 if risk_level == 'high' | (risk_level == "intermediate" &
-    #                                cancerpredmarker > 0.15) for (risk_level, cancerpredmarker) in zip(df_cancer_dx['risk_group'], df_cancer_dx['cancerpredmarker'])
-    #                          else 0]
-    # df_cancer_dx['conditional'] = [1 if df_cancer_dx['risk_group'] == 'high' |
-    #                                     (df_cancer_dx["risk_group"] == "intermediate" &
-    #                                      df_cancer_dx["cancerpredmarker"] > 0.15)
-    #                                else 0]
 
-    # print(df_cancer_dx)
+
+
+
+
+
+

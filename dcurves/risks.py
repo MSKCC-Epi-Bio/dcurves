@@ -10,10 +10,9 @@ def _calc_binary_risks(
         data: pd.DataFrame,
         outcome: str,
         model: str
-):
+) -> list:
     predicted_vals = sm.formula.glm(outcome + '~' + model, family=sm.families.Binomial(),
                                     data=data).fit().predict()
-    # return [(1 - val) for val in predicted_vals]
     return [val for val in predicted_vals]
 
 @beartype
@@ -28,7 +27,8 @@ def _calc_surv_risks(
     cph = lifelines.CoxPHFitter()
     cph.fit(cph_df, time_to_outcome_col, outcome)
     cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
-    return cph.predict_survival_function(cph_df, times=time).values[0]
+    predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
+    return [val for val in predicted_vals]
 
 @beartype
 def _create_risks_df(
@@ -61,8 +61,8 @@ def _create_risks_df(
 
     machine_epsilon = np.finfo(float).eps
 
-    data['all'] = [1 - machine_epsilon for i in range(0, len(data.index))]
-    data['none'] = [0 + machine_epsilon for i in range(0, len(data.index))]
+    data['all'] = [1 + machine_epsilon for i in range(0, len(data.index))]
+    data['none'] = [0 - machine_epsilon for i in range(0, len(data.index))]
 
     return data
 

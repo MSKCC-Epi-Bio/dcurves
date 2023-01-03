@@ -1,19 +1,20 @@
 # Load data
+from dcurves.load_test_data import load_test_surv_risk_test_df
+from dcurves.load_test_data import load_survival_df
 import dcurves
-from dcurves.load_test_data import load_tutorial_marker_risk_scores
+from dcurves.load_test_data import load_tutorial_bin_marker_risks_list
 
 # load risk functions
-
-from dcurves.risks import _calc_binary_risks
+from dcurves.risks import _calc_binary_risks, _calc_surv_risks
 from dcurves.risks import _create_risks_df
 
 # load tools
 import pandas as pd
 import numpy as np
 
-def test_dca_risks_calc():
+def test_bin_dca_risks_calc():
 
-    r_marker_risks = load_tutorial_marker_risk_scores()
+    r_marker_risks = np.round(sorted(load_tutorial_bin_marker_risks_list()['marker_risk'].tolist()), 10)
 
     df_cancer_dx = \
         pd.read_csv(
@@ -21,34 +22,41 @@ def test_dca_risks_calc():
         )
 
     p_marker_risks = \
-        _calc_binary_risks(
-            data=df_cancer_dx,
-            outcome='cancer',
-            model='marker'
+        np.round(
+            sorted(
+                _calc_binary_risks(
+                    data=df_cancer_dx,
+                    outcome='cancer',
+                    model='marker'
+                )
+            ),
+            10
         )
 
-    r_marker_risks = r_marker_risks['marker_risk'].tolist()
+    assert all(r_marker_risks==p_marker_risks)
 
-    # print(p_marker_risks==r_marker_risks)
 
-    # # print(type(r_marker_risks['marker_risk'].tolist()), ' ', type(p_marker_risks))
-    # # print(sorted(p_marker_risks))
-    #
+def test_surv_dca_risks_calc():
 
-    marker_compare_df = \
-        pd.DataFrame({'r_marker_risks': sorted(r_marker_risks),
-                      'p_marker_risks': sorted(p_marker_risks)})
+    r_surv_risk_test_df = load_test_surv_risk_test_df()
 
-    print(marker_compare_df.to_string())
+    surv_df = load_survival_df()
 
-    for i in range(0,len(marker_compare_df)):
-        if marker_compare_df['r_marker_risks'][i] != marker_compare_df['p_marker_risks'][i]:
-            print(i)
+    surv_marker_calc_list = \
+        _calc_surv_risks(
+            data=surv_df,
+            outcome='cancer',
+            model='marker',
+            time=2,
+            time_to_outcome_col='ttcancer'
+        )
 
-    # print('\n', marker_compare_df)
-    # print('r_marker_risks')
-    # print('\n', marker_compare_df['r_marker_risks'].describe())
-    # print('p_marker_risks')
-    # print('\n', marker_compare_df['p_marker_risks'].describe())
+    comp_df = \
+        pd.DataFrame({'r_marker_risks': r_surv_risk_test_df['marker'].tolist(),
+                      'p_marker_risks': surv_marker_calc_list}).round(decimals=4)
+
+    assert comp_df['r_marker_risks'].equals(comp_df['p_marker_risks'])
+
+
 
 

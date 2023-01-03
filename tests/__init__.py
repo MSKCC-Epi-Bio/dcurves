@@ -13,7 +13,7 @@ r_results_dir = path.join(resources_dir, 'r_results')
 
 # Load data
 import dcurves
-from dcurves.load_test_data import load_tutorial_marker_risk_scores
+from dcurves.load_test_data import load_tutorial_bin_marker_risks_list
 
 # load risk functions
 # from dcurves.risks import _calc_binary_risks

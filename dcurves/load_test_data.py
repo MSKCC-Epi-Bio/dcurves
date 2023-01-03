@@ -41,22 +41,16 @@ def load_binary_df():
 def load_survival_df():
     """Return a dataframe containing a simulation survival data
     """
-
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
-
     # with pkg_resources.resource_stream(__name__, 'data/df_surv.csv') as stream:
     #     data = pd.read_csv(stream, encoding='latin-1')
-
     stream = pkg_resources.resource_stream(__name__, 'data/df_surv.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_case_control_df():
     """Return a dataframe containing a case-control dataset
-
-
     """
-
     # This is a stream-like object. If you want the actual info, call
     # stream.read()
 
@@ -66,17 +60,33 @@ def load_case_control_df():
     stream = pkg_resources.resource_stream(__name__, 'data/df_case_control.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-def load_tutorial_interventions():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_vals.csv')
+def load_tutorial_bin_interventions_df():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_bin_int_df.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+def load_tutorial_bin_marker_risks_list():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_bin_int_marker_risks.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-
-def load_tutorial_risk_df():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_risk_df.csv')
+def load_tutorial_coxph_pr_failure18_vals():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_coxph_pr_failure18_vals.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
+def load_test_surv_risk_test_df():
+    """
+     These are risk scores calculated for marker convert_to_risk in survival case:
+     outcome = 'cancer'
+     model = 'marker'
+     data = load_survival_df() (from above)
+     time=2,
+     time_to_outcome_col='ttcancer'
+    """
+    stream = pkg_resources.resource_stream(__name__, 'data/surv_risk_test_df.csv')
+    return pd.read_csv(stream, encoding='latin-1')
 
+def load_tutorial_r_stdca_coxph_df():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_r_stdca_coxph_df.csv')
+    return pd.read_csv(stream, encoding='latin-1')
 
-def load_tutorial_marker_risk_scores():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_int_marker_risk_scores.csv')
+def load_tutorial_r_stdca_coxph_pr_failure18_test_consequences():
+    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_r_stdca_coxph_pr_failure18_test_consequences.csv')
     return pd.read_csv(stream, encoding='latin-1')

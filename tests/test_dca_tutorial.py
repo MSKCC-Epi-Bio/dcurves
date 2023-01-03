@@ -1,36 +1,29 @@
+# Load Basic Tools
 import numpy as np
 import pandas as pd
-
-from dcurves.load_test_data import load_survival_df
-from dcurves.load_test_data import load_case_control_df
-import statsmodels.api as sm
-
-# from dcurves.plot_graphs import plot_net_benefit
-
-import statsmodels.api as sm
-
 import matplotlib.pyplot as plt
 
-from dcurves.dca import _create_risks_df, _calc_prevalence, _create_initial_df
+
+# Load Data
+from dcurves.load_test_data import load_survival_df
+from dcurves.load_test_data import load_case_control_df
+from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
+from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
+
+# Load Stats Libraries
+import statsmodels.api as sm
+import lifelines
+
+# Load dcurves functions
+from dcurves.dca import _calc_prevalence, _create_initial_df
+from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
 from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
 from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.load_test_data import load_tutorial_interventions
+from dcurves.load_test_data import load_tutorial_bin_interventions_df
 from dcurves.dca import dca
 from dcurves.plot_graphs import plot_graphs
-
 from dcurves.dca import net_intervention_avoided
-
-
-
-
-
-
-
-
-
 import dcurves
-import pandas as pd
-import statsmodels.api as sm
 
 
 # def test_python_model():
@@ -219,92 +212,144 @@ import statsmodels.api as sm
 #
 #     print('\n', dca_table_df[['model', 'threshold', 'net_benefit']])
 
-def test_python_dca_intervention():
+# def test_python_dca_intervention():
+#
+#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+#
+#     dca_result_df = \
+#         dca(
+#             data=df_cancer_dx,
+#             outcome='cancer',
+#             modelnames=['marker'],
+#             thresholds=np.arange(0.05, 0.36, 0.01),
+#             models_to_prob=['marker']
+#         )
+#
+#     dca_interventions_df = \
+#         net_intervention_avoided(
+#             after_dca_df=dca_result_df
+#         )
+#
+#     plot_graphs(
+#         plot_df=dca_interventions_df,
+#         graph_type='net_intervention_avoided',
+#         y_limits=[-10, 70]
+#     )
 
-    r_interventions_df = load_tutorial_interventions()
-    r_interventions_df = r_interventions_df[['variable', 'threshold', 'net_benefit', 'net_intervention_avoided']]
+# def test_python_import_ttcancer():
+#
+#     df_time_to_cancer_dx = \
+#         pd.read_csv(
+#             "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+#         )
+#
+#     print(df_time_to_cancer_dx)
 
-    # print(r_interventions_df.size)
+# def test_python_coxph():
+#
+#     df_time_to_cancer_dx = \
+#         pd.read_csv(
+#                 "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+#             )
+#
+#     cph = lifelines.CoxPHFitter()
+#     cph.fit(df=df_time_to_cancer_dx,
+#             duration_col='ttcancer',
+#             event_col='cancer',
+#             formula='age + famhistory + marker')
+#
+#     cph_pred_vals = \
+#         cph.predict_survival_function(
+#             df_time_to_cancer_dx[['age',
+#                                   'famhistory',
+#                                   'marker']],
+#             times=[1.5])
+#
+#     df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
 
-    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-    dca_result_df = \
+def test_python_stdca_coxph():
+
+    r_stdca_coxph_df = load_tutorial_r_stdca_coxph_df()
+
+    r_stdca_coxph_df = \
+        r_stdca_coxph_df.sort_values(by=['variable',
+                                         'threshold'],
+                                     ascending=[True,
+                                                True]).reset_index(drop=True).drop(['label',
+                                                                                    'pos_rate',
+                                                                                    'harm',
+                                                                                    'n'], axis=1)
+
+    df_time_to_cancer_dx = \
+        pd.read_csv(
+                "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+            )
+
+    cph = lifelines.CoxPHFitter()
+    cph.fit(df=df_time_to_cancer_dx,
+            duration_col='ttcancer',
+            event_col='cancer',
+            formula='age + famhistory + marker')
+
+    cph_pred_vals = \
+        cph.predict_survival_function(
+            df_time_to_cancer_dx[['age',
+                                  'famhistory',
+                                  'marker']],
+            times=[1.5])
+
+    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+
+    surv_dca_results = \
         dca(
-            data=df_cancer_dx,
+            data=df_time_to_cancer_dx,
             outcome='cancer',
-            modelnames=['marker'],
-            thresholds=np.arange(0.05, 0.36, 0.01),
-            models_to_prob=['marker']
+            modelnames=['pr_failure18'],
+            thresholds=np.arange(0, 0.51, 0.01),
+            time=1.5,
+            time_to_outcome_col='ttcancer'
         )
+    surv_dca_results = \
+        surv_dca_results.reset_index().sort_values(by=['model',
+                                                       'threshold'],
+                                                   ascending=[True,
+                                                              True]).reset_index(drop=True).drop(['index',
+                                                                                                  'n',
+                                                                                                  'prevalence',
+                                                                                                  'harm',
+                                                                                                  'test_pos_rate'],
+                                                                                                 axis=1)
 
-    dca_interventions_df = \
-        net_intervention_avoided(
-            after_dca_df=dca_result_df
+
+    round_decimal_num = 0
+
+    # assert r_stdca_coxph_df[
+    #     'threshold'
+    #     ].round(decimals=round_decimal_num).equals(other=surv_dca_results['threshold'].round(decimals=round_decimal_num))
+    # assert r_stdca_coxph_df[
+    #     'tp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['tp_rate'].round(decimals=round_decimal_num))
+    # assert r_stdca_coxph_df[
+    #     'fp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['fp_rate'].round(decimals=round_decimal_num))
+    # assert r_stdca_coxph_df[
+    #     'net_benefit'].round(decimals=round_decimal_num).equals(other=surv_dca_results['net_benefit'].round(decimals=round_decimal_num))
+
+    comp_df = \
+        pd.DataFrame(
+            {
+                'r_models': r_stdca_coxph_df['variable'].tolist(),
+                'p_models': surv_dca_results['model'].tolist(),
+                'r_thresholds': r_stdca_coxph_df['threshold'].tolist(),
+                'p_thresh': surv_dca_results['threshold'].tolist(),
+                'r_tp': r_stdca_coxph_df['tp_rate'].tolist(),
+                'p_tp': surv_dca_results['tp_rate'].tolist()
+            }
         )
-
-    dca_interventions_df = dca_interventions_df[['model', 'threshold', 'net_benefit', 'net_intervention_avoided']]
-
-    r_interventions_df2 = r_interventions_df.sort_values(by=['variable', 'threshold'], ascending=True).reset_index()
-    dca_interventions_df2 = dca_interventions_df.sort_values(by=['model', 'threshold'], ascending=True).reset_index()
-
-    # print(r_interventions_df2)
-
-    # print(' ')
-    # print('\n', pd.concat([r_interventions_df2, dca_interventions_df2], axis=1).to_string())
-    comp_df = pd.concat([r_interventions_df2, dca_interventions_df2], axis=1)
 
     print('\n', comp_df.to_string())
 
-    print()
-    # print(comp_df[['model', 'threshold']])
-
-    # for dan_nb_val, shaun_nb_val in zip(r_interventions_df['net_benefit'], dca_interventions_df['net_benefit']):
-    #     print('\n', 'dan_val: ' + str(dan_nb_val), ' and ', 'Shaun_val: ' + str(shaun_nb_val))
-
-    # print('\n', r_interventions_df['net_benefit'].sort_values())
-    # print('\n', dca_interventions_df['net_benefit'].sort_values().equals(r_interventions_df['net_benefit'].sort_values()))
 
 
 
 
-    # print('\n', r_interventions_df['net_benefit'].sort_values() == dca_interventions_df['net_benefit'].sort_values())
-
-    # print('\n', len(dca_interventions_df))
-
-    # shaun_nia_comp_df = \
-    #     pd.DataFrame({
-    #         'shaun_model': dca_interventions_df['model'],
-    #         'shaun_thresh': dca_interventions_df['threshold'],
-    #         'shaun_nb': dca_interventions_df['net_benefit'],
-    #         'shaun_nia': dca_interventions_df['net_intervention_avoided']
-    #     })
-    #
-    # dan_nia_comp_df = \
-    #     pd.DataFrame({
-    #         'dan_model': r_interventions_df['variable'],
-    #         'dan_thresh': r_interventions_df['threshold'],
-    #         'dan_nb': r_interventions_df['net_benefit'],
-    #         'dan_nia': r_interventions_df['net_intervention_avoided']
-    #     })
-    #
-    # shaun_nia_comp_df2 = shaun_nia_comp_df.sort_values(by=['shaun_model', 'shaun_thresh'], ascending=[True, True])
-    # dan_nia_comp_df2 = dan_nia_comp_df.sort_values(by=['dan_model', 'dan_thresh'], ascending=[True, True])
-    #
-    #
-    # comp_df = pd.concat([shaun_nia_comp_df2, dan_nia_comp_df2], axis=1)
-    # print('\n', comp_df.to_string())
-
-    #
-    # print('\n', comp_df.to_string())
-
-
-
-    # print(nia_comp_df.to_string())
-
-
-    # print(dca_result_df.size)
-
-    # print('\n', r_interventions_df.to_string())
-
-    # print('\n', dca_result_df.to_string())
 

@@ -59,7 +59,7 @@ def _plot_net_intervention_avoided(
         plt.legend(modelnames)
         plt.grid(b=True, which='both', axis='both')
         plt.xlabel('Threshold Values')
-        plt.ylabel('Calculated Net Interventions Avoided')
+        plt.ylabel('Calculated Net Reduction of Interventions Per 100 Patients')
     plt.show()
 
 def plot_graphs(plot_df: pd.DataFrame,

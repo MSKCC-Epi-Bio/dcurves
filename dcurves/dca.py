@@ -6,15 +6,13 @@ import lifelines
 
 from .risks import _create_risks_df
 
- # import _create_risks_df
-
 def _calc_prevalence(
         risks_df: pd.DataFrame,
         outcome: str,
         prevalence: Optional[Union[int, float]] = None,
         time: Optional[Union[int, float]] = None,
         time_to_outcome_col: Optional[str] = None
-):
+) -> float:
     # Binary
     if time_to_outcome_col is None:
         if prevalence is not None:
@@ -30,7 +28,7 @@ def _calc_prevalence(
             kmf = lifelines.KaplanMeierFitter()
             kmf.fit(risks_df[time_to_outcome_col], risks_df[outcome] * 1)  # *1 to convert from boolean to int
             prevalence = 1 - kmf.survival_function_at_times(time)
-            prevalence = prevalence[1]
+            prevalence = float(prevalence)
     return prevalence
 
 @beartype
@@ -42,9 +40,9 @@ def _create_initial_df(
         harm: Optional[dict] = None
 ) -> pd.DataFrame:
 
-    machine_epsilon = np.finfo(float).eps
-    thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
-    thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
+    # machine_epsilon = np.finfo(float).eps
+    # thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
+    # thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
 
     modelnames = np.append(modelnames, ['all', 'none'])
     initial_df = pd.DataFrame(
@@ -209,25 +207,27 @@ def _calc_nonspecific_stats(
         initial_stats_df: pd.DataFrame
 ):
 
-    initial_stats_df['neg_rate'] = 1 - initial_stats_df['prevalence']
-    initial_stats_df['fn_rate'] = initial_stats_df['prevalence'] - initial_stats_df['tp_rate']
-    initial_stats_df['tn_rate'] = initial_stats_df['neg_rate'] - initial_stats_df['fp_rate']
-
     initial_stats_df['net_benefit'] = initial_stats_df['tp_rate'] - initial_stats_df['threshold'] / (
             1 - initial_stats_df['threshold']) * initial_stats_df['fp_rate'] - initial_stats_df['harm']
-    initial_stats_df['test_neg_rate'] = initial_stats_df['fn_rate'] + initial_stats_df['tn_rate']
-    initial_stats_df['ppv'] = initial_stats_df['tp_rate'] /\
-                                  (initial_stats_df['tp_rate'] + initial_stats_df['fp_rate'])
-    initial_stats_df['npv'] = initial_stats_df['tn_rate'] /\
-                                  (initial_stats_df['tn_rate'] + initial_stats_df['fn_rate'])
-    initial_stats_df['sens'] = initial_stats_df['tp_rate'] /\
-                                   (initial_stats_df['tp_rate'] + initial_stats_df['fn_rate'])
-    initial_stats_df['spec'] = initial_stats_df['tn_rate'] /\
-                                   (initial_stats_df['tn_rate'] + initial_stats_df['fp_rate'])
-    initial_stats_df['lr_pos'] = initial_stats_df['sens'] /\
-                                     (1 - initial_stats_df['spec'])
-    initial_stats_df['lr_neg'] = (1 - initial_stats_df['sens']) /\
-                                     initial_stats_df['spec']
+
+    # initial_stats_df['neg_rate'] = 1 - initial_stats_df['prevalence']
+    # initial_stats_df['fn_rate'] = initial_stats_df['prevalence'] - initial_stats_df['tp_rate']
+    # initial_stats_df['tn_rate'] = initial_stats_df['neg_rate'] - initial_stats_df['fp_rate']
+    #
+    #
+    # initial_stats_df['test_neg_rate'] = initial_stats_df['fn_rate'] + initial_stats_df['tn_rate']
+    # initial_stats_df['ppv'] = initial_stats_df['tp_rate'] /\
+    #                               (initial_stats_df['tp_rate'] + initial_stats_df['fp_rate'])
+    # initial_stats_df['npv'] = initial_stats_df['tn_rate'] /\
+    #                               (initial_stats_df['tn_rate'] + initial_stats_df['fn_rate'])
+    # initial_stats_df['sens'] = initial_stats_df['tp_rate'] /\
+    #                                (initial_stats_df['tp_rate'] + initial_stats_df['fn_rate'])
+    # initial_stats_df['spec'] = initial_stats_df['tn_rate'] /\
+    #                                (initial_stats_df['tn_rate'] + initial_stats_df['fp_rate'])
+    # initial_stats_df['lr_pos'] = initial_stats_df['sens'] /\
+    #                                  (1 - initial_stats_df['spec'])
+    # initial_stats_df['lr_neg'] = (1 - initial_stats_df['sens']) /\
+    #                                  initial_stats_df['spec']
 
     final_dca_df = initial_stats_df
 

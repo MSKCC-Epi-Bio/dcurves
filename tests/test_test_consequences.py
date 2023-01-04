@@ -9,6 +9,7 @@ from dcurves.dca import dca
 from dcurves.load_test_data import load_binary_df, load_survival_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
+from dcurves.load_test_data import load_r_simple_surv_dca_result_df
 # Load Tools
 import pandas as pd
 import numpy as np
@@ -20,19 +21,84 @@ import lifelines
 # Doesn't match for pr_failure18 results, so trying on simple case with df surv first, compare to R results
 def test_simple_surv():
 
-    df_surv = load_survival_df()
+    r_benchmark_results = load_r_simple_surv_dca_result_df()\
 
+    r_benchmark_df = \
+        r_benchmark_results[['variable',
+                             'threshold',
+                             'tp_rate']]
+
+    r_benchmark_df = \
+        r_benchmark_df.sort_values(by=['variable',
+                                       'threshold'],
+                                   ascending=[True,
+                                              True]).reset_index(drop=True)
+
+
+    df_surv = load_survival_df()
     surv_dca_results = \
         dca(
             data=df_surv,
             outcome='cancer',
             modelnames=['famhistory'],
-            time=1,
+            time=1.5,
             time_to_outcome_col='ttcancer',
             thresholds=np.arange(0, 1.00, 0.01)
         )
 
-    print(len(surv_dca_results))
+    surv_dca_df = \
+        surv_dca_results[['model',
+                          'threshold',
+                          'tp_rate']]
+
+    surv_dca_df = \
+        surv_dca_df.sort_values(by=['model',
+                                    'threshold'],
+                                ascending=[True,
+                                           True]).reset_index(drop=True)
+
+    round_dec_num = 6
+    r_all_df = r_benchmark_df[r_benchmark_df['variable']=='all']['tp_rate'].round(decimals=round_dec_num)
+    p_all_df = surv_dca_df[surv_dca_df['model']=='all']['tp_rate'].round(decimals=round_dec_num)
+    assert r_all_df.equals(p_all_df)
+
+
+    r_none_df = r_benchmark_df[r_benchmark_df['variable']=='none']['tp_rate'].round(decimals=round_dec_num)
+    p_none_df = surv_dca_df[surv_dca_df['model']=='none']['tp_rate'].round(decimals=round_dec_num)
+    assert r_none_df.equals(p_none_df)
+
+
+
+
+    r_fam_df = r_benchmark_df[r_benchmark_df['variable']=='famhistory']['tp_rate']
+    p_fam_df = surv_dca_df[surv_dca_df['model']=='famhistory']['tp_rate']
+
+    comp_df = \
+        pd.concat([
+            r_all_df,
+            p_all_df
+        ], axis=1)
+    print('\n', comp_df.to_string())
+
+    # assert r_fam_df.equals(p_fam_df)
+
+
+    #
+    # round_dec_num = 4
+    # assert r_benchmark_results['threshold'].round(decimals=round_dec_num).equals(other=surv_dca_results['threshold'].round(decimals=round_dec_num))
+    #
+    # comp_df = \
+    #     pd.concat([r_benchmark_results, surv_dca_results], axis=1).drop(
+    #         ['net_benefit', 'fp_rate', 'n', ], axis=1
+    #     )
+    #
+    # print(comp_df.columns)
+
+
+    # assert r_benchmark_results['tp_rate'].round(decimals=round_dec_num).equals(other=surv_dca_results['tp_rate'].round(decimals=round_dec_num))
+    # assert r_benchmark_results['fp_rate'].round(decimals=10).equals(other=surv_dca_results['fp_rate'].round(decimals=10))
+    # assert r_benchmark_results['net_benefit'].round(decimals=10).equals(other=surv_dca_results['net_benefit'].round(decimals=10))
+
 
 
 def test_tut_pr_failure18_tp_rate():

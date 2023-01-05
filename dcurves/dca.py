@@ -43,10 +43,6 @@ def _create_initial_df(
         harm: Optional[dict] = None
 ) -> pd.DataFrame:
 
-    # machine_epsilon = np.finfo(float).eps
-    # thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
-    # thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
-
     modelnames = np.append(modelnames, ['all', 'none'])
     initial_df = pd.DataFrame(
         {'model':
@@ -110,13 +106,15 @@ def _calc_tp_rate(
         thresholds: np.ndarray,
         model: str,
         outcome: str,
-        test_pos_rate: pd.Series,
-        prevalence_value: Union[float, int],
+        test_pos_rate: Optional[pd.Series] = None,
+        prevalence_value: Optional[Union[float, int]] = None,
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
 ):
+
     # Survival
     if time_to_outcome_col is not None:
+
         risk_rate_among_test_pos = \
             _calc_risk_rate_among_test_pos(
                 risks_df=risks_df,
@@ -127,9 +125,9 @@ def _calc_tp_rate(
                 time=time
             )
         tp_rate = risk_rate_among_test_pos * test_pos_rate
-
     # Binary
-    elif time_to_outcome_col is None :
+
+    elif time_to_outcome_col is None:
         true_outcome = risks_df[risks_df[outcome]==True][[model]]
         tp_rate = []
         for threshold in thresholds:
@@ -139,6 +137,7 @@ def _calc_tp_rate(
                         prevalence_value))
             except KeyError:
                 tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
+
     return pd.Series(tp_rate)
 
 def _calc_fp_rate(
@@ -172,9 +171,9 @@ def _calc_fp_rate(
             try:
                 fp_rate.append(pd.Series(false_outcome[model] >= threshold).value_counts()[1] / len(
                     false_outcome[model]) * (1 - prevalence_value))
-            except KeyError:
+            except IndexError:
                 fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
-    return fp_rate
+    return pd.Series(fp_rate)
 
 @beartype
 def _calc_modelspecific_stats(
@@ -185,7 +184,7 @@ def _calc_modelspecific_stats(
         prevalence_value: Union[float, int],
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
-):
+) -> pd.DataFrame:
 
     for model in initial_df['model'].value_counts().index:
         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
@@ -222,9 +221,9 @@ def _calc_modelspecific_stats(
         # print('outside fp_rate')
         # print(fp_rate)
 
-        initial_df.loc[initial_df['model'] == model, 'test_pos_rate'] = test_pos_rate
-        initial_df.loc[initial_df['model'] == model, 'tp_rate'] = tp_rate
-        initial_df.loc[initial_df['model'] == model, 'fp_rate'] = fp_rate
+        initial_df.loc[initial_df['model'] == model, 'test_pos_rate'] = test_pos_rate.tolist()
+        initial_df.loc[initial_df['model'] == model, 'tp_rate'] = tp_rate.tolist()
+        initial_df.loc[initial_df['model'] == model, 'fp_rate'] = fp_rate.tolist()
 
     return initial_df
 

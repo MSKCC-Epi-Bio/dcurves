@@ -82,3 +82,16 @@ def load_r_simple_surv_dca_result_df():
     """
     stream = pkg_resources.resource_stream(__name__, 'data/r_simple_surv_dca_result_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_simple_surv_tpfp_calc_df():
+    """
+    Dataframe containing columns used to calculate tp/fp rate from r survival dca case for simple testing
+    outcome='cancer'
+    models=['famhistory']
+    thresholds=np.arange(0, 1.0, 0.01)
+    time_to_outcome_col='ttcancer'
+    time=1.5
+    :return:
+    """
+    stream = pkg_resources.resource_stream(__name__, 'data/r_simple_surv_tpfp_calc_df.csv')
+    return pd.read_csv(stream, encoding='latin-1')

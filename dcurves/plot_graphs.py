@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from dcurves import _validate
 from beartype import beartype
 
 @beartype

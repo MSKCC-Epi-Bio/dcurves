@@ -24,6 +24,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/dcurves/data/r_simple_surv_dca_result_df.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/dcurves/data/surv_risk_test_df.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

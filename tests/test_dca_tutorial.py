@@ -35,21 +35,21 @@ import dcurves
 #     print(mod_results.summary())
 
 
-# def test_python_famhistory1():
-#
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['famhistory']
-#         )
-#
-#     plot_graphs(
-#         plot_df=dca_result_df,
-#         graph_type='net_benefit'
-#     )
+def test_python_famhistory1():
+
+    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+
+    dca_result_df = \
+        dca(
+            data=df_cancer_dx,
+            outcome='cancer',
+            modelnames=['famhistory']
+        )
+
+    plot_graphs(
+        plot_df=dca_result_df,
+        graph_type='net_benefit'
+    )
 
 # def test_python_famhistory2():
 #
@@ -268,85 +268,85 @@ import dcurves
 #     df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
 
 
-def test_python_stdca_coxph():
-
-    r_stdca_coxph_df = load_tutorial_r_stdca_coxph_df()
-
-    r_stdca_coxph_df = \
-        r_stdca_coxph_df.sort_values(by=['variable',
-                                         'threshold'],
-                                     ascending=[True,
-                                                True]).reset_index(drop=True).drop(['label',
-                                                                                    'pos_rate',
-                                                                                    'harm',
-                                                                                    'n'], axis=1)
-
-    df_time_to_cancer_dx = \
-        pd.read_csv(
-                "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
-            )
-
-    cph = lifelines.CoxPHFitter()
-    cph.fit(df=df_time_to_cancer_dx,
-            duration_col='ttcancer',
-            event_col='cancer',
-            formula='age + famhistory + marker')
-
-    cph_pred_vals = \
-        cph.predict_survival_function(
-            df_time_to_cancer_dx[['age',
-                                  'famhistory',
-                                  'marker']],
-            times=[1.5])
-
-    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
-
-    surv_dca_results = \
-        dca(
-            data=df_time_to_cancer_dx,
-            outcome='cancer',
-            modelnames=['pr_failure18'],
-            thresholds=np.arange(0, 0.51, 0.01),
-            time=1.5,
-            time_to_outcome_col='ttcancer'
-        )
-    surv_dca_results = \
-        surv_dca_results.reset_index().sort_values(by=['model',
-                                                       'threshold'],
-                                                   ascending=[True,
-                                                              True]).reset_index(drop=True).drop(['index',
-                                                                                                  'n',
-                                                                                                  'prevalence',
-                                                                                                  'harm',
-                                                                                                  'test_pos_rate'],
-                                                                                                 axis=1)
-
-
-    round_decimal_num = 0
-
-    # assert r_stdca_coxph_df[
-    #     'threshold'
-    #     ].round(decimals=round_decimal_num).equals(other=surv_dca_results['threshold'].round(decimals=round_decimal_num))
-    # assert r_stdca_coxph_df[
-    #     'tp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['tp_rate'].round(decimals=round_decimal_num))
-    # assert r_stdca_coxph_df[
-    #     'fp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['fp_rate'].round(decimals=round_decimal_num))
-    # assert r_stdca_coxph_df[
-    #     'net_benefit'].round(decimals=round_decimal_num).equals(other=surv_dca_results['net_benefit'].round(decimals=round_decimal_num))
-
-    comp_df = \
-        pd.DataFrame(
-            {
-                'r_models': r_stdca_coxph_df['variable'].tolist(),
-                'p_models': surv_dca_results['model'].tolist(),
-                'r_thresholds': r_stdca_coxph_df['threshold'].tolist(),
-                'p_thresh': surv_dca_results['threshold'].tolist(),
-                'r_tp': r_stdca_coxph_df['tp_rate'].tolist(),
-                'p_tp': surv_dca_results['tp_rate'].tolist()
-            }
-        )
-
-    print('\n', comp_df.to_string())
+# def test_python_stdca_coxph():
+#
+#     r_stdca_coxph_df = load_tutorial_r_stdca_coxph_df()
+#
+#     r_stdca_coxph_df = \
+#         r_stdca_coxph_df.sort_values(by=['variable',
+#                                          'threshold'],
+#                                      ascending=[True,
+#                                                 True]).reset_index(drop=True).drop(['label',
+#                                                                                     'pos_rate',
+#                                                                                     'harm',
+#                                                                                     'n'], axis=1)
+#
+#     df_time_to_cancer_dx = \
+#         pd.read_csv(
+#                 "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+#             )
+#
+#     cph = lifelines.CoxPHFitter()
+#     cph.fit(df=df_time_to_cancer_dx,
+#             duration_col='ttcancer',
+#             event_col='cancer',
+#             formula='age + famhistory + marker')
+#
+#     cph_pred_vals = \
+#         cph.predict_survival_function(
+#             df_time_to_cancer_dx[['age',
+#                                   'famhistory',
+#                                   'marker']],
+#             times=[1.5])
+#
+#     df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+#
+#     surv_dca_results = \
+#         dca(
+#             data=df_time_to_cancer_dx,
+#             outcome='cancer',
+#             modelnames=['pr_failure18'],
+#             thresholds=np.arange(0, 0.51, 0.01),
+#             time=1.5,
+#             time_to_outcome_col='ttcancer'
+#         )
+#     surv_dca_results = \
+#         surv_dca_results.reset_index().sort_values(by=['model',
+#                                                        'threshold'],
+#                                                    ascending=[True,
+#                                                               True]).reset_index(drop=True).drop(['index',
+#                                                                                                   'n',
+#                                                                                                   'prevalence',
+#                                                                                                   'harm',
+#                                                                                                   'test_pos_rate'],
+#                                                                                                  axis=1)
+#
+#
+#     round_decimal_num = 0
+#
+#     # assert r_stdca_coxph_df[
+#     #     'threshold'
+#     #     ].round(decimals=round_decimal_num).equals(other=surv_dca_results['threshold'].round(decimals=round_decimal_num))
+#     # assert r_stdca_coxph_df[
+#     #     'tp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['tp_rate'].round(decimals=round_decimal_num))
+#     # assert r_stdca_coxph_df[
+#     #     'fp_rate'].round(decimals=round_decimal_num).equals(other=surv_dca_results['fp_rate'].round(decimals=round_decimal_num))
+#     # assert r_stdca_coxph_df[
+#     #     'net_benefit'].round(decimals=round_decimal_num).equals(other=surv_dca_results['net_benefit'].round(decimals=round_decimal_num))
+#
+#     comp_df = \
+#         pd.DataFrame(
+#             {
+#                 'r_models': r_stdca_coxph_df['variable'].tolist(),
+#                 'p_models': surv_dca_results['model'].tolist(),
+#                 'r_thresholds': r_stdca_coxph_df['threshold'].tolist(),
+#                 'p_thresh': surv_dca_results['threshold'].tolist(),
+#                 'r_tp': r_stdca_coxph_df['tp_rate'].tolist(),
+#                 'p_tp': surv_dca_results['tp_rate'].tolist()
+#             }
+#         )
+#
+#     print('\n', comp_df.to_string())
 
 
 

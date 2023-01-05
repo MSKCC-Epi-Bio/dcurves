@@ -64,5 +64,8 @@ def _create_risks_df(
     data['all'] = [1 + machine_epsilon for i in range(0, len(data.index))]
     data['none'] = [0 - machine_epsilon for i in range(0, len(data.index))]
 
+    data.replace(0, 0-machine_epsilon, inplace=True)
+    data.replace(1, 1+machine_epsilon, inplace=True)
+
     return data
 

@@ -4,7 +4,7 @@ from beartype import beartype
 from typing import Optional, Union
 import lifelines
 
-from .risks import _create_risks_df
+from .risks import _create_risks_df, _rectify_model_risk_boundaries
 
 def _calc_prevalence(
         risks_df: pd.DataFrame,
@@ -53,6 +53,7 @@ def _create_initial_df(
          'harm': 0
          }
     )
+
     if harm is not None:
         for model in harm.keys():
             initial_df.loc[initial_df['model'] == model, 'harm'] = harm[model]
@@ -171,7 +172,7 @@ def _calc_fp_rate(
             try:
                 fp_rate.append(pd.Series(false_outcome[model] >= threshold).value_counts()[1] / len(
                     false_outcome[model]) * (1 - prevalence_value))
-            except IndexError:
+            except:
                 fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
     return pd.Series(fp_rate)
 
@@ -187,6 +188,7 @@ def _calc_modelspecific_stats(
 ) -> pd.DataFrame:
 
     for model in initial_df['model'].value_counts().index:
+
         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
                                             thresholds=thresholds,
                                             model=model)
@@ -227,6 +229,7 @@ def _calc_modelspecific_stats(
 
     return initial_df
 
+@beartype
 def _calc_nonspecific_stats(
         initial_stats_df: pd.DataFrame
 ):
@@ -257,6 +260,9 @@ def _calc_nonspecific_stats(
 
     return final_dca_df
 
+
+
+@beartype
 def dca(
         data: pd.DataFrame,
         outcome: str,
@@ -289,11 +295,17 @@ def dca(
             time_to_outcome_col=time_to_outcome_col
         )
 
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
     # 3. calculate prevalences
 
     prevalence_value = \
         _calc_prevalence(
-            risks_df=risks_df,
+            risks_df=rectified_risks_df,
             outcome=outcome,
             prevalence=prevalence,
             time=time,
@@ -306,7 +318,7 @@ def dca(
         _create_initial_df(
             thresholds=thresholds,
             modelnames=modelnames,
-            input_df_rownum=len(risks_df.index),
+            input_df_rownum=len(rectified_risks_df.index),
             prevalence_value=prevalence_value,
             harm=harm
         )
@@ -316,7 +328,7 @@ def dca(
     initial_stats_df = \
         _calc_modelspecific_stats(
             initial_df=initial_df,
-            risks_df=risks_df,
+            risks_df=rectified_risks_df,
             thresholds=thresholds,
             outcome=outcome,
             prevalence_value=prevalence_value,
@@ -332,6 +344,7 @@ def dca(
 
     return final_dca_df
 
+@beartype
 def net_intervention_avoided(
         after_dca_df: pd.DataFrame,
         nper: int = 100

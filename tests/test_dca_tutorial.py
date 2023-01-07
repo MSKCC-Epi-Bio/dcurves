@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 
 # Load Data
+from dcurves.load_test_data import load_r_dca_famhistory
+
 from dcurves.load_test_data import load_survival_df
 from dcurves.load_test_data import load_case_control_df
 from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
@@ -37,19 +39,40 @@ import dcurves
 
 def test_python_famhistory1():
 
-    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+    df_r_dca_famhistory = \
+        load_r_dca_famhistory().sort_values(by=['model',
+                                                'threshold'],
+                                            ascending=[True,
+                                                       True]).reset_index(drop=True)
+
+    df_cancer_dx = \
+        pd.read_csv("https://raw.githubusercontent.com/\n"
+                    "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv").sort_values(
+            by=['variable',
+                'threshold'],
+            ascending=[True,
+                       True]).reset_index(drop=True)
+
+
 
     dca_result_df = \
         dca(
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['famhistory']
-        )
+        ).sort_values(by=['model',
+                          'threshold'],
+                      ascending=[True,
+                                 True]).reset_index(drop=True)
 
-    plot_graphs(
-        plot_df=dca_result_df,
-        graph_type='net_benefit'
-    )
+    print(' ')
+    print(dca_result_df.columns)
+    print(df_r_dca_famhistory.columns)
+
+    # plot_graphs(
+    #     plot_df=dca_result_df,
+    #     graph_type='net_benefit'
+    # )
 
 # def test_python_famhistory2():
 #

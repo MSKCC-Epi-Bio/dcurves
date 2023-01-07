@@ -59,13 +59,20 @@ def _create_risks_df(
                     time_to_outcome_col=time_to_outcome_col
                 )
 
-    machine_epsilon = np.finfo(float).eps
-
-    data['all'] = [1 + machine_epsilon for i in range(0, len(data.index))]
-    data['none'] = [0 - machine_epsilon for i in range(0, len(data.index))]
-
-    data.replace(0, 0-machine_epsilon, inplace=True)
-    data.replace(1, 1+machine_epsilon, inplace=True)
+    data['all'] = [1 for i in range(0, len(data.index))]
+    data['none'] = [0 for i in range(0, len(data.index))]
 
     return data
 
+
+@beartype
+def _rectify_model_risk_boundaries(
+        risks_df: pd.DataFrame,
+        modelnames: list
+) -> pd.DataFrame:
+    machine_epsilon = np.finfo(float).eps
+    for modelname in modelnames:
+        risks_df[modelname].replace(to_replace=0, value=0 - machine_epsilon, inplace=True)
+        risks_df[modelname].replace(to_replace=1, value=1 + machine_epsilon, inplace=True)
+
+    return risks_df

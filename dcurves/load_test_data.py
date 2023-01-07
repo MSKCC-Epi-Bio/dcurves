@@ -99,3 +99,10 @@ def load_r_simple_surv_tpfp_calc_df():
 def load_r_simple_binary_dca_result_df():
     stream = pkg_resources.resource_stream(__name__, 'data/r_simple_binary_dca_result_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+
+# DCA Tutorial Benchmarking files
+
+def load_r_dca_famhistory():
+    stream = pkg_resources.resource_stream(__name__, 'data/r_dca_famhistory.csv')
+    return pd.read_csv(stream, encoding='latin-1')

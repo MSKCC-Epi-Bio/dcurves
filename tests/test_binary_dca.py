@@ -44,10 +44,10 @@ def test_python_bin_dca_and_nia():
     p_net_int_df = \
         net_intervention_avoided(
             after_dca_df=p_dca_df
-        ).reset_index().sort_values(by=['model',
-                                        'threshold'],
-                                    ascending=[True,
-                                               True]).reset_index(drop=True)
+        ).sort_values(by=['model',
+                          'threshold'],
+                      ascending=[True,
+                                 True]).reset_index(drop=True)
 
     r_net_int_df = \
         load_tutorial_bin_interventions_df().sort_values(by=['variable',

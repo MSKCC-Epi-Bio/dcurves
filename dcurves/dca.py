@@ -101,12 +101,30 @@ def _calc_risk_rate_among_test_pos(
         elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
             risk_rate_among_test_pos.append(0)
         else:
-            # print('risk_above_thresh_time')
-            # print(risk_above_thresh_time)
-            # print('risk_above_thresh_outcome')
-            # print(risk_above_thresh_outcome.value_counts())
             kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
             risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
+
+    # sorted_rratp_vals = pd.Series(sorted(risks_df[time_to_outcome_col].values))
+
+
+    # time_and_rratp_df = \
+    #     pd.concat(
+    #         [
+    #             sorted_rratp_vals,
+    #             pd.series(risk_rate_among_test_pos)
+    #         ],
+    #         axis=1
+    #     )
+
+
+
+    # time_and_estimate_df = \
+    #     pd.DataFrame(
+    #         {'ttoutcome': risks_df[time_to_outcome_col].sort_values(by=[time_to_outcome_col])}
+    #     )
+
+    # filtered_rates
+
 
     return pd.Series(risk_rate_among_test_pos)
 
@@ -339,7 +357,7 @@ def dca(
 
     # 6. Generate DCA-ready df with full list of calculated statistics
     final_dca_df = \
-        _calc__stats(
+        _calc_more_stats(
             initial_stats_df=initial_stats_df
         )
 

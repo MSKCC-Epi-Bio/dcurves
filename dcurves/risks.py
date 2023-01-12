@@ -64,14 +64,14 @@ def _create_risks_df(
 
     return data
 
-
 @beartype
 def _rectify_model_risk_boundaries(
         risks_df: pd.DataFrame,
         modelnames: list
 ) -> pd.DataFrame:
+
     machine_epsilon = np.finfo(float).eps
-    for modelname in modelnames:
+    for modelname in np.append(modelnames, ['all', 'none']):
         risks_df[modelname].replace(to_replace=0, value=0 - machine_epsilon, inplace=True)
         risks_df[modelname].replace(to_replace=1, value=1 + machine_epsilon, inplace=True)
 

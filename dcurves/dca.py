@@ -89,16 +89,24 @@ def _calc_risk_rate_among_test_pos(
         time: Union[float, int]
 ) -> pd.Series:
     risk_rate_among_test_pos = []
+
     for threshold in thresholds:
         risk_above_thresh_time = risks_df[risks_df[model] >= threshold][time_to_outcome_col]
         risk_above_thresh_outcome = risks_df[risks_df[model] >= threshold][outcome]
 
         kmf = lifelines.KaplanMeierFitter()
-        try:
+
+        if np.max(risks_df['ttcancer']) < time:
+            risk_rate_among_test_pos.append(None)
+        elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
+            risk_rate_among_test_pos.append(0)
+        else:
+            # print('risk_above_thresh_time')
+            # print(risk_above_thresh_time)
+            # print('risk_above_thresh_outcome')
+            # print(risk_above_thresh_outcome.value_counts())
             kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
             risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
-        except:
-            risk_rate_among_test_pos.append(1)
 
     return pd.Series(risk_rate_among_test_pos)
 
@@ -177,7 +185,7 @@ def _calc_fp_rate(
     return pd.Series(fp_rate)
 
 @beartype
-def _calc_modelspecific_stats(
+def _calc_initial_stats(
         initial_df: pd.DataFrame,
         risks_df: pd.DataFrame,
         thresholds: np.ndarray,
@@ -216,13 +224,6 @@ def _calc_modelspecific_stats(
                 prevalence_value=prevalence_value
             )
 
-        # print('outside test_pos_rate')
-        # print(test_pos_rate)
-        # print('outside tp_rate')
-        # print(tp_rate)
-        # print('outside fp_rate')
-        # print(fp_rate)
-
         initial_df.loc[initial_df['model'] == model, 'test_pos_rate'] = test_pos_rate.tolist()
         initial_df.loc[initial_df['model'] == model, 'tp_rate'] = tp_rate.tolist()
         initial_df.loc[initial_df['model'] == model, 'fp_rate'] = fp_rate.tolist()
@@ -230,7 +231,7 @@ def _calc_modelspecific_stats(
     return initial_df
 
 @beartype
-def _calc_nonspecific_stats(
+def _calc_more_stats(
         initial_stats_df: pd.DataFrame
 ):
 
@@ -326,7 +327,7 @@ def dca(
     # 5. Calculate model-specific consequences
 
     initial_stats_df = \
-        _calc_modelspecific_stats(
+        _calc_initial_stats(
             initial_df=initial_df,
             risks_df=rectified_risks_df,
             thresholds=thresholds,
@@ -338,7 +339,7 @@ def dca(
 
     # 6. Generate DCA-ready df with full list of calculated statistics
     final_dca_df = \
-        _calc_nonspecific_stats(
+        _calc__stats(
             initial_stats_df=initial_stats_df
         )
 

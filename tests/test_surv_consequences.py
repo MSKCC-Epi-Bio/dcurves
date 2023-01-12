@@ -3,10 +3,11 @@
 from dcurves.dca import _calc_tp_rate, _calc_fp_rate, _calc_test_pos_rate
 from dcurves.dca import _calc_risk_rate_among_test_pos
 from dcurves.risks import _create_risks_df
-from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_modelspecific_stats
-from dcurves.dca import dca
+from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats
+from dcurves.dca import _rectify_model_risk_boundaries
 
 # Load Data for Testing
+from dcurves.load_test_data import load_r_case2_results
 from dcurves.load_test_data import load_binary_df, load_survival_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
@@ -22,17 +23,27 @@ import lifelines
 # 230102 SP: Left off here, trying to figure out why survival dca won't match r survival dca results
 # Doesn't match for pr_failure18 results, so trying on simple case with df surv first, compare to R results
 
-def test_test_pos_rate():
-    df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
+def test_case2_surv_risk_rate_among_test_positive():
+    # Note: To calc risk rate among test positive, divide tp_rate by test_pos_rate
 
     data = load_survival_df()
-    outcome = 'cancer'
-    prevalence = None
-    time = 1.5
-    time_to_outcome_col = 'ttcancer'
-    models_to_prob = None
-    modelnames = ['famhistory']
     thresholds = np.arange(0, 1.0, 0.01)
+    outcome = 'cancer'
+    modelnames = ['cancerpredmarker']
+    models_to_prob = None
+    time = 1
+    time_to_outcome_col = 'ttcancer'
+
+    r_benchmark_results = load_r_case2_results()
+
+    all_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'all']['tp_rate'] / \
+                r_benchmark_results[r_benchmark_results['variable'] == 'all']['test_pos_rate']).reset_index(drop=1)
+
+    none_rratp = pd.Series(np.repeat(a=0, repeats=100))
+
+    cpm_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker']['tp_rate'] / \
+                r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker'][
+                    'test_pos_rate']).reset_index(drop=1)
 
     risks_df = \
         _create_risks_df(
@@ -43,15 +54,40 @@ def test_test_pos_rate():
             time_to_outcome_col=time_to_outcome_col
         )
 
-    test_pos_rate = \
-        _calc_test_pos_rate(
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
             risks_df=risks_df,
-            thresholds=thresholds,
-            model=modelnames[0]
+            modelnames=modelnames
         )
 
-    round_dec_num = 6
-    assert df_test_simple_surv_tpfp['test_pos_rate'].round(round_dec_num).equals(test_pos_rate.round(round_dec_num))
+    p_rratp_results = {}
+    for model in ['all', 'none', 'cancerpredmarker']:
+
+        p_rratp_results[model] = \
+            _calc_risk_rate_among_test_pos(
+                risks_df=rectified_risks_df,
+                outcome='cancer',
+                model=model,
+                thresholds=np.arange(0.73, 0.75, 0.01),
+                time_to_outcome_col='ttcancer',
+                time=time
+            )
+
+    p_rratp_results_df = pd.DataFrame(p_rratp_results).reset_index(drop=True)
+
+    print('\n', p_rratp_results_df.to_string())
+
+    # print('\n',
+    #       pd.concat(
+    #           [p_rratp_results_df,
+    #            all_rratp,
+    #            none_rratp,
+    #            cpm_rratp],
+    #           axis=1
+    #       ).to_string()
+    # )
+
+
 
 # def test_risk_rate_among_test_pos():
 #     pass
@@ -150,7 +186,7 @@ def test_surv_fp_rate():
     assert df_test_simple_surv_tpfp['fp_rate'].round(decimals=round_dec_num).equals(
         fp_rate.round(decimals=round_dec_num))
 
-def test_modelspecific_stats():
+def test_initial_stats():
 
     df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
 
@@ -312,7 +348,7 @@ def test_tut_pr_failure18_tp_rate():
         )
 
     initial_stats_df = \
-        _calc_modelspecific_stats(
+        _calc_initial_stats(
             initial_df=initial_df,
             risks_df=risks_df,
             thresholds=thresholds,

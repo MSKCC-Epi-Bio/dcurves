@@ -1,8 +1,10 @@
 # Load data
 from dcurves.load_test_data import load_test_surv_risk_test_df
-from dcurves.load_test_data import load_survival_df
+from dcurves.load_test_data import load_binary_df, load_survival_df
+
 import dcurves
 from dcurves.load_test_data import load_tutorial_bin_marker_risks_list
+from dcurves.risks import _rectify_model_risk_boundaries
 
 # load risk functions
 from dcurves.risks import _calc_binary_risks, _calc_surv_risks
@@ -60,6 +62,26 @@ def test_surv_dca_risks_calc():
 
 def test_rectify_model_risk_boundaries():
 
+    data = load_binary_df()
+    modelnames = ['famhistory']
 
-    pass
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome='cancer'
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    machine_epsilon = np.finfo(float).eps
+    assert rectified_risks_df['all'][0] == 1 + machine_epsilon
+    assert not rectified_risks_df['all'][0] == 1
+    assert rectified_risks_df['none'][0] == 0 - machine_epsilon
+    assert not rectified_risks_df['none'][0] == 0
+
+
 

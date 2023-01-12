@@ -4,7 +4,7 @@ from dcurves.dca import net_intervention_avoided
 from dcurves.plot_graphs import plot_graphs
 
 from dcurves.dca import _calc_prevalence, _create_initial_df
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+from dcurves.dca import _calc_initial_stats, _calc_more_stats
 from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
 
 
@@ -116,10 +116,10 @@ def test_surv_dca():
             harm=harm
         )
 
-    # 5. Calculate model-specific consequences
+    # 5. Calculate initial consequences
 
     initial_stats_df = \
-        _calc_modelspecific_stats(
+        _calc_initial_stats(
             initial_df=initial_df,
             risks_df=risks_df,
             thresholds=thresholds,
@@ -131,7 +131,7 @@ def test_surv_dca():
 
     # 6. Generate DCA-ready df with full list of calculated statistics
     final_dca_df = \
-        _calc_nonspecific_stats(
+        _calc_more_stats(
             initial_stats_df=initial_stats_df
         )
 

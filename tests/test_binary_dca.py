@@ -4,7 +4,7 @@ from dcurves.dca import net_intervention_avoided
 from dcurves.plot_graphs import plot_graphs
 
 from dcurves.dca import _calc_prevalence, _create_initial_df
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+from dcurves.dca import _calc_initial_stats, _calc_more_stats
 from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
 
 

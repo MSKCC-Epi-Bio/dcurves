@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 # Load Data
 from dcurves.load_test_data import load_r_dca_famhistory
 
-from dcurves.load_test_data import load_survival_df
-from dcurves.load_test_data import load_case_control_df
-from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
-from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
+# from dcurves.load_test_data import load_survival_df
+# from dcurves.load_test_data import load_case_control_df
+# from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
+# from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
 
 # Load Stats Libraries
 import statsmodels.api as sm
@@ -19,7 +19,7 @@ import lifelines
 # Load dcurves functions
 from dcurves.dca import _calc_prevalence, _create_initial_df
 from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
-from dcurves.dca import _calc_modelspecific_stats, _calc_nonspecific_stats
+from dcurves.dca import _calc_initial_stats, _calc_more_stats
 from dcurves.load_test_data import load_binary_df, load_survival_df
 from dcurves.load_test_data import load_tutorial_bin_interventions_df
 from dcurves.dca import dca
@@ -40,34 +40,65 @@ import dcurves
 def test_python_famhistory1():
 
     df_r_dca_famhistory = \
-        load_r_dca_famhistory().sort_values(by=['model',
-                                                'threshold'],
-                                            ascending=[True,
-                                                       True]).reset_index(drop=True)
+        load_r_dca_famhistory().sort_values(by=['variable',
+                                                'threshold'], ascending=[True,
+                                                                         True]).reset_index(drop=True)
 
     df_cancer_dx = \
-        pd.read_csv("https://raw.githubusercontent.com/\n"
-                    "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv").sort_values(
-            by=['variable',
-                'threshold'],
-            ascending=[True,
-                       True]).reset_index(drop=True)
-
-
+        pd.read_csv("https://raw.githubusercontent.com/"
+                    "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
     dca_result_df = \
         dca(
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['famhistory']
-        ).sort_values(by=['model',
-                          'threshold'],
-                      ascending=[True,
-                                 True]).reset_index(drop=True)
+        )
 
-    print(' ')
-    print(dca_result_df.columns)
-    print(df_r_dca_famhistory.columns)
+    # print('\n', dca_result_df.to_string())
+
+    #
+    dca_result_df = \
+        dca_result_df.sort_values(by=['model',
+                                      'threshold'],
+                                  ascending=[True,
+                                             True]).reset_index(drop=True)
+
+    # print('\n', dca_result_df.to_string())
+
+    # print('\n', 'R DCA')
+    # print(df_r_dca_famhistory.to_string())
+    # print('\n', 'Local DCA')
+    # print(dca_result_df.to_string())
+
+    for model in ['all', 'none', 'famhistory']:
+        round_dec_num = 6
+        r_nb = df_r_dca_famhistory[df_r_dca_famhistory[
+                                       'variable'] == model][
+            ['variable', 'threshold', 'net_benefit']].round(decimals=round_dec_num).reset_index(drop=True)
+        p_nb = dca_result_df[dca_result_df['model'] \
+                             == model][['model', 'threshold', 'net_benefit']].round(decimals=round_dec_num).reset_index(drop=True)
+
+        comp_df = \
+            pd.concat(
+                [r_nb,
+                 p_nb],
+                axis=1
+            )
+
+        print(
+            '\n',
+            comp_df.to_string()
+        )
+
+        # assert r_nb.round(decimals=round_dec_num).equals(p_nb.round(decimals=round_dec_num))
+
+
+
+    #
+    # print(' ')
+    # print(dca_result_df.columns)
+    # print(df_r_dca_famhistory.columns)
 
     # plot_graphs(
     #     plot_df=dca_result_df,

@@ -3,7 +3,7 @@
 from dcurves.dca import _calc_tp_rate, _calc_fp_rate, _calc_test_pos_rate
 from dcurves.dca import _calc_risk_rate_among_test_pos
 from dcurves.risks import _create_risks_df
-from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats
+from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats, _calc_more_stats
 from dcurves.dca import _rectify_model_risk_boundaries
 
 # Load Data for Testing
@@ -38,16 +38,78 @@ def test_case2_surv_risk_rate_among_test_positive():
     harm = None
     prevalence = None
 
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
+    model_rratp_dict = {}
+    for model in ['all', 'none', 'cancerpredmarker']:
+        risk_rate_among_test_pos_series = \
+            _calc_risk_rate_among_test_pos(
+                risks_df=rectified_risks_df,
+                outcome=outcome,
+                model=model,
+                thresholds=thresholds,
+                time_to_outcome_col=time_to_outcome_col,
+                time=time
+            )
+        model_rratp_dict[model] = risk_rate_among_test_pos_series.reset_index(drop=1)
+
     r_benchmark_results = load_r_case2_results()
 
-    # all_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'all']['tp_rate'] / \
-    #             r_benchmark_results[r_benchmark_results['variable'] == 'all']['test_pos_rate']).reset_index(drop=1)
-    #
-    # none_rratp = pd.Series([0]*100)
-    #
-    # cpm_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker']['tp_rate'] / \
-    #             r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker'][
-    #                 'test_pos_rate']).reset_index(drop=1)
+    r_benchmark_results['risk_rate_among_test_pos'] = \
+        r_benchmark_results.tp_rate / r_benchmark_results.test_pos_rate
+    r_benchmark_results.loc[r_benchmark_results.variable == 'none', 'risk_rate_among_test_pos'] = float(0)
+
+    for model in ['all', 'none', 'cancerpredmarker']:
+
+        assert model_rratp_dict[
+            model].reset_index(drop=True).round(decimals=5).equals(r_benchmark_results[
+            r_benchmark_results.variable == model]['risk_rate_among_test_pos'].reset_index(drop=True).round(decimals=5))
+
+
+def test_case2_all_stats():
+
+    r_benchmark_results = load_r_case2_results()
+
+    data = load_survival_df()
+    outcome = 'cancer'
+    prevalence = None
+    time = 1
+    time_to_outcome_col = 'ttcancer'
+    models_to_prob = None
+    modelnames = ['cancerpredmarker']
+    thresholds = np.arange(0, 1.0, 0.01)
+    harm = None
 
     risks_df = \
         _create_risks_df(
@@ -82,379 +144,152 @@ def test_case2_surv_risk_rate_among_test_positive():
             harm=harm
         )
 
-    p_rratp_results = {}
+    initial_stats_df = \
+        _calc_initial_stats(
+            initial_df=initial_df,
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            outcome=outcome,
+            prevalence_value=prevalence_value,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    final_dca_df = \
+        _calc_more_stats(
+            initial_stats_df=initial_stats_df
+        )
+
     for model in ['all', 'none', 'cancerpredmarker']:
+        for stat in ['tp_rate', 'fp_rate', 'net_benefit']:
 
-        # print(
-        #     '\n',
-        #     _calc_risk_rate_among_test_pos(
-        #         risks_df=rectified_risks_df,
-        #
-        #     )
-        # )
+            round_dec_num = 6
+            p_tp_rate_series = final_dca_df[
+                final_dca_df.model == model][stat].reset_index(drop=True).round(decimals=round_dec_num)
 
-        p_rratp_results[model] = \
-            _calc_risk_rate_among_test_pos(
-                risks_df=rectified_risks_df,
-                outcome='cancer',
-                model=model,
-                thresholds=thresholds,
-                time_to_outcome_col='ttcancer',
-                time=time
-            )
+            r_tp_rate_series = r_benchmark_results[
+                r_benchmark_results.variable == model][stat].reset_index(drop=1).round(decimals=round_dec_num)
 
-    p_rratp_results_df = pd.DataFrame(p_rratp_results).reset_index(drop=True)
+            assert p_tp_rate_series.equals(r_tp_rate_series)
 
-    round_dec_num = 6
-    assert p_rratp_results_df['all'].round(decimals=round_dec_num).equals(all_rratp.round(decimals=round_dec_num))
-    assert p_rratp_results_df['none'].round(decimals=round_dec_num).equals(none_rratp.round(decimals=round_dec_num))
-    assert p_rratp_results_df[
-        'cancerpredmarker'].round(decimals=round_dec_num).equals(cpm_rratp.round(decimals=round_dec_num))
 
-# def test_case2_surv_tp_rate():
-#
-#     r_benchmark_results = load_r_case2_results()
-#
-#     data = load_survival_df()
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = 1.5
-#     time_to_outcome_col = 'ttcancer'
-#     models_to_prob = None
-#     modelnames = ['famhistory']
-#     thresholds = np.arange(0, 1.0, 0.01)
-#     harm = None
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     rectified_risks_df = \
-#         _rectify_model_risk_boundaries(
-#             risks_df=risks_df,
-#             modelnames=modelnames
-#         )
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=rectified_risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(rectified_risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     initial_stats_df = \
-#         _calc_initial_stats(
-#             initial_df=initial_df,
-#             risks_df=rectified_risks_df,
-#             thresholds=thresholds,
-#             outcome=outcome,
-#             prevalence_value=prevalence_value,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     test_pos_rate = \
-#         _calc_test_pos_rate(risks_df=rectified_risks_df,
-#                             thresholds=thresholds,
-#                             model=modelnames[0]
-#                             )
-#
-#     risk_rate_among_test_pos = \
-#         _calc_risk_rate_among_test_pos(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             model=modelnames[0],
-#             thresholds=thresholds,
-#             time_to_outcome_col=time_to_outcome_col,
-#             time=time
-#         )
-#
-#     tp_rate = risk_rate_among_test_pos * test_pos_rate
-#
-#     # print(tp_rate)
-#
-#     round_dec_num = 6
-    # assert df_test_simple_surv_tpfp['tp_rate'].round(decimals=round_dec_num).equals(tp_rate.round(decimals=round_dec_num))
-    # print(
-    #     pd.concat(
-    #         [
-    #
-    #         ]
-    #     )
-    # )
+def test_tut_pr_failure18_tp_rate():
 
-# def test_surv_fp_rate():
-#     df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
-#
-#     data = load_survival_df()
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = 1.5
-#     time_to_outcome_col = 'ttcancer'
-#     models_to_prob = None
-#     modelnames = ['famhistory']
-#     thresholds = np.arange(0, 1.0, 0.01)
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     test_pos_rate = \
-#         _calc_test_pos_rate(risks_df=risks_df,
-#                             thresholds=thresholds,
-#                             model=modelnames[0]
-#                             )
-#
-#     risk_rate_among_test_pos = \
-#         _calc_risk_rate_among_test_pos(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             model=modelnames[0],
-#             thresholds=thresholds,
-#             time_to_outcome_col=time_to_outcome_col,
-#             time=time
-#         )
-#
-#     fp_rate = (1 - risk_rate_among_test_pos) * test_pos_rate
-#
-#     # comp_df = \
-#     #     pd.concat(
-#     #         [
-#     #             fp_rate,
-#     #             df_test_simple_surv_tpfp['fp_rate']
-#     #
-#     #         ], axis=1
-#     #     )
-#
-#     round_dec_num = 5
-#     assert df_test_simple_surv_tpfp['fp_rate'].round(decimals=round_dec_num).equals(
-#         fp_rate.round(decimals=round_dec_num))
-#
-# def test_initial_stats():
-#
-#     df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
-#
-#     data = load_survival_df()
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = 1.5
-#     time_to_outcome_col = 'ttcancer'
-#     models_to_prob = None
-#     modelnames = ['famhistory']
-#     thresholds = np.arange(0, 1.0, 0.01)
-#     harm = None
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 3. calculate prevalences
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 4. Create initial dataframe for binary/survival cases
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     # 5. Calculate model-specific consequences
-#
-#     for model in initial_df['model'].value_counts().index:
-#         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
-#                                             thresholds=thresholds,
-#                                             model=model)
-#         tp_rate = \
-#             _calc_tp_rate(
-#                 risks_df=risks_df,
-#                 thresholds=thresholds,
-#                 model=model,
-#                 outcome=outcome,
-#                 time=time,
-#                 time_to_outcome_col=time_to_outcome_col,
-#                 test_pos_rate=test_pos_rate,
-#                 prevalence_value=prevalence_value
-#             )
-#
-#         fp_rate = \
-#             _calc_fp_rate(
-#                 risks_df=risks_df,
-#                 thresholds=thresholds,
-#                 model=model,
-#                 outcome=outcome,
-#                 time=time,
-#                 time_to_outcome_col=time_to_outcome_col,
-#                 test_pos_rate=test_pos_rate,
-#                 prevalence_value=prevalence_value
-#             )
-#
-#         initial_df.loc[initial_df['model'] == model, 'test_pos_rate'] = test_pos_rate.tolist()
-#         initial_df.loc[initial_df['model'] == model, 'tp_rate'] = tp_rate.tolist()
-#         initial_df.loc[initial_df['model'] == model, 'fp_rate'] = fp_rate.tolist()
-#
-#     assert not initial_df.isnull().values.any()
-#
-#     round_dec_num = 6
-#     for i in ['test_pos_rate', 'tp_rate', 'fp_rate']:
-#         assert initial_df[initial_df['model'] == 'famhistory'][i].round(
-#             decimals=\
-#             round_dec_num).equals(df_test_simple_surv_tpfp[i].round(decimals=round_dec_num))
-#
-# def test_tut_pr_failure18_tp_rate():
-#
-#     df_time_to_cancer_dx = \
-#             pd.read_csv(
-#                     "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
-#                 )
-#     cph = lifelines.CoxPHFitter()
-#     cph.fit(df=df_time_to_cancer_dx,
-#             duration_col='ttcancer',
-#             event_col='cancer',
-#             formula='age + famhistory + marker')
-#     cph_pred_vals = \
-#         cph.predict_survival_function(
-#             df_time_to_cancer_dx[['age',
-#                                   'famhistory',
-#                                   'marker']],
-#             times=[1.5]
-#         )
-#     df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
-#
-#     df_time_to_cancer_dx = \
-#             pd.read_csv(
-#                     "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
-#                 )
-#     cph = lifelines.CoxPHFitter()
-#     cph.fit(df=df_time_to_cancer_dx,
-#             duration_col='ttcancer',
-#             event_col='cancer',
-#             formula='age + famhistory + marker')
-#     cph_pred_vals = \
-#         cph.predict_survival_function(
-#             df_time_to_cancer_dx[['age',
-#                                   'famhistory',
-#                                   'marker']],
-#             times=[1.5]
-#         )
-#
-#     df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
-#
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = 1.5
-#     time_to_outcome_col = 'ttcancer'
-#     thresholds = np.arange(0, 0.51, 0.01)
-#     modelnames = ['pr_failure18']
-#     harm = None
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=df_time_to_cancer_dx,
-#             outcome='cancer',
-#             models_to_prob=None,
-#             time=time,
-#             time_to_outcome_col='ttcancer'
-#         )
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     initial_stats_df = \
-#         _calc_initial_stats(
-#             initial_df=initial_df,
-#             risks_df=risks_df,
-#             thresholds=thresholds,
-#             outcome=outcome,
-#             prevalence_value=prevalence_value,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         ).reset_index().sort_values(by=['model',
-#                                         'threshold'],
-#                                     ascending=[True,
-#                                                True]).reset_index(drop=True)
-#
-#     r_stats_df = load_tutorial_r_stdca_coxph_df().reset_index().sort_values(by=['variable',
-#                                         'threshold'],
-#                                     ascending=[True,
-#                                                True]).reset_index(drop=True)
-#
-#     pr_failure18_conseq = load_tutorial_r_stdca_coxph_pr_failure18_test_consequences()
-#
-#     comp_df = \
-#         pd.concat(
-#             [
-#                 initial_stats_df,
-#                 r_stats_df
-#             ],
-#             axis=1
-#         ).drop(['harm', 'index', 'label', 'n', 'net_benefit'], axis=1)
-#
-#     # Remove all, none models since those are the same
-#     # Differences pop up in pr_failure18
-#
-#     comp_df = comp_df[comp_df['model']=='pr_failure18'].reset_index(drop=True)
-#     comp_df = pd.concat([comp_df, pr_failure18_conseq[['r_test_pos_rate']]], axis=1)
-#
-#     # From test below we know test_pos_rate is same between Python and R
-#     round_dec_num = 7
-#     assert comp_df['test_pos_rate'].round(
-#         decimals=round_dec_num
-#     ).equals(comp_df['r_test_pos_rate'].round(
-#         decimals=round_dec_num
-#     ))
+    df_time_to_cancer_dx = \
+            pd.read_csv(
+                    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+                )
+    cph = lifelines.CoxPHFitter()
+    cph.fit(df=df_time_to_cancer_dx,
+            duration_col='ttcancer',
+            event_col='cancer',
+            formula='age + famhistory + marker')
+    cph_pred_vals = \
+        cph.predict_survival_function(
+            df_time_to_cancer_dx[['age',
+                                  'famhistory',
+                                  'marker']],
+            times=[1.5]
+        )
+    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+
+    df_time_to_cancer_dx = \
+            pd.read_csv(
+                    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+                )
+    cph = lifelines.CoxPHFitter()
+    cph.fit(df=df_time_to_cancer_dx,
+            duration_col='ttcancer',
+            event_col='cancer',
+            formula='age + famhistory + marker')
+    cph_pred_vals = \
+        cph.predict_survival_function(
+            df_time_to_cancer_dx[['age',
+                                  'famhistory',
+                                  'marker']],
+            times=[1.5]
+        )
+
+    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+
+    outcome = 'cancer'
+    prevalence = None
+    time = 1.5
+    time_to_outcome_col = 'ttcancer'
+    thresholds = np.arange(0, 0.51, 0.01)
+    modelnames = ['pr_failure18']
+    harm = None
+
+    risks_df = \
+        _create_risks_df(
+            data=df_time_to_cancer_dx,
+            outcome='cancer',
+            models_to_prob=None,
+            time=time,
+            time_to_outcome_col='ttcancer'
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
+    initial_stats_df = \
+        _calc_initial_stats(
+            initial_df=initial_df,
+            risks_df=risks_df,
+            thresholds=thresholds,
+            outcome=outcome,
+            prevalence_value=prevalence_value,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        ).reset_index().sort_values(by=['model',
+                                        'threshold'],
+                                    ascending=[True,
+                                               True]).reset_index(drop=True)
+
+    r_stats_df = load_tutorial_r_stdca_coxph_df().reset_index().sort_values(by=['variable',
+                                        'threshold'],
+                                    ascending=[True,
+                                               True]).reset_index(drop=True)
+
+    pr_failure18_conseq = load_tutorial_r_stdca_coxph_pr_failure18_test_consequences()
+
+    comp_df = \
+        pd.concat(
+            [
+                initial_stats_df,
+                r_stats_df
+            ],
+            axis=1
+        ).drop(['harm', 'index', 'label', 'n', 'net_benefit'], axis=1)
+
+    # Remove all, none models since those are the same
+    # Differences pop up in pr_failure18
+
+    comp_df = comp_df[comp_df['model']=='pr_failure18'].reset_index(drop=True)
+    comp_df = pd.concat([comp_df, pr_failure18_conseq[['r_test_pos_rate']]], axis=1)
+
+    # From test below we know test_pos_rate is same between Python and R
+    round_dec_num = 7
+    assert comp_df['test_pos_rate'].round(
+        decimals=round_dec_num
+    ).equals(comp_df['r_test_pos_rate'].round(
+        decimals=round_dec_num
+    ))
 
 
 

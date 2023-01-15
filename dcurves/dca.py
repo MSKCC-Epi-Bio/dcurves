@@ -91,40 +91,23 @@ def _calc_risk_rate_among_test_pos(
         time: Union[float, int]
 ) -> pd.Series:
     risk_rate_among_test_pos = []
-
     for threshold in thresholds:
+
         risk_above_thresh_time = risks_df[risks_df[model] >= threshold][time_to_outcome_col]
         risk_above_thresh_outcome = risks_df[risks_df[model] >= threshold][outcome]
 
         kmf = lifelines.KaplanMeierFitter()
-        rr_times = kmf.timeline
 
         if np.max(risks_df['ttcancer']) < time:
             risk_rate_among_test_pos.append(None)
         elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
-            risk_rate_among_test_pos.append(0)
-        elif np.max(rr_times) < time:
-
-            risk_rate_among_test_pos.append(None)
+            risk_rate_among_test_pos.append(float(0))
         else:
             kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
-            risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
-
-
-    # sorted_rratp_vals = pd.Series(sorted(risks_df[time_to_outcome_col].values))
-    # time_and_rratp_df = \
-    #     pd.concat(
-    #         [
-    #             sorted_rratp_vals,
-    #             pd.series(risk_rate_among_test_pos)
-    #         ],
-    #         axis=1
-    #     )
-    # time_and_estimate_df = \
-    #     pd.DataFrame(
-    #         {'ttoutcome': risks_df[time_to_outcome_col].sort_values(by=[time_to_outcome_col])}
-    #     )
-    # filtered_rates
+            if np.max(kmf.timeline) < time:
+                risk_rate_among_test_pos.append(None)
+            elif np.max(kmf.timeline) >= time:
+                risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
 
     return pd.Series(risk_rate_among_test_pos)
 

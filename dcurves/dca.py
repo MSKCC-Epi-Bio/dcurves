@@ -19,10 +19,11 @@ def _calc_prevalence(
             pass
         elif prevalence is None:
             outcome_values = risks_df[outcome].values.flatten().tolist()
-            try:
-                prevalence = pd.Series(outcome_values).value_counts()[1] / len(outcome_values)
-            except:
+            outcome_tf_counts_dict = dict(pd.Series(outcome_values).value_counts())
+            if True not in outcome_tf_counts_dict:
                 prevalence = 0 / len(outcome_values)
+            else:
+                prevalence = outcome_tf_counts_dict[True] / len(outcome_values)
     # Survival
     elif time_to_outcome_col is not None:
         if prevalence is not None:
@@ -72,11 +73,12 @@ def _calc_test_pos_rate(
     test_pos_rate = []
 
     for threshold in thresholds:
-        try:
-            test_pos_rate.append(
-                pd.Series(risks_df[model] >= threshold).value_counts()[1] / len(risks_df.index))
-        except KeyError:
+        risk_above_thresh_tf_dict = dict(pd.Series(risks_df[model] >= threshold).value_counts())
+
+        if True not in risk_above_thresh_tf_dict:
             test_pos_rate.append(0 / len(risks_df.index))
+        elif True in risk_above_thresh_tf_dict:
+            test_pos_rate.append(risk_above_thresh_tf_dict[True]/len(risks_df.index))
 
     return pd.Series(test_pos_rate)
 
@@ -95,18 +97,21 @@ def _calc_risk_rate_among_test_pos(
         risk_above_thresh_outcome = risks_df[risks_df[model] >= threshold][outcome]
 
         kmf = lifelines.KaplanMeierFitter()
+        rr_times = kmf.timeline
 
         if np.max(risks_df['ttcancer']) < time:
             risk_rate_among_test_pos.append(None)
         elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
             risk_rate_among_test_pos.append(0)
+        elif np.max(rr_times) < time:
+
+            risk_rate_among_test_pos.append(None)
         else:
             kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
             risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
 
+
     # sorted_rratp_vals = pd.Series(sorted(risks_df[time_to_outcome_col].values))
-
-
     # time_and_rratp_df = \
     #     pd.concat(
     #         [
@@ -115,18 +120,14 @@ def _calc_risk_rate_among_test_pos(
     #         ],
     #         axis=1
     #     )
-
-
-
     # time_and_estimate_df = \
     #     pd.DataFrame(
     #         {'ttoutcome': risks_df[time_to_outcome_col].sort_values(by=[time_to_outcome_col])}
     #     )
-
     # filtered_rates
 
-
     return pd.Series(risk_rate_among_test_pos)
+
 
 def _calc_tp_rate(
         risks_df: pd.DataFrame,
@@ -137,7 +138,7 @@ def _calc_tp_rate(
         prevalence_value: Optional[Union[float, int]] = None,
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
-):
+) -> pd.Series:
 
     # Survival
     if time_to_outcome_col is not None:
@@ -153,17 +154,15 @@ def _calc_tp_rate(
             )
         tp_rate = risk_rate_among_test_pos * test_pos_rate
     # Binary
-
     elif time_to_outcome_col is None:
         true_outcome = risks_df[risks_df[outcome]==True][[model]]
         tp_rate = []
         for threshold in thresholds:
-            try:
-                tp_rate.append(
-                    pd.Series(true_outcome[model] >= threshold).value_counts()[1] / len(true_outcome[model]) * (
-                        prevalence_value))
-            except KeyError:
+            true_tf_above_thresh_dict = dict(pd.Series(true_outcome[model] >= threshold).value_counts())
+            if True not in true_tf_above_thresh_dict:
                 tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
+            elif True in true_tf_above_thresh_dict:
+                tp_rate.append(true_tf_above_thresh_dict[True] / len(true_outcome[model]) * (prevalence_value))
 
     return pd.Series(tp_rate)
 
@@ -172,10 +171,10 @@ def _calc_fp_rate(
         thresholds: np.ndarray,
         model: str,
         outcome: str,
-        time: Union[float, int],
-        time_to_outcome_col: str,
-        test_pos_rate: pd.Series,
-        prevalence_value: Union[float, int]
+        test_pos_rate: Optional[pd.Series] = None,
+        prevalence_value: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None,
 ) -> pd.Series:
     # Survival
     if time_to_outcome_col is not None:
@@ -294,17 +293,6 @@ def dca(
         time_to_outcome_col: Optional[str] = None
 ) -> pd.DataFrame:
 
-    # Adjust thresholds to be 0 - eps or 1 + eps
-
-    # machine_epsilon = np.finfo(float).eps
-    # thresholds = np.where(thresholds == 0.00, 0.00 + machine_epsilon, thresholds)
-    # thresholds = np.where(thresholds == 1.00, 1.00 - machine_epsilon, thresholds)
-
-    # 1. Perform checks on inputs to see if user is high or not
-    # check_inputs(...)
-
-    # 2. Convert requested columns to risk scores 0 to 1
-
     risks_df = \
         _create_risks_df(
             data=data,
@@ -320,8 +308,6 @@ def dca(
             modelnames=modelnames
         )
 
-    # 3. calculate prevalences
-
     prevalence_value = \
         _calc_prevalence(
             risks_df=rectified_risks_df,
@@ -331,8 +317,6 @@ def dca(
             time_to_outcome_col=time_to_outcome_col
         )
 
-    # 4. Create initial dataframe for binary/survival cases
-
     initial_df = \
         _create_initial_df(
             thresholds=thresholds,
@@ -341,8 +325,6 @@ def dca(
             prevalence_value=prevalence_value,
             harm=harm
         )
-
-    # 5. Calculate model-specific consequences
 
     initial_stats_df = \
         _calc_initial_stats(
@@ -355,7 +337,6 @@ def dca(
             time_to_outcome_col=time_to_outcome_col
         )
 
-    # 6. Generate DCA-ready df with full list of calculated statistics
     final_dca_df = \
         _calc_more_stats(
             initial_stats_df=initial_stats_df

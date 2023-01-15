@@ -23,6 +23,8 @@ import lifelines
 # 230102 SP: Left off here, trying to figure out why survival dca won't match r survival dca results
 # Doesn't match for pr_failure18 results, so trying on simple case with df surv first, compare to R results
 
+# Don't need to test test_pos_rate for survival case since it's the same
+
 def test_case2_surv_risk_rate_among_test_positive():
     # Note: To calc risk rate among test positive, divide tp_rate by test_pos_rate
 
@@ -33,17 +35,19 @@ def test_case2_surv_risk_rate_among_test_positive():
     models_to_prob = None
     time = 1
     time_to_outcome_col = 'ttcancer'
+    harm = None
+    prevalence = None
 
     r_benchmark_results = load_r_case2_results()
 
-    all_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'all']['tp_rate'] / \
-                r_benchmark_results[r_benchmark_results['variable'] == 'all']['test_pos_rate']).reset_index(drop=1)
-
-    none_rratp = pd.Series(np.repeat(a=0.0, repeats=100))
-
-    cpm_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker']['tp_rate'] / \
-                r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker'][
-                    'test_pos_rate']).reset_index(drop=1)
+    # all_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'all']['tp_rate'] / \
+    #             r_benchmark_results[r_benchmark_results['variable'] == 'all']['test_pos_rate']).reset_index(drop=1)
+    #
+    # none_rratp = pd.Series([0]*100)
+    #
+    # cpm_rratp = (r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker']['tp_rate'] / \
+    #             r_benchmark_results[r_benchmark_results['variable'] == 'cancerpredmarker'][
+    #                 'test_pos_rate']).reset_index(drop=1)
 
     risks_df = \
         _create_risks_df(
@@ -60,8 +64,34 @@ def test_case2_surv_risk_rate_among_test_positive():
             modelnames=modelnames
         )
 
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
     p_rratp_results = {}
-    for model in ['all', 'none']:
+    for model in ['all', 'none', 'cancerpredmarker']:
+
+        # print(
+        #     '\n',
+        #     _calc_risk_rate_among_test_pos(
+        #         risks_df=rectified_risks_df,
+        #
+        #     )
+        # )
 
         p_rratp_results[model] = \
             _calc_risk_rate_among_test_pos(
@@ -73,79 +103,17 @@ def test_case2_surv_risk_rate_among_test_positive():
                 time=time
             )
 
-    # model = 'cancerpredmarker'
-    #
-    # p_rratp_results[model] = \
-    #     _calc_risk_rate_among_test_pos(
-    #         risks_df=rectified_risks_df,
-    #         outcome='cancer',
-    #         model=model,
-    #         thresholds=thresholds,
-    #         time_to_outcome_col='ttcancer',
-    #         time=time
-    #     )
-    #
-    # p_rratp_results_df = pd.DataFrame(p_rratp_results).reset_index(drop=True)
+    p_rratp_results_df = pd.DataFrame(p_rratp_results).reset_index(drop=True)
 
-    # print('\n',
-    #       pd.concat(
-    #           [p_rratp_results_df,
-    #            all_rratp,
-    #            none_rratp,
-    #            cpm_rratp],
-    #           axis=1
-    #       ).to_string()
-    # )
+    round_dec_num = 6
+    assert p_rratp_results_df['all'].round(decimals=round_dec_num).equals(all_rratp.round(decimals=round_dec_num))
+    assert p_rratp_results_df['none'].round(decimals=round_dec_num).equals(none_rratp.round(decimals=round_dec_num))
+    assert p_rratp_results_df[
+        'cancerpredmarker'].round(decimals=round_dec_num).equals(cpm_rratp.round(decimals=round_dec_num))
 
-    # round_dec_num = 6
-    # assert p_rratp_results_df['all'].round(decimals=round_dec_num).equals(all_rratp.round(decimals=round_dec_num))
-    # assert p_rratp_results_df['none'][54] == 0
-
-
-
-    # print(sorted(risks_df[time_to_outcome_col].values))
-
-    # print('\n', risks_df.to_string())
-    #
-    # sorted_ttcancer_vals = pd.Series(sorted(risks_df[time_to_outcome_col].values))
-    #
-    # print(
-    #     '\n',
-    #     pd.concat(
-    #         [
-    #             sorted_ttcancer_vals,
-    #             p_rratp_results['cancerpredmarker']
-    #         ],
-    #         axis=1
-    #     ).to_string()
-    # )
-
-    # print('\n', p_rratp_results_df['none'])
-    # print('\n', none_rratp)
-
-    risk_rate_among_test_pos = []
-
-    for threshold in thresholds:
-        risk_above_thresh_time = risks_df[risks_df[model] >= threshold][time_to_outcome_col]
-        risk_above_thresh_outcome = risks_df[risks_df[model] >= threshold][outcome]
-
-        kmf = lifelines.KaplanMeierFitter()
-
-        if np.max(risks_df['ttcancer']) < time:
-            risk_rate_among_test_pos.append(None)
-        elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
-            risk_rate_among_test_pos.append(0)
-        else:
-            kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
-            risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
-
-
-
-# def test_risk_rate_among_test_pos():
-#     pass
-
-# def test_surv_tp_rate():
-#     df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
+# def test_case2_surv_tp_rate():
+#
+#     r_benchmark_results = load_r_case2_results()
 #
 #     data = load_survival_df()
 #     outcome = 'cancer'
@@ -155,6 +123,7 @@ def test_case2_surv_risk_rate_among_test_positive():
 #     models_to_prob = None
 #     modelnames = ['famhistory']
 #     thresholds = np.arange(0, 1.0, 0.01)
+#     harm = None
 #
 #     risks_df = \
 #         _create_risks_df(
@@ -165,8 +134,43 @@ def test_case2_surv_risk_rate_among_test_positive():
 #             time_to_outcome_col=time_to_outcome_col
 #         )
 #
+#     rectified_risks_df = \
+#         _rectify_model_risk_boundaries(
+#             risks_df=risks_df,
+#             modelnames=modelnames
+#         )
+#
+#     prevalence_value = \
+#         _calc_prevalence(
+#             risks_df=rectified_risks_df,
+#             outcome=outcome,
+#             prevalence=prevalence,
+#             time=time,
+#             time_to_outcome_col=time_to_outcome_col
+#         )
+#
+#     initial_df = \
+#         _create_initial_df(
+#             thresholds=thresholds,
+#             modelnames=modelnames,
+#             input_df_rownum=len(rectified_risks_df.index),
+#             prevalence_value=prevalence_value,
+#             harm=harm
+#         )
+#
+#     initial_stats_df = \
+#         _calc_initial_stats(
+#             initial_df=initial_df,
+#             risks_df=rectified_risks_df,
+#             thresholds=thresholds,
+#             outcome=outcome,
+#             prevalence_value=prevalence_value,
+#             time=time,
+#             time_to_outcome_col=time_to_outcome_col
+#         )
+#
 #     test_pos_rate = \
-#         _calc_test_pos_rate(risks_df=risks_df,
+#         _calc_test_pos_rate(risks_df=rectified_risks_df,
 #                             thresholds=thresholds,
 #                             model=modelnames[0]
 #                             )
@@ -183,9 +187,18 @@ def test_case2_surv_risk_rate_among_test_positive():
 #
 #     tp_rate = risk_rate_among_test_pos * test_pos_rate
 #
-#     round_dec_num = 6
-#     assert df_test_simple_surv_tpfp['tp_rate'].round(decimals=round_dec_num).equals(tp_rate.round(decimals=round_dec_num))
+#     # print(tp_rate)
 #
+#     round_dec_num = 6
+    # assert df_test_simple_surv_tpfp['tp_rate'].round(decimals=round_dec_num).equals(tp_rate.round(decimals=round_dec_num))
+    # print(
+    #     pd.concat(
+    #         [
+    #
+    #         ]
+    #     )
+    # )
+
 # def test_surv_fp_rate():
 #     df_test_simple_surv_tpfp = load_r_simple_surv_tpfp_calc_df()
 #

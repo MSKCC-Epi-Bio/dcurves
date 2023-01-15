@@ -38,6 +38,7 @@ def test_case1_binary_test_pos_rate():
 
     # Load in R Benchmarking Results
     r_benchmark_results = load_r_case1_results()
+
     # Make DF of Thresholds, test_pos_rate For Each Model
     r_benchmark_test_pos_rates_df = \
         pd.DataFrame(

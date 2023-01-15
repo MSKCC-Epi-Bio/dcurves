@@ -70,8 +70,6 @@ def test_case1_binary_test_pos_rate():
             modelnames=modelnames
         )
 
-    # 3. calculate prevalences
-
     prevalence_value = \
         _calc_prevalence(
             risks_df=rectified_risks_df,
@@ -81,7 +79,6 @@ def test_case1_binary_test_pos_rate():
             time_to_outcome_col=time_to_outcome_col
         )
 
-    # 4. Create initial dataframe for binary/survival cases
 
     initial_df = \
         _create_initial_df(
@@ -91,8 +88,6 @@ def test_case1_binary_test_pos_rate():
             prevalence_value=prevalence_value,
             harm=harm
         )
-
-    # 5. Calculate model-specific consequences
 
     initial_stats_df = \
         _calc_initial_stats(
@@ -127,326 +122,246 @@ def test_case1_binary_test_pos_rate():
     assert r_benchmark_test_pos_rates_df['none'].round(\
         decimals=6).equals(p_test_pos_rate_df['none'].round(decimals=6))
 
-#
-# def test_binary_tp_rate():
-#     data = load_binary_df()
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = None
-#     time_to_outcome_col = None
-#     models_to_prob = ['age']
-#     modelnames = ['age']
-#     thresholds = np.arange(0, 1.0, 0.01)
-#     model = modelnames[0]
-#     harm = None
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 3. calculate prevalences
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 4. Create initial dataframe for binary/survival cases
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     # 5. Calculate model-specific consequences
-#
-#     initial_stats_df = \
-#         _calc_initial_stats(
-#             initial_df=initial_df,
-#             risks_df=risks_df,
-#             thresholds=thresholds,
-#             outcome=outcome,
-#             prevalence_value=prevalence_value,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 6. Generate DCA-ready df with full list of calculated statistics
-#     final_dca_df = \
-#         _calc__stats(
-#             initial_stats_df=initial_stats_df
-#         )
-#
-#     round_dec_num = 5
-#
-#     r_dca_results = load_r_simple_binary_dca_result_df()
-#
-#     r_age_tp_rates = \
-#         r_dca_results[r_dca_results['variable'] == model
-#         ]['tp_rate'].round(decimals=round_dec_num).reset_index(drop=True)
-#
-#     p_age_tp_rates = \
-#         final_dca_df[final_dca_df['model'] == model
-#         ]['tp_rate'].round(decimals=round_dec_num).reset_index(drop=True)
-#
-#     comp_df = \
-#         pd.concat([
-#             r_age_tp_rates,
-#             p_age_tp_rates
-#         ], axis=1)
-#
-#     print('\n', comp_df.to_string())
-#
-#     assert r_dca_results[r_dca_results['variable']=='age'][
-#         'tp_rate'].round(decimals=round_dec_num).equals(final_dca_df[
-#         final_dca_df['model'] == 'famhistory']['tp_rate'].round(decimals=round_dec_num))
-#
-#     print(
-#         '\n', r_dca_results[r_dca_results['variable'] == 'age']['tp_rate'].to_string()
-#     )
-#
-#
-#     print('\n',
-#           pd.concat([
-#               r_dca_results[r_dca_results['variable'] == 'age']['tp_rate'].reset_index(drop=1),
-#               tp_rate
-#           ], axis=1).to_string())
-#
-#
-#     true_outcome = risks_df[risks_df[outcome] == True][[modelnames[0]]]
-#     tp_rate = []
-#     for threshold in thresholds:
-#         try:
-#             tp_rate.append(
-#                 pd.Series(true_outcome[modelnames[0]] >= threshold).value_counts()[1] / len(true_outcome[modelnames[0]]) * (
-#                     prevalence_value))
-#         except KeyError:
-#             tp_rate.append(0 / len(true_outcome[modelnames[0]]) * prevalence_value)
-#
-#     print(pd.Series(tp_rate))
-#
-#     false_outcome = risks_df[risks_df[outcome] == False][[model]]
-#
-#     fp_rate = []
-#     for threshold in thresholds:
-#         try:
-#             fp_rate.append(pd.Series(false_outcome[model] >= threshold).value_counts()[1] / len(
-#                 false_outcome[model]) * (1 - prevalence_value))
-#         except KeyError:
-#             fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
 
-# def test_binary_famhistory_error():
-#
-#     data = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     outcome = 'cancer'
-#     prevalence = None
-#     time = None
-#     time_to_outcome_col = None
-#     models_to_prob = None
-#     modelnames = ['famhistory']
-#     thresholds = np.arange(0, 1.0, 0.01)
-#     model = modelnames[0]
-#     harm = None
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # print('\n', risks_df.to_string())
-#
-#     # endpoints_adjusted_risks_df = \
-#     #     _adjust_risks_df_endpoints(
-#     #         risks_df=risks_df,
-#     #
-#     #     )
-#
-#     # 3. calculate prevalences
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 4. Create initial dataframe for binary/survival cases
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     # print('\n', initial_df.to_string())
-#
-#     # 5. Calculate model-specific consequences
-#     #
-#     for model in initial_df['model'].value_counts().index:
-#         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
-#                                             thresholds=thresholds,
-#                                             model=model)
-    #
-    #     print('\n', model)
-    #
-    #     true_outcome = risks_df[risks_df[outcome] == True][[model]]
-    #     print(outcome)
-    #     print(risks_df[outcome])
-    #     tp_rate = []
-        # for threshold in thresholds:
-        #
-        #     print('\n', pd.Series(true_outcome[model] >= threshold))
+def test_case1_binary_tp_rate():
 
-            # try:
-            #     tp_rate.append(
-            #         pd.Series(true_outcome[model] >= threshold).value_counts()[1] / len(true_outcome[model]) * (
-            #             prevalence_value))
-            # except KeyError:
-            #     tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
+    r_benchmark_results_df = load_r_case1_results()
 
-# def test_none_model_net_benefit_thresh():
-#     df_r_dca_famhistory = \
-        # load_r_dca_famhistory().sort_values(by=['variable',
-        #                                         'threshold'], ascending=[True,
-        #                                                                  True]).reset_index(drop=True)
-#
-#     df_cancer_dx = \
-#         pd.read_csv("https://raw.githubusercontent.com/"
-#                     "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     dca_result_df = \
-#         dca(
-#             data=df_cancer_dx,
-#             outcome='cancer',
-#             modelnames=['famhistory']
-#         )
-#
-#     dca_result_df = \
-#         dca_result_df.sort_values(by=['model',
-#                                       'threshold'],
-#                                   ascending=[True,
-#                                              True]).reset_index(drop=True)
+    data = load_binary_df()
+    outcome = 'cancer'
+    prevalence = None
+    time = None
+    time_to_outcome_col = None
+    models_to_prob = None
+    modelnames = ['famhistory']
+    model = modelnames[0]
+    thresholds = np.arange(0, 1.0, 0.01)
+    harm = None
+    # model = modelnames[0]
 
-    # print('\n', dca_result_df.to_string())
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
 
-    # print('\n', 'R DCA')
-    # print(df_r_dca_famhistory.to_string())
-    # print('\n', 'Local DCA')
-    # print(dca_result_df.to_string())
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
 
-    model = 'none'
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
 
-    round_dec_num = 6
+    p_tp_rate = \
+        _calc_tp_rate(
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            model=model,
+            outcome='cancer',
+            test_pos_rate=None,
+            prevalence_value=prevalence_value
+        )
+
+    bm_tp_rate = r_benchmark_results_df[r_benchmark_results_df.variable == 'famhistory'].tp_rate.reset_index(drop=True)
+
+    assert bm_tp_rate.round(decimals=6).equals(p_tp_rate.round(decimals=6))
 
 
-    # print('\n', df_r_dca_famhistory.columns)
-    #
-    # r_nb = df_r_dca_famhistory[df_r_dca_famhistory[
-    #                                'variable'] == model][
-    #     ['variable', 'threshold', 'pos_rate', 'tp_rate', 'fp_rate', 'net_benefit']].round(decimals=round_dec_num).reset_index(drop=True)
-    #
-    # p_nb = dca_result_df[dca_result_df['model'] \
-    #                      == model][['model', 'threshold', 'prevalence', 'tp_rate', 'fp_rate', 'net_benefit']].round(decimals=round_dec_num).reset_index(
-    #     drop=True)
-    #
-    # comp_df = \
-    #     pd.concat(
-    #         [r_nb,
-    #          p_nb],
-    #         axis=1
-    #     )
-    #
-    # print(
-    #     '\n',
-    #     comp_df.to_string()
-    # )
+def test_case1_binary_fp_rate():
 
-# def test_none_0_threshold_vals():
-#     df_cancer_dx = \
-#         pd.read_csv("https://raw.githubusercontent.com/"
-#                     "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#     data = df_cancer_dx
-#     outcome = 'cancer'
-#     models_to_prob = None
-#     time = None
-#     time_to_outcome_col = None
-#     modelnames = ['famhistory']
-#     thresholds = np.arange(0.01, 1.01, 0.01)
-#
-#
-#
-#     risks_df = \
-#         _create_risks_df(
-#             data=data,
-#             outcome=outcome,
-#             models_to_prob=models_to_prob,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     rectified_risks_df = \
-#         _rectify_model_risk_boundaries(
-#             risks_df=risks_df,
-#             modelnames=modelnames
-#         )
-#
-#     # 3. calculate prevalences
-#
-#     prevalence_value = \
-#         _calc_prevalence(
-#             risks_df=rectified_risks_df,
-#             outcome=outcome,
-#             prevalence=prevalence,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
-#
-#     # 4. Create initial dataframe for binary/survival cases
-#
-#     initial_df = \
-#         _create_initial_df(
-#             thresholds=thresholds,
-#             modelnames=modelnames,
-#             input_df_rownum=len(rectified_risks_df.index),
-#             prevalence_value=prevalence_value,
-#             harm=harm
-#         )
-#
-#     # 5. Calculate model-specific consequences
-#
-#     initial_stats_df = \
-#         _calc_initial_stats(
-#             initial_df=initial_df,
-#             risks_df=rectified_risks_df,
-#             thresholds=thresholds,
-#             outcome=outcome,
-#             prevalence_value=prevalence_value,
-#             time=time,
-#             time_to_outcome_col=time_to_outcome_col
-#         )
+    r_benchmark_results_df = load_r_case1_results()
+
+    data = load_binary_df()
+    outcome = 'cancer'
+    prevalence = None
+    time = None
+    time_to_outcome_col = None
+    models_to_prob = None
+    modelnames = ['famhistory']
+    model = modelnames[0]
+    thresholds = np.arange(0, 1.0, 0.01)
+    harm = None
+    # model = modelnames[0]
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    p_fp_rate = \
+        _calc_fp_rate(
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            model=model,
+            outcome='cancer',
+            test_pos_rate=None,
+            prevalence_value=prevalence_value
+        )
+
+    bm_fp_rate = r_benchmark_results_df[r_benchmark_results_df.variable == 'famhistory'].fp_rate.reset_index(drop=True)
+
+    assert bm_fp_rate.round(decimals=6).equals(p_fp_rate.round(decimals=6))
+
+def test_case1_binary_calc_initial_stats():
+    r_benchmark_results_df = load_r_case1_results()
+
+    data = load_binary_df()
+    outcome = 'cancer'
+    prevalence = None
+    time = None
+    time_to_outcome_col = None
+    models_to_prob = None
+    modelnames = ['famhistory']
+    model = modelnames[0]
+    thresholds = np.arange(0, 1.0, 0.01)
+    harm = None
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
+    initial_stats_df = \
+        _calc_initial_stats(
+            initial_df=initial_df,
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            outcome=outcome,
+            prevalence_value=prevalence_value,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    for model in ['all', 'none', 'famhistory']:
+        for stat in ['test_pos_rate', 'tp_rate', 'fp_rate']:
+
+            assert initial_stats_df[initial_stats_df.model == model][
+                stat].round(decimals=6).reset_index(drop=True).equals(r_benchmark_results_df[
+                r_benchmark_results_df.variable == model][stat].round(decimals=6).reset_index(drop=True))
 
 
+def test_case1_binary_calc_more_stats():
+    r_benchmark_results_df = load_r_case1_results()
 
+    data = load_binary_df()
+    outcome = 'cancer'
+    prevalence = None
+    time = None
+    time_to_outcome_col = None
+    models_to_prob = None
+    modelnames = ['famhistory']
+    model = modelnames[0]
+    thresholds = np.arange(0, 1.0, 0.01)
+    harm = None
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
+    initial_stats_df = \
+        _calc_initial_stats(
+            initial_df=initial_df,
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            outcome=outcome,
+            prevalence_value=prevalence_value,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    final_dca_df = \
+        _calc_more_stats(
+            initial_stats_df=initial_stats_df
+        )
+
+    for model in ['all', 'none', 'famhistory']:
+        assert final_dca_df[final_dca_df.model == model][
+                'net_benefit'].round(decimals=6).reset_index(drop=True).equals(r_benchmark_results_df[
+                r_benchmark_results_df.variable == model]['net_benefit'].round(decimals=6).reset_index(drop=True))

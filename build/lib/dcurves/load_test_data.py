@@ -1,5 +1,6 @@
 import pandas as pd
 import pkg_resources
+import importlib_resources
 
 #useful directories
 # root_test_dir = path.dirname(path.realpath(__file__))

@@ -5,14 +5,13 @@ from dcurves.dca import _calc_risk_rate_among_test_pos
 from dcurves.risks import _create_risks_df
 from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats, _calc_more_stats
 from dcurves.dca import _rectify_model_risk_boundaries
-
+from dcurves.plot_graphs import plot_graphs
 # Load Data for Testing
 from dcurves.load_test_data import load_r_case2_results
 from dcurves.load_test_data import load_binary_df, load_survival_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
 from dcurves.load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
-from dcurves.load_test_data import load_r_simple_surv_dca_result_df
-from dcurves.load_test_data import load_r_simple_surv_tpfp_calc_df
+
 # Load Tools
 import pandas as pd
 import numpy as np
@@ -291,7 +290,18 @@ def test_tut_pr_failure18_tp_rate():
         decimals=round_dec_num
     ))
 
-
+# def test_case3_r_python_discrepancy():
+#
+#     plot_r_df = load_r_case2_results()
+#
+#     print(
+#         plot_r_df.to_string()
+#     )
+#
+#     # plot_graphs(
+#     #     plot_df=load_r_case2_results()
+#     # )
+#     pass
 
 
 

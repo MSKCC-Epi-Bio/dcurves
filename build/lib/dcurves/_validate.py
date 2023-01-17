@@ -1,17 +1,6 @@
 from .dca import *
 
 
-def _validate_prevalence(prevalence: float):
-    # make sure prevalence input is a float
-
-    if prevalence is None:
-        pass
-    elif isinstance(prevalence, float) or isinstance(prevalence, int):
-        pass
-    else:
-        raise TypeError("prevalence must be of type: float or int")
-
-
 def _validate_time(time: float or int):
     # make sure time input is a float or int
 
@@ -34,19 +23,11 @@ def _validate_time_to_outcome_col(time_to_outcome_col: str):
         raise TypeError("time_to_outcome_col must be of type: str")
 
 
-def _binary_convert_to_risk_input_checks(
-        prevalence: float):
-    # make sure _convert_to_risk inputs are kosher
-
-    _validate_prevalence(prevalence=prevalence)
-
 def _surv_convert_to_risk_input_checks(
-        prevalence: float,
         time: float,
         time_to_outcome_col: str):
     # make sure _convert_to_risk inputs are kosher
 
-    _validate_prevalence(prevalence=prevalence)
     _validate_time(time=time)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
@@ -65,23 +46,19 @@ def _validate_thresholds(thresholds: list):
 
 
 def _binary_calculate_test_consequences_input_checks(
-        thresholds: list,
-        prevalence: float):
+        thresholds: list):
     # make sure _calculate_test_consequences inputs are kosher
 
     _validate_thresholds(thresholds=thresholds)
-    _validate_prevalence(prevalence=prevalence)
 
 
 def _surv_calculate_test_consequences_input_checks(
         thresholds: list,
-        prevalence: float,
         time: float,
         time_to_outcome_col: str):
     # make sure _calculate_test_consequences inputs are kosher
 
     _validate_thresholds(thresholds=thresholds)
-    _validate_prevalence(prevalence=prevalence)
     _validate_time(time=time)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
@@ -158,15 +135,13 @@ def _binary_dca_input_checks(
         thresh_vals: list,
         harm: dict,
         probabilities: list,  # list of TRUE/FALSE values indicating which predictors
-        prevalence: float):
+        ):
     # make sure dca inputs are kosher
 
     _validate_str_list(input_list=predictors)
     _validate_thresh_list(input_list=thresh_vals)
     _validate_harm(harm=harm)
     _validate_probabilities(probabilities=probabilities, predictors=predictors)
-    _validate_prevalence(prevalence=prevalence)
-
 
 def _surv_dca_input_checks(
         predictors: list,
@@ -183,7 +158,6 @@ def _surv_dca_input_checks(
     _validate_harm(harm=harm)
     _validate_probabilities(probabilities=probabilities, predictors=predictors)
     _validate_time(time=time)
-    _validate_prevalence(prevalence=prevalence)
     _validate_time_to_outcome_col(time_to_outcome_col=time_to_outcome_col)
 
 

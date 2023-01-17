@@ -232,11 +232,23 @@ def _calc_initial_stats(
 
 @beartype
 def _calc_more_stats(
-        initial_stats_df: pd.DataFrame
+        initial_stats_df: pd.DataFrame,
+        nper: Optional[int] = 1
 ):
 
     initial_stats_df['net_benefit'] = initial_stats_df['tp_rate'] - initial_stats_df['threshold'] / (
             1 - initial_stats_df['threshold']) * initial_stats_df['fp_rate'] - initial_stats_df['harm']
+
+    # A step to calc 'net_intervention_avoided', can drop 'net_benefit_all' column after 'net_intervention_avoided'
+    initial_stats_df['net_benefit_all'] = \
+        initial_stats_df[initial_stats_df.model == 'all'][
+            'net_benefit'].tolist() * len(initial_stats_df['model'].value_counts())
+
+    initial_stats_df['net_intervention_avoided'] = (initial_stats_df.net_benefit - initial_stats_df.net_benefit_all) / \
+                                              (initial_stats_df.threshold / (1 - initial_stats_df.threshold)) * nper
+
+    # Drop 'net_benefit_all', as mentioned above
+    initial_stats_df = initial_stats_df.drop(columns='net_benefit_all')
 
     # initial_stats_df['neg_rate'] = 1 - initial_stats_df['prevalence']
     # initial_stats_df['fn_rate'] = initial_stats_df['prevalence'] - initial_stats_df['tp_rate']
@@ -268,12 +280,13 @@ def dca(
         data: pd.DataFrame,
         outcome: str,
         modelnames: list,
-        thresholds: np.ndarray = np.linspace(0.00, 1.00, 101),
+        thresholds: np.ndarray = np.arange(0.00, 1.00, 0.01),
         harm: Optional[dict] = None,
         models_to_prob: Optional[list] = None,
         prevalence: Optional[Union[float, int]] = None,
         time: Optional[Union[float, int]] = None,
-        time_to_outcome_col: Optional[str] = None
+        time_to_outcome_col: Optional[str] = None,
+        nper: Optional[int] = 1
 ) -> pd.DataFrame:
 
     risks_df = \
@@ -322,70 +335,12 @@ def dca(
 
     final_dca_df = \
         _calc_more_stats(
-            initial_stats_df=initial_stats_df
+            initial_stats_df=initial_stats_df,
+            nper=nper
         )
 
     return final_dca_df
 
-@beartype
-def net_intervention_avoided(
-        after_dca_df: pd.DataFrame,
-        nper: int = 100
-):
-    """
-
-    Calculate net interventions avoided after using the dca function
-
-    Parameters
-    ----------
-    after_dca_df : pd.DataFrame
-        dataframe outputted by dca function in the dcurves library
-    nper : int
-        number to report net interventions per （Defaults to 100)
-
-    Examples
-    ________
-
-    >>> import
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-
-    >>> after_dca_df = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-
-    >>> after_net_intervention_avoided_df = dcurves.net_intervention_avoided(
-    ... after_dca_df = after_dca_df,
-    ... nper = 100
-    ...)
-
-    |
-
-    Parameters
-    __________
-
-
-    :returns
-
-    merged_after_dca_df: pd.DataFrame
-        dataframe with calculated net_intervention_avoided field joined to the inputted after_dca_df
-
-    """
-
-    all_records = after_dca_df[after_dca_df['model'] == 'all']
-    all_records = all_records[['threshold', 'net_benefit']]
-    all_records = all_records.rename(columns={'net_benefit': 'net_benefit_all'})
-
-    merged_after_dca_df = after_dca_df.merge(all_records, on='threshold')
-
-    merged_after_dca_df['net_intervention_avoided'] = \
-        (merged_after_dca_df['net_benefit']
-         - merged_after_dca_df['net_benefit_all']) \
-        / (merged_after_dca_df['threshold']
-            / (1 - merged_after_dca_df['threshold'])) * nper
-
-    return merged_after_dca_df
 
 
 

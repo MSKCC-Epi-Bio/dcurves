@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.1.20'
+VERSION = '1.0.0'
 DESCRIPTION = 'Python package for Andrew Vickers\' Decision Curve Analysis method to evaluate prediction models and diagnostic tests'
 LONG_DESCRIPTION = 'A package that allows to build simple streams of video, audio and camera data.'
 
@@ -21,7 +21,9 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['pandas', 'numpy', 'statsmodels', 'lifelines', 'matplotlib'],
+    install_requires=['pandas', 'numpy', 'beartype', 'typing',
+                      'pkg_resources', 'statsmodels', 'lifelines',
+                      'matplotlib', 'random', 'typing'],
     keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK'],
     classifiers=[
         "Development Status :: 1 - Planning",
@@ -34,3 +36,4 @@ setup(
     include_package_data=True,
     package_data={'': ['data/*.csv']}
 )
+

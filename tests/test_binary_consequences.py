@@ -1,27 +1,19 @@
 
 # Load Functions To Test/Needed For Testing
-from dcurves.dca import _calc_tp_rate, _calc_fp_rate, _calc_test_pos_rate
-from dcurves.dca import _calc_risk_rate_among_test_pos
+from dcurves.dca import _calc_tp_rate, _calc_fp_rate
 from dcurves.risks import _create_risks_df
 from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats
 from dcurves.dca import _calc_more_stats
-from dcurves.dca import dca
 from dcurves.dca import _rectify_model_risk_boundaries
 
 # Load Data for Testing
 from dcurves.load_test_data import load_r_case1_results
 from dcurves.load_test_data import load_binary_df
-from dcurves.load_test_data import load_r_simple_binary_dca_result_df
-from dcurves.load_test_data import load_r_dca_famhistory
 
 # Load Tools
 import pandas as pd
 import numpy as np
 
-# Load Statistics Libraries
-import lifelines
-
-# Using dcurves Simulation Binary DataFrame
 
 def test_case1_binary_test_pos_rate():
 

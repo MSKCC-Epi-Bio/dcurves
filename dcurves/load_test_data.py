@@ -1,6 +1,5 @@
 import pandas as pd
 import pkg_resources
-from os import path
 
 #useful directories
 # root_test_dir = path.dirname(path.realpath(__file__))
@@ -152,6 +151,22 @@ def load_r_simple_binary_dca_result_df():
 def load_r_dca_famhistory():
     stream = pkg_resources.resource_stream(__name__, 'data/r_dca_famhistory.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_df_cancer_dx():
+    '''
+    Load data that can also be gotten from this link:
+    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
+    '''
+    stream = pkg_resources.resource_stream(__name__, 'data/df_cancer_dx.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
+def load_r_df_cancer_dx2():
+    ''''
+    Load data that is same as df_cancer_dx but with predictions from model as in dca-tutorial
+    '''
+    stream = pkg_resources.resource_stream(__name__, 'data/df_cancer_dx2.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
 
 
 

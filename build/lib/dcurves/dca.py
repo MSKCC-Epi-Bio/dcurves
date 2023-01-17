@@ -1,621 +1,346 @@
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
+from beartype import beartype
+from typing import Optional, Union
 import lifelines
-import matplotlib.pyplot as plt
-from dcurves import _validate
 
+from .risks import _create_risks_df, _rectify_model_risk_boundaries
 
-def _convert_to_risk(model_frame: pd.DataFrame,
-                     outcome: str,
-                     predictor: str,
-                     prevalence: float = None,
-                     time: float = None,
-                     time_to_outcome_col: str = None) -> pd.DataFrame:
-    # Converts indicated predictor columns in dataframe into probabilities from 0 to 1
+def _calc_prevalence(
+        risks_df: pd.DataFrame,
+        outcome: str,
+        prevalence: Optional[Union[int, float]] = None,
+        time: Optional[Union[int, float]] = None,
+        time_to_outcome_col: Optional[str] = None
+) -> float:
+    # Binary
+    if time_to_outcome_col is None:
+        if prevalence is not None:
+            pass
+        elif prevalence is None:
+            outcome_values = risks_df[outcome].values.flatten().tolist()
+            outcome_tf_counts_dict = dict(pd.Series(outcome_values).value_counts())
+            if True not in outcome_tf_counts_dict:
+                prevalence = 0 / len(outcome_values)
+            else:
+                prevalence = outcome_tf_counts_dict[True] / len(outcome_values)
+    # Survival
+    elif time_to_outcome_col is not None:
+        if prevalence is not None:
+            ValueError('In survival outcomes, prevalence should not be supplied')
+        elif prevalence is None:
+            kmf = lifelines.KaplanMeierFitter()
+            kmf.fit(risks_df[time_to_outcome_col], risks_df[outcome] * 1)  # *1 to convert from boolean to int
+            prevalence = 1 - kmf.survival_function_at_times(time)
+            prevalence = float(prevalence)
+    return prevalence
 
-    _validate._convert_to_risk_input_checks(model_frame=model_frame,
-                                            outcome=outcome,
-                                            predictor=predictor,
-                                            prevalence=prevalence,
-                                            time=time,
-                                            time_to_outcome_col=time_to_outcome_col)
+@beartype
+def _create_initial_df(
+        thresholds: np.ndarray,
+        modelnames: list,
+        input_df_rownum: int,
+        prevalence_value: Union[float, int],
+        harm: Optional[dict] = None
+) -> pd.DataFrame:
 
-    # Binary DCA
-    if not time_to_outcome_col:
-        predicted_vals = sm.formula.glm(outcome + '~' + predictor, family=sm.families.Binomial(),
-                                        data=model_frame).fit().predict()
-        model_frame[predictor] = [(1 - val) for val in predicted_vals]
-        # model_frame.loc[model_frame['predictor']]
-        return model_frame
-
-    # Survival DCA
-    elif time_to_outcome_col:
-        #### From lifelines dataframe
-        cph = lifelines.CoxPHFitter()
-        cph_df = model_frame[['ttcancer', 'cancer', 'cancerpredmarker']]
-        cph.fit(cph_df, 'ttcancer', 'cancer')
-
-        new_cph_df = cph_df
-        new_cph_df['ttcancer'] = [time for i in range(0, len(cph_df))]
-        predicted_vals = cph.predict_survival_function(new_cph_df, times=time).values[
-            0]  #### all values in list of single list, so just dig em out with [0]
-        new_model_frame = model_frame
-        new_model_frame[predictor] = predicted_vals
-        return new_model_frame
-
-
-def _calculate_test_consequences(model_frame: pd.DataFrame,
-                                 outcome: str,
-                                 predictor: str,
-                                 thresholds: list,
-                                 prevalence: float = None,
-                                 time: float = None,
-                                 time_to_outcome_col: str = None) -> pd.DataFrame:
-    # This function calculates the following and outputs them in a pandas DataFrame
-    # For binary evaluation:
-    # will calculate [tpr, fpr]
-    # For survival evaluation
-    # will calculate [tpr, fpr, 'test_pos_rate', risk_rate_among_test_pos]
-
-    _validate._calculate_test_consequences_input_checks(
-        model_frame=model_frame,
-        outcome=outcome,
-        predictor=predictor,
-        thresholds=thresholds,
-        prevalence=prevalence,
-        time=time,
-        time_to_outcome_col=time_to_outcome_col
+    modelnames = np.append(modelnames, ['all', 'none'])
+    initial_df = pd.DataFrame(
+        {'model':
+             pd.Series([x for y in modelnames for x in [y] * len(thresholds)]),
+         'threshold': thresholds.tolist() * len(modelnames),
+         'n': [input_df_rownum] * len(thresholds) * len(modelnames),
+         'prevalence': [prevalence_value] * len(thresholds) * len(modelnames),
+         'harm': 0
+         }
     )
 
-    #### Handle prevalence values
+    if harm is not None:
+        for model in harm.keys():
+            initial_df.loc[initial_df['model'] == model, 'harm'] = harm[model]
+    elif harm is None:
+        pass
+    else:
+        ValueError('Harm should be either None or dict')
 
-    # If provided - case-control
-    # If not provided
-    # if not time_to_outcome_col - binary
-    # if time_to_outcome_col - survival
+    return initial_df
 
-    #### If case-control prevalence:
-    if prevalence != None:
-        prevalence_values = [prevalence] * len(thresholds)  #### need list to be as long as len(thresholds)
+def _calc_test_pos_rate(
+        risks_df: pd.DataFrame,
+        thresholds: np.ndarray,
+        model: str
+) -> pd.Series:
+    test_pos_rate = []
 
-    #### If binary
-    elif not time_to_outcome_col:
-        try:
-            outcome_values = model_frame[outcome].values.flatten().tolist()
-            prevalence_values = [pd.Series(outcome_values).value_counts()[1] / len(outcome_values)] * len(
-                thresholds)  #### need list to be as long as len(thresholds)
-        except:
-            return 'error: binary prevalence'
+    for threshold in thresholds:
+        risk_above_thresh_tf_dict = dict(pd.Series(risks_df[model] >= threshold).value_counts())
 
-    #### If survival
-    elif time_to_outcome_col:
+        if True not in risk_above_thresh_tf_dict:
+            test_pos_rate.append(0 / len(risks_df.index))
+        elif True in risk_above_thresh_tf_dict:
+            test_pos_rate.append(risk_above_thresh_tf_dict[True]/len(risks_df.index))
+
+    return pd.Series(test_pos_rate)
+
+def _calc_risk_rate_among_test_pos(
+        risks_df: pd.DataFrame,
+        outcome: str,
+        model: str,
+        thresholds: np.ndarray,
+        time_to_outcome_col: str,
+        time: Union[float, int]
+) -> pd.Series:
+    risk_rate_among_test_pos = []
+    for threshold in thresholds:
+
+        risk_above_thresh_time = risks_df[risks_df[model] >= threshold][time_to_outcome_col]
+        risk_above_thresh_outcome = risks_df[risks_df[model] >= threshold][outcome]
 
         kmf = lifelines.KaplanMeierFitter()
-        kmf.fit(model_frame[time_to_outcome_col], model_frame[outcome] * 1)  # *1 to convert from boolean to int
-        prevalence = 1 - kmf.survival_function_at_times(time)
-        prevalence = prevalence[1]
-        #### Convert survival to risk by doing 1 - x (Figure out why)
 
-        prevalence_values = [prevalence] * len(thresholds)
+        if np.max(risks_df['ttcancer']) < time:
+            risk_rate_among_test_pos.append(None)
+        elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
+            risk_rate_among_test_pos.append(float(0))
+        else:
+            kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
+            if np.max(kmf.timeline) < time:
+                risk_rate_among_test_pos.append(None)
+            elif np.max(kmf.timeline) >= time:
+                risk_rate_among_test_pos.append(1 - float(kmf.survival_function_at_times(time)))
 
-    n = len(model_frame.index)
-    df = pd.DataFrame({'predictor': predictor,
-                       'threshold': thresholds,
-                       'n': [n] * len(thresholds),
-                       'prevalence': prevalence_values})
+    return pd.Series(risk_rate_among_test_pos)
 
-    count = 0
 
-    # If no time_to_outcome_col, it means binary
+def _calc_tp_rate(
+        risks_df: pd.DataFrame,
+        thresholds: np.ndarray,
+        model: str,
+        outcome: str,
+        test_pos_rate: Optional[pd.Series] = None,
+        prevalence_value: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None
+) -> pd.Series:
 
-    if not time_to_outcome_col:
+    # Survival
+    if time_to_outcome_col is not None:
 
-        true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
-        false_outcome = model_frame[model_frame[outcome] == False][[predictor]]
-        test_pos_rate = []
+        risk_rate_among_test_pos = \
+            _calc_risk_rate_among_test_pos(
+                risks_df=risks_df,
+                outcome=outcome,
+                model=model,
+                thresholds=thresholds,
+                time_to_outcome_col=time_to_outcome_col,
+                time=time
+            )
+        tp_rate = risk_rate_among_test_pos * test_pos_rate
+    # Binary
+    elif time_to_outcome_col is None:
+        true_outcome = risks_df[risks_df[outcome]==True][[model]]
         tp_rate = []
-        fp_rate = []
-
-        for (threshold, prevalence) in zip(thresholds, prevalence_values):
-
-            count += 1
-
-            #### Debugging try/except
-
-            # test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
-            # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
-
-            #### Indexing [1] doesn't work w/ value_counts when only index is 0, so [1] gives error, have to try/except so that when [1] doesn't work can input 0
-
-            try:
-                test_pos_rate.append(
-                    pd.Series(model_frame[predictor] >= threshold).value_counts()[1] / len(model_frame.index))
-                # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
-            except:
-                test_pos_rate.append(0 / len(model_frame.index))
-
-            #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
-            #### Have to try/except this so that when indexing doesn't work, can input 0
-
-            try:
-                tp_rate.append(
-                    pd.Series(true_outcome[predictor] >= threshold).value_counts()[1] / len(true_outcome[predictor]) * (
-                        prevalence))
-            except KeyError:
-                tp_rate.append(0 / len(true_outcome[predictor]) * (prevalence))
-            try:
-                fp_rate.append(pd.Series(false_outcome[predictor] >= threshold).value_counts()[1] / len(
-                    false_outcome[predictor]) * (1 - prevalence))
-            except KeyError:
-                fp_rate.append(0 / len(false_outcome[predictor]) * (1 - prevalence))
-
-        df['tpr'] = tp_rate
-        df['fpr'] = fp_rate
-
-    #### If time_to_outcome_col, then survival
-    elif time_to_outcome_col:
-
-        #         true_outcome = model_frame[model_frame[outcome] == True][[predictor]]
-        #         false_outcome = model_frame[model_frame[outcome] == False][[predictor]]
-
-        test_pos_rate = []
-        risk_rate_among_test_pos = []
-        tp_rate = []
-        fp_rate = []
-
-        # For each threshold, get outcomes where risk value is greater than threshold, insert as formula
         for threshold in thresholds:
-            # test_pos_rate.append(pd.Series(model_frame[predictor] >= threshold).value_counts()[1]/len(model_frame.index))
+            true_tf_above_thresh_dict = dict(pd.Series(true_outcome[model] >= threshold).value_counts())
+            if True not in true_tf_above_thresh_dict:
+                tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
+            elif True in true_tf_above_thresh_dict:
+                tp_rate.append(true_tf_above_thresh_dict[True] / len(true_outcome[model]) * (prevalence_value))
 
+    return pd.Series(tp_rate)
+
+def _calc_fp_rate(
+        risks_df: pd.DataFrame,
+        thresholds: np.ndarray,
+        model: str,
+        outcome: str,
+        test_pos_rate: Optional[pd.Series] = None,
+        prevalence_value: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None,
+) -> pd.Series:
+    # Survival
+    if time_to_outcome_col is not None:
+        risk_rate_among_test_pos = \
+            _calc_risk_rate_among_test_pos(
+                risks_df=risks_df,
+                outcome=outcome,
+                model=model,
+                thresholds=thresholds,
+                time_to_outcome_col=time_to_outcome_col,
+                time=time
+            )
+        fp_rate = (1 - risk_rate_among_test_pos) * test_pos_rate
+    # Binary
+    elif time_to_outcome_col is None:
+        false_outcome = risks_df[risks_df[outcome] == False][[model]]
+
+        fp_rate = []
+        for threshold in thresholds:
             try:
-                test_pos_rate.append(
-                    pd.Series(model_frame[predictor] >= threshold).value_counts()[1] / len(model_frame.index))
-                # test_pos_rate.append(pd.Series(df_binary[predictor] >= threshold).value_counts()[1]/len(df_binary.index))
+                fp_rate.append(pd.Series(false_outcome[model] >= threshold).value_counts()[1] / len(
+                    false_outcome[model]) * (1 - prevalence_value))
             except:
-                test_pos_rate.append(0 / len(model_frame.index))
+                fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
+    return pd.Series(fp_rate)
 
-            #### Indexing [1] doesn't work w/ value_counts since only 1 index ([0]), so [1] returns an error
-            #### Have to try/except this so that when indexing doesn't work, can input 0
+@beartype
+def _calc_initial_stats(
+        initial_df: pd.DataFrame,
+        risks_df: pd.DataFrame,
+        thresholds: np.ndarray,
+        outcome: str,
+        prevalence_value: Union[float, int],
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None
+) -> pd.DataFrame:
 
-            #### Get risk value, which is kaplan meier output at specified time, or at timepoint right before specified time given there are points after timepoint as well
-            #### Input for KM:
+    for model in initial_df['model'].value_counts().index:
 
-            risk_above_thresh_time = model_frame[model_frame[predictor] >= threshold][time_to_outcome_col]
-            risk_above_thresh_outcome = model_frame[model_frame[predictor] >= threshold][outcome]
+        test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
+                                            thresholds=thresholds,
+                                            model=model)
+        tp_rate = \
+            _calc_tp_rate(
+                risks_df=risks_df,
+                thresholds=thresholds,
+                model=model,
+                outcome=outcome,
+                time=time,
+                time_to_outcome_col=time_to_outcome_col,
+                test_pos_rate=test_pos_rate,
+                prevalence_value=prevalence_value
+            )
 
-            kmf = lifelines.KaplanMeierFitter()
-            try:
-                kmf.fit(risk_above_thresh_time, risk_above_thresh_outcome * 1)
-                risk_rate_among_test_pos.append(1 - pd.Series(kmf.survival_function_at_times(time))[1])
-            except:
+        fp_rate = \
+            _calc_fp_rate(
+                risks_df=risks_df,
+                thresholds=thresholds,
+                model=model,
+                outcome=outcome,
+                time=time,
+                time_to_outcome_col=time_to_outcome_col,
+                test_pos_rate=test_pos_rate,
+                prevalence_value=prevalence_value
+            )
 
-                risk_rate_among_test_pos.append(1)
+        initial_df.loc[initial_df['model'] == model, 'test_pos_rate'] = test_pos_rate.tolist()
+        initial_df.loc[initial_df['model'] == model, 'tp_rate'] = tp_rate.tolist()
+        initial_df.loc[initial_df['model'] == model, 'fp_rate'] = fp_rate.tolist()
 
-        df['test_pos_rate'] = test_pos_rate
-        df['risk_rate_among_test_pos'] = risk_rate_among_test_pos
+    return initial_df
 
-        df['tpr'] = df['risk_rate_among_test_pos'] * test_pos_rate
-        df['fpr'] = (1 - df['risk_rate_among_test_pos']) * test_pos_rate
+@beartype
+def _calc_more_stats(
+        initial_stats_df: pd.DataFrame,
+        nper: Optional[int] = 1
+):
 
-    return df
+    initial_stats_df['net_benefit'] = initial_stats_df['tp_rate'] - initial_stats_df['threshold'] / (
+            1 - initial_stats_df['threshold']) * initial_stats_df['fp_rate'] - initial_stats_df['harm']
 
+    # A step to calc 'net_intervention_avoided', can drop 'net_benefit_all' column after 'net_intervention_avoided'
+    initial_stats_df['net_benefit_all'] = \
+        initial_stats_df[initial_stats_df.model == 'all'][
+            'net_benefit'].tolist() * len(initial_stats_df['model'].value_counts())
 
-def dca(data: object,
-        outcome: object,
-        predictors: object,
-        thresh_vals: object = [0.01, 0.99, 0.01],
-        harm: object = None,
-        probabilities: object = [False],
-        time: object = None,
-        prevalence: object = None,
-        time_to_outcome_col: object = None) -> object:
-    """
+    initial_stats_df['net_intervention_avoided'] = (initial_stats_df.net_benefit - initial_stats_df.net_benefit_all) / \
+                                              (initial_stats_df.threshold / (1 - initial_stats_df.threshold)) * nper
 
-    Perform Decision Curve Analysis
+    # Drop 'net_benefit_all', as mentioned above
+    initial_stats_df = initial_stats_df.drop(columns='net_benefit_all')
 
-    |
+    # initial_stats_df['neg_rate'] = 1 - initial_stats_df['prevalence']
+    # initial_stats_df['fn_rate'] = initial_stats_df['prevalence'] - initial_stats_df['tp_rate']
+    # initial_stats_df['tn_rate'] = initial_stats_df['neg_rate'] - initial_stats_df['fp_rate']
+    #
+    #
+    # initial_stats_df['test_neg_rate'] = initial_stats_df['fn_rate'] + initial_stats_df['tn_rate']
+    # initial_stats_df['ppv'] = initial_stats_df['tp_rate'] /\
+    #                               (initial_stats_df['tp_rate'] + initial_stats_df['fp_rate'])
+    # initial_stats_df['npv'] = initial_stats_df['tn_rate'] /\
+    #                               (initial_stats_df['tn_rate'] + initial_stats_df['fn_rate'])
+    # initial_stats_df['sens'] = initial_stats_df['tp_rate'] /\
+    #                                (initial_stats_df['tp_rate'] + initial_stats_df['fn_rate'])
+    # initial_stats_df['spec'] = initial_stats_df['tn_rate'] /\
+    #                                (initial_stats_df['tn_rate'] + initial_stats_df['fp_rate'])
+    # initial_stats_df['lr_pos'] = initial_stats_df['sens'] /\
+    #                                  (1 - initial_stats_df['spec'])
+    # initial_stats_df['lr_neg'] = (1 - initial_stats_df['sens']) /\
+    #                                  initial_stats_df['spec']
 
-    Diagnostic and prognostic models are typically evaluated with measures of
-    accuracy that do not address clinical consequences.
+    final_dca_df = initial_stats_df
 
-    |
-
-    Decision-analytic techniques allow assessment of clinical outcomes but often
-    require collection of additional information may be cumbersome to apply to
-    models that yield a continuous result. Decision curve analysis is a method
-    for evaluating and comparing prediction models that incorporates clinical
-    consequences, requires only the data set on which the models are tested,
-    and can be applied to models that have either continuous or dichotomous
-    results.
-    The dca function performs decision curve analysis for binary outcomes.
-
-    |
-
-    Review the
-    [DCA Vignette](http://www.danieldsjoberg.com/dcurves/articles/dca.html)
-    for a detailed walk-through of various applications.
-
-    |
-
-    Also, see [www.decisioncurveanalysis.org]
-    (https://www.mskcc.org/departments/epidemiology-biostatistics/biostatistics/decision-curve-analysis) for more information.
-
-    |
-
-    Examples
-    ________
-
-    |
-
-    Load simulation binary data dataframe, print contents.
-
-    |
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> print(df_binary)
-         patientid  cancer  ...    marker cancerpredmarker
-    0            1   False  ...  0.776309         0.037201
-    1            2   False  ...  0.267086         0.578907
-    2            3   False  ...  0.169621         0.021551
-    3            4   False  ...  0.023996         0.003910
-    4            5   False  ...  0.070910         0.018790
-    ..         ...     ...  ...       ...              ...
-    745        746   False  ...  0.654782         0.057813
-    746        747    True  ...  1.030259         0.160424
-    747        748   False  ...  0.151616         0.108838
-    748        749   False  ...  0.624602         0.015285
-    749        750   False  ...  0.270679         0.011938
-
-    [750 rows x 8 columns]
-
-    |
-
-    Run DCA on simulation binary data. Print the results.
-
-    |
-
-    >>> print(
-    ...   dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ...    )
-    ... )
-          predictor     threshold    n  prevalence    tpr       fpr    variable  harm  net_benefit
-    0    famhistory  1.000000e-09  750        0.14  0.032  0.121333  famhistory     0     0.032000
-    1    famhistory  1.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.030774
-    2    famhistory  2.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.029524
-    3    famhistory  3.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.028247
-    4    famhistory  4.000000e-02  750        0.14  0.032  0.121333  famhistory     0     0.026944
-    ..          ...           ...  ...         ...    ...       ...         ...   ...          ...
-    96         none  9.600000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    97         none  9.700000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    98         none  9.800000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    99         none  9.900000e-01  750        0.14  0.000  0.000000        none     0     0.000000
-    100        none  1.000000e+00  750        0.14  0.000  0.000000        none     0          NaN
-
-    |
-
-    Load simulation survival data and run DCA on it. Print the results.
-
-    |
-
-    >>> df_surv = dcurves.load_test_data.load_survival_df()
-    >>> print(
-    ...   dcurves.dca(
-    ...     data = dcurves.load_test_data.load_survival_df(),
-    ...     outcome = 'cancer',
-    ...     predictors = ['cancerpredmarker'],
-    ...     thresh_vals = [0.01, 1.0, 0.01],
-    ...     probabilities = [False],
-    ...     time = 1,
-    ...     time_to_outcome_col = 'ttcancer'
-    ...   )
-    ... )
-                predictor     threshold    n  prevalence  ...       fpr          variable  harm  net_benefit
-    0    cancerpredmarker  1.000000e-09  750    0.147287  ...  0.852713  cancerpredmarker     0     0.147287
-    1    cancerpredmarker  1.000000e-02  750    0.147287  ...  0.742181  cancerpredmarker     0     0.139656
-    2    cancerpredmarker  2.000000e-02  750    0.147287  ...  0.613444  cancerpredmarker     0     0.132703
-    3    cancerpredmarker  3.000000e-02  750    0.147287  ...  0.523820  cancerpredmarker     0     0.123979
-    4    cancerpredmarker  4.000000e-02  750    0.147287  ...  0.474956  cancerpredmarker     0     0.115921
-    ..                ...           ...  ...         ...  ...       ...               ...   ...          ...
-    96               none  9.600000e-01  750    0.147287  ...  0.000000              none     0     0.000000
-    97               none  9.700000e-01  750    0.147287  ...  0.000000              none     0     0.000000
-    98               none  9.800000e-01  750    0.147287  ...  0.000000              none     0     0.000000
-    99               none  9.900000e-01  750    0.147287  ...  0.000000              none     0     0.000000
-    100              none  1.000000e+00  750    0.147287  ...  0.000000              none     0          NaN
+    return final_dca_df
 
 
-    Parameters
-    ----------
-    data : pd.DataFrame
-        the data set to analyze
-    outcome : str
-        the column name of the data frame to use as the outcome
-    predictors : str OR list(str)
-        the column(s) that will be used to predict the outcome
-    thresh_vals : list(float OR int)
-        3 values in list - threshold probability lower bound, upper bound,
-        then step size, respectively (defaults to [0.01, 1, 0.01]). The lower
-        bound must be >0.
-    harm : float or list(float)
-        the harm associated with each predictor
-        harm must have the same length as the predictors list
-    probabilities : bool or list(bool)
-        whether the outcome is coded as a probability
-        probability must have the same length as the predictors list
-    time : float (defaults to None)
-        survival endpoint time for risk calculation
-    prevalence : float (defaults to None)
-        population prevalence value
-    time_to_outcome_col : str (defaults to None)
-        name of input dataframe column that contains time-to-outcome data
 
+@beartype
+def dca(
+        data: pd.DataFrame,
+        outcome: str,
+        modelnames: list,
+        thresholds: np.ndarray = np.arange(0.00, 1.00, 0.01),
+        harm: Optional[dict] = None,
+        models_to_prob: Optional[list] = None,
+        prevalence: Optional[Union[float, int]] = None,
+        time: Optional[Union[float, int]] = None,
+        time_to_outcome_col: Optional[str] = None,
+        nper: Optional[int] = 1
+) -> pd.DataFrame:
 
-    Return
-    -------
-    all_covariates_df : pd.DataFrame
-        A dataframe containing calculated net benefit values and threshold values for plotting
-
-    """
-
-    _validate._dca_input_checks(
-        model_frame=data,
-        outcome=outcome,
-        predictors=predictors,
-        thresh_vals=thresh_vals,
-        harm=harm,
-        probabilities=probabilities,
-        time=time,
-        prevalence=prevalence,
-        time_to_outcome_col=time_to_outcome_col
-    )
-
-    # make model_frame df of outcome and predictor cols from data
-
-    model_frame = data[np.append(outcome, predictors)]
-
-    #### If survival, then time_to_outcome_col contains name of col
-    #### Otherwise, time_to_outcome_col will not be set (will = None), which means we're doing Binary DCA
-
-    if time_to_outcome_col:
-        model_frame[time_to_outcome_col] = data[time_to_outcome_col]
-
-    #### Convert to risk
-    #### Convert selected columns to risk scores
-
-    for i in range(0, len(predictors)):
-        if probabilities[i]:
-            model_frame = _convert_to_risk(model_frame,
-                                           outcome,
-                                           predictors[i],
-                                           prevalence,
-                                           time,
-                                           time_to_outcome_col)
-
-    model_frame['all'] = [1 for i in range(0, len(model_frame.index))]
-    model_frame['none'] = [0 for i in range(0, len(model_frame.index))]
-
-    # thresh_vals input from user contains 3 values: lower threshold bound, higher threshold
-    # bound, step increment in positions [0,1,2]
-
-    # nr.arange takes 3 vals: start, stop + one step increment, and step increment
-    thresholds = np.arange(thresh_vals[0], thresh_vals[1] + thresh_vals[2], thresh_vals[2])  # array of values
-    #### Prep data, add placeholder for 0 (10e-10), because can't use 0  for DCA, will output incorrect (incorrect?) value
-    thresholds = np.insert(thresholds, 0, 0.1 ** 9).tolist()
-
-    covariate_names = [i for i in model_frame.columns if
-                       i not in outcome]  # Get names of covariates (if survival, then will still have time_to_outcome_col
-    #### If survival, get covariate names that are not time_to_outcome_col
-    if time_to_outcome_col:
-        covariate_names = [i for i in covariate_names if i not in time_to_outcome_col]
-
-    testcons_list = []
-    for covariate in covariate_names:
-        temp_testcons_df = _calculate_test_consequences(
-            model_frame=model_frame,
+    risks_df = \
+        _create_risks_df(
+            data=data,
             outcome=outcome,
-            predictor=covariate,
-            thresholds=thresholds,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
             prevalence=prevalence,
             time=time,
             time_to_outcome_col=time_to_outcome_col
         )
 
-        temp_testcons_df['variable'] = [covariate] * len(temp_testcons_df.index)
+    initial_df = \
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
 
-        temp_testcons_df['harm'] = [harm[covariate] if harm != None else 0] * len(temp_testcons_df.index)
-        testcons_list.append(temp_testcons_df)
+    initial_stats_df = \
+        _calc_initial_stats(
+            initial_df=initial_df,
+            risks_df=rectified_risks_df,
+            thresholds=thresholds,
+            outcome=outcome,
+            prevalence_value=prevalence_value,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
 
-    all_covariates_df = pd.concat(testcons_list)
+    final_dca_df = \
+        _calc_more_stats(
+            initial_stats_df=initial_stats_df,
+            nper=nper
+        )
 
-    all_covariates_df['net_benefit'] = all_covariates_df['tpr'] - all_covariates_df['threshold'] / (
-            1 - all_covariates_df['threshold']) * all_covariates_df['fpr'] - all_covariates_df['harm']
-
-    return all_covariates_df
-
-
-def net_intervention_avoided(
-        after_dca_df: pd.DataFrame,
-        nper: int = 100
-):
-    """
-
-    |
-
-    Calculate net interventions avoided after performing decision curve analysis
-
-    |
-
-    Examples
-    ________
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-
-    >>> after_dca_df = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-
-    >>> after_net_intervention_avoided_df = dcurves.net_intervention_avoided(
-    ... after_dca_df = after_dca_df,
-    ... nper = 100
-    ...)
-
-    |
-
-    Parameters
-    __________
-    after_dca_df : pd.DataFrame
-        dataframe outputted by dca function in the dcurves library
-    nper : int
-        number to report net interventions per （Defaults to 100)
-
-    Return
-    ______
-    merged_after_dca_df: pd.DataFrame
-        dataframe with calculated net_intervention_avoided field joined to the inputted after_dca_df
-
-    """
+    return final_dca_df
 
 
-    all_records = after_dca_df[after_dca_df['variable'] == 'all']
-    all_records = all_records[['threshold', 'net_benefit']]
-    all_records = all_records.rename(columns={'net_benefit': 'net_benefit_all'})
-
-    merged_after_dca_df = after_dca_df.merge(all_records, on='threshold')
-
-    merged_after_dca_df['net_intervention_avoided'] = (merged_after_dca_df['net_benefit']
-                                             - merged_after_dca_df['net_benefit_all']) \
-                                            / (merged_after_dca_df['threshold']
-                                               / (1 - merged_after_dca_df['threshold'])) * nper
-
-    return merged_after_dca_df
 
 
-def plot_graphs(after_dca_df: pd.DataFrame,
-                graph_type: str = 'net_benefit',
-                y_limits: list = [-0.05, 0.2],
-                color_names: list = ['blue', 'purple', 'red',
-                                     'green', 'hotpink', 'orange',
-                                     'saddlebrown', 'lime', 'magenta']
-                ) -> None:
-    """
-
-    |
-
-    Plot the outputted dataframe from dca() of this library.
-
-    |
-
-    Specifically, this function
-    will plot the calculated net benefit values for each threshold value from those
-    indicated in the dca() function.
-
-    Examples
-    ________
-
-    |
-
-    Simple plot binary DCA example. Load binary outcome dataframe, run DCA, plot calculated predictor net benefit values
-
-    |
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> binary_dca_results = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-    >>> plot_graphs(after_dca_df = binary_dca_results)
-
-    |
-
-    Simple binary DCA example with plotting net interventions avoided. Load binary outcome dataframe, run DCA, run
-    net_intervention_avoided(), plot outputted dataframe
-
-    |
-
-    >>> df_binary = dcurves.load_test_data.load_binary_df()
-    >>> after_dca_df = dcurves.dca(
-    ...     data = df_binary,
-    ...     outcome = 'cancer',
-    ...     predictors = ['famhistory']
-    ... )
-    >>> after_net_interventions_avoided_df = net_intervention_avoided(after_dca_df=after_dca_df)
-    >>> plot_graphs(after_dca_df = after_net_interventions_avoided_df,
-    ...     graph_type='net_intervention_avoided',
-    ...     y_limits=[-10,100],
-    ...     color_names=['red','teal']
-    ... )
-
-    Parameters
-    __________
-    after_dca_df : pandas.DataFrame
-        dataframe outputted by dca function in the dcurves library
-    graph_type : str
-        type of graph outputted, either 'net_benefit' or 'net_intervention_avoided' (defaults to 'net_benefit')
-    y_limits : list[float]
-        list of float that control graph lower and upper y-axis limits
-        (defaults to [-0.05, 0.2] for graph_type == net_benefit. Change values for
-         graph_type == net_intervention_avoided)
-    color_names : list[str]
-        list of colors specified by user (defaults to ['blue', 'purple', 'red',
-        'green', 'hotpink', 'orange', 'saddlebrown', 'lime', 'magenta']
-
-    Returns
-    _______
-    None
-
-    """
-
-    _validate._plot_graphs_input_checks(after_dca_df=after_dca_df,
-                                        y_limits=y_limits,
-                                        color_names=color_names,
-                                        graph_type=graph_type)
-
-    _validate._plot_net_intervention_input_checks(after_dca_df=after_dca_df,
-                                                  graph_type=graph_type)
-
-    if graph_type == 'net_benefit':
-
-        predictor_names = after_dca_df['predictor'].value_counts().index
-        # color_names = ['blue', 'purple','red',
-        #                'green', 'hotpink', 'orange',
-        #                'saddlebrown', 'lime', 'magenta']
-
-        for predictor_name, color_name in zip(predictor_names, color_names):
-            single_pred_df = after_dca_df[after_dca_df['predictor'] == predictor_name]
-            x_vals = single_pred_df['threshold']
-            y_vals = single_pred_df['net_benefit']
-            plt.plot(x_vals, y_vals, color=color_name)
-
-            plt.ylim(y_limits)
-            plt.legend(predictor_names)
-            plt.grid(b=True, which='both', axis='both')
-            plt.xlabel('Threshold Values')
-            plt.ylabel('Calculated Net Benefit')
-
-    elif graph_type == 'net_intervention_avoided':
-
-        # Don't want to plot 'all'/'none' for net_intervention_avoided
-
-        cleaned_after_dca_df = after_dca_df[~(after_dca_df["predictor"].isin(['all', 'none']))]
-
-        predictor_names = cleaned_after_dca_df['predictor'].value_counts().index
-
-        for predictor_name, color_name in zip(predictor_names, color_names):
-            single_pred_df = cleaned_after_dca_df[cleaned_after_dca_df['predictor'] == predictor_name]
-            x_vals = single_pred_df['threshold']
-            y_vals = single_pred_df['net_intervention_avoided']
-            plt.plot(x_vals, y_vals, color=color_name)
-
-            plt.ylim(y_limits)
-            plt.legend(predictor_names)
-            plt.grid(b=True, which='both', axis='both')
-            plt.xlabel('Threshold Values')
-            plt.ylabel('Calculated Net Interventions Avoided')
-
-    return

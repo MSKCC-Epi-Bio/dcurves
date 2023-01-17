@@ -1,5 +1,6 @@
 import pandas as pd
 import pkg_resources
+import importlib_resources
 
 #useful directories
 # root_test_dir = path.dirname(path.realpath(__file__))
@@ -59,7 +60,7 @@ def load_r_case1_results():
     stream = pkg_resources.resource_stream(__name__, 'data/r_case1_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-# Case 2 R Results:
+# Case 2 R Results: Simple survival Case
 
 def load_r_case2_results():
     '''
@@ -81,6 +82,8 @@ def load_r_case2_results():
 
     stream = pkg_resources.resource_stream(__name__, 'data/r_case2_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+
 
 # TUTORIAL BENCHMARKING
 

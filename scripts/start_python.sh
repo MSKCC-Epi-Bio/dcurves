@@ -7,7 +7,7 @@ export PYTHONPATH=.:$PYTHONPATH
 python3 "$@" #
 
 # /Users/ShaunPorwal/Documents/GitHub/python_packages/dcurves/scripts/start_python.sh -m unittest \
-# path/of/test
+# path/of/tests
 
 # ~/
 

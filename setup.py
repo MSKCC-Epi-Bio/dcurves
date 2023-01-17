@@ -9,7 +9,6 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 
 VERSION = '1.0.0'
 DESCRIPTION = 'Python package for Andrew Vickers\' Decision Curve Analysis method to evaluate prediction models and diagnostic tests'
-LONG_DESCRIPTION = 'A package that allows to build simple streams of video, audio and camera data.'
 
 # Setting up
 setup(
@@ -24,7 +23,7 @@ setup(
     install_requires=['pandas', 'numpy', 'beartype', 'typing',
                       'pkg_resources', 'statsmodels', 'lifelines',
                       'matplotlib', 'random', 'typing'],
-    keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK'],
+    keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK', 'Shaun Porwal'],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",

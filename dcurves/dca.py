@@ -6,6 +6,7 @@ import lifelines
 
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 
+
 def _calc_prevalence(
         risks_df: pd.DataFrame,
         outcome: str,
@@ -13,6 +14,25 @@ def _calc_prevalence(
         time: Optional[Union[int, float]] = None,
         time_to_outcome_col: Optional[str] = None
 ) -> float:
+    """
+    Parameters
+    ----------
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    outcome : str
+        Column name of outcome of interest in risks_df
+    prevalence : int or float. Defaults to None
+        Value that indicates the prevalence among the population. Only to be specified in case-control situtations
+    time : int or float, Defaults to None
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col : str, Defaults to None
+        Column name of time of interest in risks_df
+
+    Returns
+    -------
+    float
+        Either calculated prevalence or inutted prevalence depending on whether or not input prevalence was supplied
+    """
     # Binary
     if time_to_outcome_col is None:
         if prevalence is not None:
@@ -35,6 +55,7 @@ def _calc_prevalence(
             prevalence = float(prevalence)
     return prevalence
 
+
 @beartype
 def _create_initial_df(
         thresholds: np.ndarray,
@@ -43,7 +64,26 @@ def _create_initial_df(
         prevalence_value: Union[float, int],
         harm: Optional[dict] = None
 ) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    thresholds : np.ndarray
+        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+    modelnames : list[str]
+        Column names from risks_df that contain model risk scores
+    input_df_rownum : int
+        Number of rows in original input dataframe
+    prevalence_value : int or float
+        Calculated prevalence value
+    harm : dict[float], defaults to None
+        Models with their associated harm values
 
+    Returns
+    -------
+
+    pd.DataFrame
+        DataFrame set with initial parameters
+    """
     modelnames = np.append(modelnames, ['all', 'none'])
     initial_df = pd.DataFrame(
         {'model':
@@ -65,11 +105,27 @@ def _create_initial_df(
 
     return initial_df
 
+
 def _calc_test_pos_rate(
         risks_df: pd.DataFrame,
         thresholds: np.ndarray,
         model: str
 ) -> pd.Series:
+    """
+    Parameters
+    ----------
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    thresholds : np.ndarray
+        Threshold values (x values) at which net test positive rate will be calculated
+    model : str
+        Model column name in risks_df
+
+    Returns
+    -------
+    pd.Series
+        Calculated test positive rates for each threshold value for a model
+    """
     test_pos_rate = []
 
     for threshold in thresholds:
@@ -78,18 +134,40 @@ def _calc_test_pos_rate(
         if True not in risk_above_thresh_tf_dict:
             test_pos_rate.append(0 / len(risks_df.index))
         elif True in risk_above_thresh_tf_dict:
-            test_pos_rate.append(risk_above_thresh_tf_dict[True]/len(risks_df.index))
+            test_pos_rate.append(risk_above_thresh_tf_dict[True] / len(risks_df.index))
 
     return pd.Series(test_pos_rate)
+
 
 def _calc_risk_rate_among_test_pos(
         risks_df: pd.DataFrame,
         outcome: str,
         model: str,
         thresholds: np.ndarray,
-        time_to_outcome_col: str,
-        time: Union[float, int]
+        time: Union[float, int],
+        time_to_outcome_col: str
 ) -> pd.Series:
+    """
+    Parameters
+    ----------
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    outcome : str
+        Column name of outcome of interest in risks_df
+    model : str
+        Model column name in risks_df
+    thresholds : np.ndarray
+        Threshold values (x values) at which risk rate among test positives will be calculated
+    time : int or float
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col : str
+        Column name of time of interest in risks_df
+
+    Returns
+    -------
+    pd.Series
+        Calculated risk rate among test positive for each threshold value
+    """
     risk_rate_among_test_pos = []
     for threshold in thresholds:
 
@@ -122,7 +200,30 @@ def _calc_tp_rate(
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
 ) -> pd.Series:
-
+    """
+    Parameters
+    ----------
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    thresholds : np.ndarray
+        Threshold values (x values) at which risk rate among test positives will be calculated
+    model : str
+        Model column name in risks_df
+    outcome : str
+        Column name of outcome of interest in risks_df
+    test_pos_rate : pd.Series, defaults to None
+        Calculated test positive rates for use in survival calculation of tp_rate
+    prevalence_value : int or float, defaults to None
+        Prevalence value used for calculation of tp_rate
+    time : int or float, defaults to None
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col : str, defaults to None
+        Column name of time of interest in risks_df
+    Returns
+    -------
+    pd.Series
+               
+    """
     # Survival
     if time_to_outcome_col is not None:
 
@@ -138,16 +239,17 @@ def _calc_tp_rate(
         tp_rate = risk_rate_among_test_pos * test_pos_rate
     # Binary
     elif time_to_outcome_col is None:
-        true_outcome = risks_df[risks_df[outcome]==True][[model]]
+        true_outcome = risks_df[risks_df[outcome] == True][[model]]
         tp_rate = []
         for threshold in thresholds:
             true_tf_above_thresh_dict = dict(pd.Series(true_outcome[model] >= threshold).value_counts())
             if True not in true_tf_above_thresh_dict:
                 tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
             elif True in true_tf_above_thresh_dict:
-                tp_rate.append(true_tf_above_thresh_dict[True] / len(true_outcome[model]) * (prevalence_value))
+                tp_rate.append(true_tf_above_thresh_dict[True] / len(true_outcome[model]) * prevalence_value)
 
     return pd.Series(tp_rate)
+
 
 def _calc_fp_rate(
         risks_df: pd.DataFrame,
@@ -184,6 +286,7 @@ def _calc_fp_rate(
                 fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
     return pd.Series(fp_rate)
 
+
 @beartype
 def _calc_initial_stats(
         initial_df: pd.DataFrame,
@@ -194,9 +297,7 @@ def _calc_initial_stats(
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
 ) -> pd.DataFrame:
-
     for model in initial_df['model'].value_counts().index:
-
         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
                                             thresholds=thresholds,
                                             model=model)
@@ -230,12 +331,12 @@ def _calc_initial_stats(
 
     return initial_df
 
+
 @beartype
 def _calc_more_stats(
         initial_stats_df: pd.DataFrame,
         nper: Optional[int] = 1
 ):
-
     initial_stats_df['net_benefit'] = initial_stats_df['tp_rate'] - initial_stats_df['threshold'] / (
             1 - initial_stats_df['threshold']) * initial_stats_df['fp_rate'] - initial_stats_df['harm']
 
@@ -245,7 +346,8 @@ def _calc_more_stats(
             'net_benefit'].tolist() * len(initial_stats_df['model'].value_counts())
 
     initial_stats_df['net_intervention_avoided'] = (initial_stats_df.net_benefit - initial_stats_df.net_benefit_all) / \
-                                              (initial_stats_df.threshold / (1 - initial_stats_df.threshold)) * nper
+                                                   (initial_stats_df.threshold / (
+                                                               1 - initial_stats_df.threshold)) * nper
 
     # Drop 'net_benefit_all', as mentioned above
     initial_stats_df = initial_stats_df.drop(columns='net_benefit_all')
@@ -274,7 +376,6 @@ def _calc_more_stats(
     return final_dca_df
 
 
-
 @beartype
 def dca(
         data: pd.DataFrame,
@@ -288,7 +389,6 @@ def dca(
         time_to_outcome_col: Optional[str] = None,
         nper: Optional[int] = 1
 ) -> pd.DataFrame:
-
     risks_df = \
         _create_risks_df(
             data=data,
@@ -340,7 +440,3 @@ def dca(
         )
 
     return final_dca_df
-
-
-
-

@@ -9,4 +9,8 @@ def test_scratch1():
 
     asdf.replace(to_replace=7, value=1, inplace=True)
 
-    print(asdf.to_string())
+    # print(asdf.to_string())
+
+def test_python_version():
+    import sys
+    print(sys.version)

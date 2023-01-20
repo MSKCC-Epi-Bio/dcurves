@@ -21,7 +21,7 @@ setup(
     long_description=(this_directory / "README.md").read_text(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    install_requires=['pandas>=1.0.2', 'numpy>=1.24.1', 'beartype>=0.11.0', 'typing>=3.7.4.3',
+    install_requires=['pandas>=1.0.2', 'numpy>=1.21.6', 'beartype>=0.11.0', 'typing>=3.7.4.3',
                       'statsmodels>=0.11.1', 'lifelines>=0.26.3', 'matplotlib>=3.2.0'],
     keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK'],
     classifiers=[

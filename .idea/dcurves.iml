@@ -4,13 +4,6 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="dcapy" />
-    <orderEntry type="module" module-name="iwillscrapeyou" />
-    <orderEntry type="module" module-name="testpack" />
-    <orderEntry type="module" module-name="packaging_tutorial" />
-    <orderEntry type="module" module-name="dcapy" />
-    <orderEntry type="module" module-name="dcapy" />
-    <orderEntry type="module" module-name="autoclicks" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="NUMPY" />

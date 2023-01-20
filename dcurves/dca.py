@@ -6,7 +6,6 @@ import lifelines
 
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 
-
 def _calc_prevalence(
         risks_df: pd.DataFrame,
         outcome: str,

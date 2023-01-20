@@ -12,6 +12,20 @@ def _plot_net_benefit(
         y_limits: list = [-0.05, 0.2],
         color_names: Optional[list] = None,
                 ) -> None:
+    """
+    Parameters
+    ----------
+    plot_df : pd.DataFrame
+        Data containing threshold values, model columns of net benefit scores to be plotted
+    y_limits : list[float]
+        2 floats, lower and upper bounds for y-axis
+    color_names
+        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
+        included by default
+    Returns
+    -------
+    None
+    """
 
     modelnames = plot_df['model'].value_counts().index
 
@@ -44,6 +58,20 @@ def _plot_net_intervention_avoided(
                 y_limits: list = [-0.05, 0.2],
                 color_names: Optional[list] = None
                 ) -> None:
+    """
+    Parameters
+    ----------
+    plot_df : pd.DataFrame
+        Data containing threshold values, model columns of net intervention scores to be plotted
+    y_limits : list[float]
+        2 floats, lower and upper bounds for y-axis
+    color_names
+        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
+        included by default
+    Returns
+    -------
+    None
+    """
 
     # Don't want to plot 'all'/'none' for net_intervention_avoided
 
@@ -72,6 +100,24 @@ def plot_graphs(plot_df: pd.DataFrame,
                                      'green', 'hotpink', 'orange',
                                      'saddlebrown', 'lime', 'magenta']
                 ) -> None:
+    """
+    Parameters
+    ----------
+    plot_df : pd.DataFrame
+        Data containing threshold values, model columns of net benefit/intervention scores to be plotted
+    graph_type : str (default: 'net_benefit')
+        Type of plot (either 'net_benefit' or 'net_intervention_avoided')
+    y_limits : list[float]
+        2 floats, lower and upper bounds for y-axis
+    color_names : list[str]
+        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
+        included by default
+
+    Returns
+    -------
+    None
+    """
+
 
     if graph_type not in ['net_benefit', 'net_intervention_avoided']:
         ValueError('graph_type must be one of 2 strings: net_benefit, net_intervention_avoided')
@@ -97,5 +143,3 @@ def plot_graphs(plot_df: pd.DataFrame,
         )
 
     return
-
-# _plot_net_benefit.__doc__ = """

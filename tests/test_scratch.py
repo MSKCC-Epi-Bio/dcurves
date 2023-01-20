@@ -11,6 +11,6 @@ def test_scratch1():
 
     # print(asdf.to_string())
 
-def test_python_version():
-    import sys
-    print(sys.version)
+def test_threshold_dtypes():
+
+    pass

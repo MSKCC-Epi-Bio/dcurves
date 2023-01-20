@@ -18,20 +18,20 @@ def _calc_prevalence(
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1) and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
-    prevalence : int or float. Defaults to None
-        Value that indicates the prevalence among the population. Only to be specified in case-control situtations
-    time : int or float, Defaults to None
+    prevalence : int or float (default: None)
+        Value that indicates the prevalence among the population, only to be specified in case-control situations
+    time : int or float (default: None)
         Time of interest in years, used in Survival DCA
-    time_to_outcome_col : str, Defaults to None
+    time_to_outcome_col : str (default: None)
         Column name of time of interest in risks_df
 
     Returns
     -------
     float
-        Either calculated prevalence or inutted prevalence depending on whether or not input prevalence was supplied
+        Either calculated prevalence or inputted prevalence depending on whether or not input prevalence was supplied
     """
     # Binary
     if time_to_outcome_col is None:
@@ -75,12 +75,11 @@ def _create_initial_df(
         Number of rows in original input dataframe
     prevalence_value : int or float
         Calculated prevalence value
-    harm : dict[float], defaults to None
+    harm : dict[float] (default: None)
         Models with their associated harm values
 
     Returns
     -------
-
     pd.DataFrame
         DataFrame set with initial parameters
     """
@@ -161,7 +160,7 @@ def _calc_risk_rate_among_test_pos(
     time : int or float
         Time of interest in years, used in Survival DCA
     time_to_outcome_col : str
-        Column name of time of interest in risks_df
+        Column name containing time to outcome values, used in Survival DCA
 
     Returns
     -------
@@ -206,23 +205,24 @@ def _calc_tp_rate(
     risks_df : pd.DataFrame
         Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
     thresholds : np.ndarray
-        Threshold values (x values) at which risk rate among test positives will be calculated
+        Threshold values (x values) at which true positive rate will be calculated
     model : str
         Model column name in risks_df
     outcome : str
         Column name of outcome of interest in risks_df
-    test_pos_rate : pd.Series, defaults to None
+    test_pos_rate : pd.Series (default: None)
         Calculated test positive rates for use in survival calculation of tp_rate
-    prevalence_value : int or float, defaults to None
-        Prevalence value used for calculation of tp_rate
-    time : int or float, defaults to None
+    prevalence_value : int or float (default: None)
+        Calculated prevalence value
+    time : int or float (default: None)
         Time of interest in years, used in Survival DCA
-    time_to_outcome_col : str, defaults to None
-        Column name of time of interest in risks_df
+    time_to_outcome_col : str (default: None)
+        Column name in risks_df containing time to outcome values, used in Survival DCA
+
     Returns
     -------
     pd.Series
-               
+        Calculated true positive rate for each threshold value
     """
     # Survival
     if time_to_outcome_col is not None:
@@ -261,6 +261,31 @@ def _calc_fp_rate(
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None,
 ) -> pd.Series:
+    """
+    Parameters
+    ----------
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    thresholds : np.ndarray
+        Threshold values (x values) at which false positive rate will be calculated
+    model : str
+        Model column name in risks_df
+    outcome : str
+        Column name of outcome of interest in risks_df
+    test_pos_rate : pd.Series (default: None)
+        Calculated test positive rates for each threshold value for a model
+    prevalence_value : int or float (default: None)
+        Calculated prevalence value
+    time : int or float (default: None)
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col: str (default: None)
+        Column name of time of interest in risks_df
+    Returns
+    -------
+    pd.Series
+        Calculated false positive rate for each threshold value
+    """
+
     # Survival
     if time_to_outcome_col is not None:
         risk_rate_among_test_pos = \
@@ -297,6 +322,29 @@ def _calc_initial_stats(
         time: Optional[Union[float, int]] = None,
         time_to_outcome_col: Optional[str] = None
 ) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    initial_df : pd.DataFrame
+        DataFrame set with initial parameters
+    risks_df : pd.DataFrame
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+    thresholds : np.ndarray
+        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+    outcome : str
+        Column name of outcome of interest in risks_df
+    prevalence_value : int or float (default: None)
+        Calculated prevalence value
+    time : int or float (default: None)
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col : str (default: None)
+        Column name in risks_df containing time to outcome values, used in Survival DCA
+
+    Returns
+    -------
+    pd.DataFrame
+        Initially set data with calculated test pos rate, true positive rate, false positive rate per threshold
+    """
     for model in initial_df['model'].value_counts().index:
         test_pos_rate = _calc_test_pos_rate(risks_df=risks_df,
                                             thresholds=thresholds,
@@ -335,8 +383,22 @@ def _calc_initial_stats(
 @beartype
 def _calc_more_stats(
         initial_stats_df: pd.DataFrame,
-        nper: Optional[int] = 1
-):
+        nper: int = 1
+) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    initial_stats_df : pd.DataFrame
+        Initially set data with calculated test pos rate, true positive rate, false positive rate per threshold
+    nper : int (default: 1)
+        Total number of interventions, multiplies proportion of interventions avoided to get scaled plots
+    Returns
+    -------
+    pd.DataFrame
+        Data of full set of stats offered by the package per each threshold value (test_pos_rate, tp, fp, nb, nia)
+
+    """
     initial_stats_df['net_benefit'] = initial_stats_df['tp_rate'] - initial_stats_df['threshold'] / (
             1 - initial_stats_df['threshold']) * initial_stats_df['fp_rate'] - initial_stats_df['harm']
 
@@ -389,6 +451,36 @@ def dca(
         time_to_outcome_col: Optional[str] = None,
         nper: Optional[int] = 1
 ) -> pd.DataFrame:
+    """
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Initial raw data ideally containing risk scores (scores ranging from 0 to 1), or else predictor/model
+        values, and outcome of interest
+    outcome : str
+        Column name of outcome of interest in risks_df
+    modelnames : list[str]
+        Column names from data that contain model risk scores or values
+    thresholds : np.ndarray
+        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+    harm : dict[float] (default: None)
+        Models with their associated harm values
+    models_to_prob : list[str] (default: None)
+        Columns that need to be converted to risk scores from 0 to 1
+    prevalence : int or float (default: None)
+        Value that indicates the prevalence among the population, only to be specified in case-control situations
+    time : int or float (default: None)
+        Time of interest in years, used in Survival DCA
+    time_to_outcome_col : str (default: None)
+        Column name in data containing time to outcome values, used in Survival DCA
+    nper : int (default: 1)
+        Total number of interventions, multiplies proportion of interventions avoided to get scaled plots
+
+    Returns
+    -------
+    pd.DataFrame
+        Data containing net benefit and interventions avoided scores to be plotted against threshold values
+    """
     risks_df = \
         _create_risks_df(
             data=data,

@@ -8,7 +8,7 @@ this_directory = Path(__file__).parent
 
 long_description = (this_directory / "README.md").read_text()
 
-VERSION = '1.0.3'
+VERSION = '1.0.4'
 DESCRIPTION = 'Python package for Andrew Vickers\' Decision Curve Analysis method to evaluate prediction models and diagnostic tests'
 
 # Setting up

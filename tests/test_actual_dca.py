@@ -33,9 +33,9 @@ def test_actual_dca2():
             time=1
         )
 
-    plot_graphs(
-        plot_df=dca_results,
-        graph_type='net_benefit',
-        y_limits=[-0.025, 0.175],
-        color_names=['blue', 'red', 'green', 'purple', 'black']
-    )
+    # plot_graphs(
+    #     plot_df=dca_results,
+    #     graph_type='net_benefit',
+    #     y_limits=[-0.025, 0.175],
+    #     color_names=['blue', 'red', 'green', 'purple', 'black']
+    # )

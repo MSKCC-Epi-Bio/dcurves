@@ -12,7 +12,7 @@ def _calc_binary_risks(
         model: str
 ) -> list:
     """
-    Calculate Risks for Binary DCA
+    Calculate Risks For a Model Column for binary DCA.
 
     Parameters
     ----------
@@ -42,7 +42,7 @@ def _calc_surv_risks(
         time_to_outcome_col: str
 ) -> list:
     """
-    Calculate Risks For a Model Column Survival DCA
+    Calculate Risks For a Model Column for survival DCA.
 
     Parameters
     ----------

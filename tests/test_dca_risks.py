@@ -1,7 +1,7 @@
 # Load data
-from dcurves.load_test_data import load_test_surv_risk_test_df
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.load_test_data import load_tutorial_bin_marker_risks_list
+from .load_test_data import load_test_surv_risk_test_df
+from .load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_tutorial_bin_marker_risks_list
 
 import dcurves
 from dcurves.risks import _rectify_model_risk_boundaries

@@ -14,6 +14,9 @@ def _calc_prevalence(
         time_to_outcome_col: Optional[str] = None
 ) -> float:
     """
+    Calculate prevalence value when not supplied for binary and survival DCA cases, and set prevalence value for binary
+    case when supplied (case control). Case control prevalence is not value for survival cases.
+
     Parameters
     ----------
     risks_df : pd.DataFrame
@@ -64,6 +67,9 @@ def _create_initial_df(
         harm: Optional[dict] = None
 ) -> pd.DataFrame:
     """
+    Create initial dataframe that will form the outputted table containing net benefit/interventions avoided
+    values for plotting.
+
     Parameters
     ----------
     thresholds : np.ndarray
@@ -110,6 +116,9 @@ def _calc_test_pos_rate(
         model: str
 ) -> pd.Series:
     """
+    Calculate each test positive rate per threshold value, which will be used to calculate true and false positive
+    rates per threshold values in the survival DCA case.
+
     Parameters
     ----------
     risks_df : pd.DataFrame
@@ -146,6 +155,9 @@ def _calc_risk_rate_among_test_pos(
         time_to_outcome_col: str
 ) -> pd.Series:
     """
+    Calculate the risk rate among test positive cases for each threshold value, which will be used to calculate true
+    and false positive rates per threshold values in the survival DCA case.
+
     Parameters
     ----------
     risks_df : pd.DataFrame
@@ -199,6 +211,8 @@ def _calc_tp_rate(
         time_to_outcome_col: Optional[str] = None
 ) -> pd.Series:
     """
+    Calculate true positive rates per threshold value in binary and survival DCA cases.
+
     Parameters
     ----------
     risks_df : pd.DataFrame
@@ -261,6 +275,8 @@ def _calc_fp_rate(
         time_to_outcome_col: Optional[str] = None,
 ) -> pd.Series:
     """
+    Calculate false positive rates per threshold value in binary and survival DCA cases.
+
     Parameters
     ----------
     risks_df : pd.DataFrame
@@ -322,6 +338,8 @@ def _calc_initial_stats(
         time_to_outcome_col: Optional[str] = None
 ) -> pd.DataFrame:
     """
+    Calculate the test positive, true positive, and false positive rate per each threshold value.
+
     Parameters
     ----------
     initial_df : pd.DataFrame
@@ -385,6 +403,7 @@ def _calc_more_stats(
         nper: int = 1
 ) -> pd.DataFrame:
     """
+    Calculate additional statistics (net benefit, net interventions avoided) and add them to initial_stats_df.
 
     Parameters
     ----------
@@ -451,6 +470,11 @@ def dca(
         nper: Optional[int] = 1
 ) -> pd.DataFrame:
     """
+    Decision curve analysis is a method for evaluating and comparing prediction models that incorporates clinical
+    consequences, requiring only the data set on which the models are tested, and can be applied to models that have
+    either continuous or dichotomous results. The dca function performs decision curve analysis for binary and survival
+    outcomes.
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -480,6 +504,9 @@ def dca(
     pd.DataFrame
         Data containing net benefit and interventions avoided scores to be plotted against threshold values
     """
+
+
+
     risks_df = \
         _create_risks_df(
             data=data,

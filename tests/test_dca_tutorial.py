@@ -1,41 +1,24 @@
 # Load Basic Tools
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 
 # Load Data
-from dcurves.load_test_data import load_r_dca_famhistory
-from dcurves.load_test_data import load_r_df_cancer_dx, load_r_df_cancer_dx2
-
-# from dcurves.load_test_data import load_survival_df
-# from dcurves.load_test_data import load_case_control_df
-# from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
-# from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
+from .load_test_data import load_r_dca_famhistory
 
 # Load Stats Libraries
 import statsmodels.api as sm
 import lifelines
 
 # Load dcurves functions
-from dcurves.dca import _calc_prevalence, _create_initial_df
-from dcurves.risks import _create_risks_df, _calc_binary_risks, _calc_surv_risks
-from dcurves.dca import _calc_initial_stats, _calc_more_stats
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.load_test_data import load_tutorial_bin_interventions_df
-from dcurves.dca import dca
-from dcurves.dca import _rectify_model_risk_boundaries
-from dcurves.plot_graphs import plot_graphs
-import dcurves
+from dcurves import dca, plot_graphs
 
+def test_python_model():
+    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-# def test_python_model():
-#     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
-#
-#     mod = sm.GLM.from_formula('cancer ~ famhistory', data=df_cancer_dx, family=sm.families.Binomial())
-#     mod_results = mod.fit()
-#
-#     print(mod_results.summary())
+    mod = sm.GLM.from_formula('cancer ~ famhistory', data=df_cancer_dx, family=sm.families.Binomial())
+    mod_results = mod.fit()
+
+    # print(mod_results.summary())
 
 
 def test_python_famhistory1():
@@ -73,7 +56,8 @@ def test_python_famhistory1():
 
 def test_python_famhistory2():
 
-    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/"
+                               "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
     dca_famhistory2_df = \
         dca(
@@ -84,7 +68,7 @@ def test_python_famhistory2():
         )
 
     # plot_graphs(
-    #     plot_df=dca_result_df,
+    #     plot_df=dca_famhistory2_df,
     #     graph_type='net_benefit'
     # )
 

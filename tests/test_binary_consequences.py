@@ -7,13 +7,12 @@ from dcurves.dca import _calc_more_stats
 from dcurves.dca import _rectify_model_risk_boundaries
 
 # Load Data for Testing
-from dcurves.load_test_data import load_r_case1_results
-from dcurves.load_test_data import load_binary_df
+from .load_test_data import load_r_case1_results
+from .load_test_data import load_binary_df
 
 # Load Tools
 import pandas as pd
 import numpy as np
-
 
 def test_case1_binary_test_pos_rate():
 

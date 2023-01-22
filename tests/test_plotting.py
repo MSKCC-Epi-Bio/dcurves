@@ -1,5 +1,5 @@
 # Load Data
-from dcurves.load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_binary_df, load_survival_df
 
 # Load DCA function(s)
 from dcurves.dca import dca
@@ -12,6 +12,7 @@ mpl.use('tkagg') # Sets backend for mpl to TkAgggraphical: GUI library for Pytho
 import matplotlib.pyplot as plt
 import random
 import pandas as pd
+import numpy as np
 
 def test_2_case1_plot_net_benefit():
 
@@ -23,41 +24,52 @@ def test_2_case1_plot_net_benefit():
         dca(
             data=df_cancer_dx,
             outcome='cancer',
-            modelnames=['famhistory']
+            modelnames=['famhistory'],
+            thresholds=np.arange(0, 0.45, 0.01)
         )
 
     # plot_graphs(
     #     plot_df=dca_famhistory_df,
     #     graph_type='net_benefit',
-    #     y_limits=[-0.05, 0.2]
+    #     y_limits=[-0.05, 0.15],
+    #     color_names=['blue', 'red', 'green']
     # )
 
 
-# def test_case1_plot_net_benefit():
-#
-#     data = load_binary_df()
-#     y_limits = [-0.05, 0.2]
-#     dca_results = \
-#         dca(
-#             data=data,
-#             outcome='cancer',
-#             modelnames=['famhistory']
-#         )
-#
-#     plot_df = dca_results
-#
-#     modelnames = plot_df['model'].value_counts().index
-#
-#     get_colors = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
-#     colors = get_colors(len(modelnames))
-#     # get_colors(3)  # sample return:  ['#8af5da', '#fbc08c', '#b741d0']
-#
-#     for modelname, color_name in zip(modelnames, colors):
-#         single_model_df = plot_df[plot_df['model'] == modelname]
-#         plt.plot(single_model_df['threshold'], single_model_df['net_benefit'], color=color_name)
-#         plt.ylim(y_limits)
-#         plt.legend(modelnames)
-#         plt.grid(b=True, which='both', axis='both')
-#         plt.xlabel('Threshold Values')
-#         plt.ylabel('Calculated Net Benefit')
-#     plt.show()
+def test_case1_plot_net_benefit():
+
+    data = load_binary_df()
+    y_limits = [-0.05, 0.2]
+    color_names = None
+    dca_results = \
+        dca(
+            data=data,
+            outcome='cancer',
+            modelnames=['famhistory']
+        )
+
+    plot_df = dca_results
+
+    # _plot_net_benefit(
+    #     plot_df=plot_df
+    # )
+
+def test_case1_plot_net_intervention_avoided():
+
+    data = load_binary_df()
+    y_limits = [-0.05, 1]
+    color_names = None
+    dca_results = \
+        dca(
+            data=data,
+            outcome='cancer',
+            modelnames=['famhistory']
+        )
+
+    plot_df = dca_results
+
+    # _plot_net_intervention_avoided(
+    #     plot_df=plot_df,
+    #     y_limits=y_limits,
+    #     color_names=['blue', 'red', 'green']
+    # )

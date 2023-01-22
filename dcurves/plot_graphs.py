@@ -13,6 +13,8 @@ def _plot_net_benefit(
         color_names: Optional[list] = None,
                 ) -> None:
     """
+    Plot net benefit values against threshold values.
+
     Parameters
     ----------
     plot_df : pd.DataFrame
@@ -28,23 +30,17 @@ def _plot_net_benefit(
     """
 
     modelnames = plot_df['model'].value_counts().index
-
-    # if len(color_names) != len(modelnames):
-    #     ValueError('More predictors than color_names, please enter more color names in color_names list and try again')
-    #
-    # if 'model' not in plot_df.columns:
-    #     ValueError('Column name containing model names is not a column in inputted dataframe, \
-    #                please make sure model_name_colname exists in dataframe')
-
     if color_names is None:
         get_colors = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
         color_names = get_colors(len(modelnames))
+        # get_colors(3)  # sample return:  ['#8af5da', '#fbc08c', '#b741d0']
+    elif color_names is not None:
+        if len(color_names) < len(modelnames):
+            ValueError(
+                'More predictors than color_names, please enter more color names in color_names list and try again')
     for modelname, color_name in zip(modelnames, color_names):
         single_model_df = plot_df[plot_df['model'] == modelname]
-        x_vals = single_model_df['threshold']
-        y_vals = single_model_df['net_benefit']
-        plt.plot(x_vals, y_vals, color=color_name)
-
+        plt.plot(single_model_df['threshold'], single_model_df['net_benefit'], color=color_name)
         plt.ylim(y_limits)
         plt.legend(modelnames)
         plt.grid(b=True, which='both', axis='both')
@@ -59,6 +55,8 @@ def _plot_net_intervention_avoided(
                 color_names: Optional[list] = None
                 ) -> None:
     """
+    Plot net interventions avoided values against threshold values.
+
     Parameters
     ----------
     plot_df : pd.DataFrame
@@ -81,6 +79,10 @@ def _plot_net_intervention_avoided(
     if color_names is None:
         get_colors = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
         color_names = get_colors(len(modelnames))
+    elif color_names is not None:
+        if len(color_names) < len(modelnames):
+            ValueError(
+                'More predictors than color_names, please enter more color names in color_names list and try again')
     for modelname, color_name in zip(modelnames, color_names):
         single_model_df = plot_df[plot_df['model'] == modelname]
         plt.plot(single_model_df['threshold'], single_model_df['net_intervention_avoided'], color=color_name)
@@ -89,18 +91,18 @@ def _plot_net_intervention_avoided(
         plt.legend(modelnames)
         plt.grid(b=True, which='both', axis='both')
         plt.xlabel('Threshold Values')
-        plt.ylabel('Calculated Net Reduction of Interventions Per 100 Patients')
+        plt.ylabel('Calculated Net Reduction of Interventions')
     plt.show()
 
 @beartype
 def plot_graphs(plot_df: pd.DataFrame,
                 graph_type: str = 'net_benefit',
                 y_limits: list = [-0.05, 1],
-                color_names: list = ['blue', 'purple', 'red',
-                                     'green', 'hotpink', 'orange',
-                                     'saddlebrown', 'lime', 'magenta']
+                color_names: Optional[list] = None
                 ) -> None:
     """
+    Plot either net benefit or interventions avoided per threshold.
+
     Parameters
     ----------
     plot_df : pd.DataFrame
@@ -118,13 +120,8 @@ def plot_graphs(plot_df: pd.DataFrame,
     None
     """
 
-
     if graph_type not in ['net_benefit', 'net_intervention_avoided']:
         ValueError('graph_type must be one of 2 strings: net_benefit, net_intervention_avoided')
-
-    if graph_type == 'net_intervention_avoided':
-        if 'net_intervention_avoided' not in plot_df.columns:
-            ValueError('You must calculate net interventions avoided and include it in the input dataframe to plot')
 
     if graph_type == 'net_benefit':
 
@@ -133,7 +130,6 @@ def plot_graphs(plot_df: pd.DataFrame,
             y_limits=y_limits,
             color_names=color_names
         )
-
     elif graph_type == 'net_intervention_avoided':
 
         _plot_net_intervention_avoided(
@@ -141,5 +137,4 @@ def plot_graphs(plot_df: pd.DataFrame,
             y_limits=y_limits,
             color_names=color_names
         )
-
     return

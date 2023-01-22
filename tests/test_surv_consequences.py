@@ -7,10 +7,10 @@ from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stat
 from dcurves.dca import _rectify_model_risk_boundaries
 from dcurves.plot_graphs import plot_graphs
 # Load Data for Testing
-from dcurves.load_test_data import load_r_case2_results
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.load_test_data import load_tutorial_r_stdca_coxph_df
-from dcurves.load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
+from .load_test_data import load_r_case2_results
+from .load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_tutorial_r_stdca_coxph_df
+from .load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
 
 # Load Tools
 import pandas as pd

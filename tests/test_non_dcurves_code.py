@@ -1,10 +1,9 @@
 
 # Load Data for Testing
-from dcurves.load_test_data import load_tutorial_coxph_pr_failure18_vals
+from .load_test_data import load_tutorial_coxph_pr_failure18_vals
 
 # Load Tools
 import pandas as pd
-import numpy as np
 
 # Load Statistics Libraries
 import lifelines

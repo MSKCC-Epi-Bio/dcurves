@@ -66,7 +66,7 @@ def test_create_initial_df():
     assert initial_df['harm'][0] == 0
 
 
-    print(initial_df['model'].value_counts())
-    print('\n', initial_df.to_string())
+    # print(initial_df['model'].value_counts())
+    # print('\n', initial_df.to_string())
 
 # Note: Need to add tests for when harm is specified to make sure each model has a different associated harm

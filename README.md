@@ -14,11 +14,14 @@ pip install dcurves
 
 ```python
 import dcurves
+
+dcurves.dca(
+
+)
 ```
 ## Usage: 
 ## Please refer to https://www.danieldsjoberg.com/dca-tutorial/dca-tutorial-r.html
 ## NOTE: Please wait for python snippets to be updated (Coming Extremely Soon!)
-
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

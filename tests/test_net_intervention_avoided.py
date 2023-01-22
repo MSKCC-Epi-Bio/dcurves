@@ -1,8 +1,8 @@
 
 from dcurves.dca import dca
 
-from dcurves.load_test_data import load_binary_df, load_survival_df
-from dcurves.load_test_data import load_r_case1_results, load_r_case2_results
+from .load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_r_case1_results, load_r_case2_results
 
 
 def test_case1_binary_net_interventions_avoided():

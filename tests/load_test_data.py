@@ -2,13 +2,6 @@ import pandas as pd
 import pkg_resources
 import importlib_resources
 
-#useful directories
-# root_test_dir = path.dirname(path.realpath(__file__))
-# resources_dir = path.join(root_test_dir, 'data')
-
-# simdata_dir = path.join(resources_dir, 'sim_data')
-# r_results_dir = path.join(resources_dir, 'r_results')
-
 # Note: after speaking with Dan, can host data online on dropbox/s3/googledrive and pull using python script
 
 # Load Simulation Data
@@ -17,8 +10,7 @@ def load_binary_df():
     Load Simulation Data For Binary Endpoints DCA
     :return pd.DataFrame that contains binary data
     '''
-
-    stream = pkg_resources.resource_stream(__name__, 'data/df_binary.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_binary.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_survival_df():
@@ -26,7 +18,7 @@ def load_survival_df():
     Load Simulation Data For Survival Endpoints DCA
     :return pd.DataFrame that contains survival data
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/df_surv.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_surv.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_case_control_df():
@@ -34,7 +26,7 @@ def load_case_control_df():
     Load Simulation Data For Binary Endpoints DCA With User-Specified Outcome Prevalence (Case-Control)
     :return pd.DataFrame that contains binary data
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/df_case_control.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_case_control.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 # Load Benchmarking Data For QC On Local Functions
@@ -57,10 +49,10 @@ def load_r_case1_results():
     prevalence = None
     harm = None
     '''
-    stream = pkg_resources.resource_stream(__name__, 'data/r_case1_results.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_case1_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
-# Case 2 R Results:
+# Case 2 R Results: Simple survival Case
 
 def load_r_case2_results():
     '''
@@ -80,17 +72,19 @@ def load_r_case2_results():
     harm = None
     '''
 
-    stream = pkg_resources.resource_stream(__name__, 'data/r_case2_results.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_case2_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+
 
 # TUTORIAL BENCHMARKING
 
 def load_tutorial_bin_marker_risks_list():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_bin_int_marker_risks.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/dca_tut_bin_int_marker_risks.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_tutorial_coxph_pr_failure18_vals():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_coxph_pr_failure18_vals.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/dca_tut_coxph_pr_failure18_vals.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_test_surv_risk_test_df():
@@ -102,15 +96,15 @@ def load_test_surv_risk_test_df():
      time=2,
      time_to_outcome_col='ttcancer'
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/surv_risk_test_df.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/surv_risk_test_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_tutorial_r_stdca_coxph_df():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_r_stdca_coxph_df.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/dca_tut_r_stdca_coxph_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_tutorial_r_stdca_coxph_pr_failure18_test_consequences():
-    stream = pkg_resources.resource_stream(__name__, 'data/dca_tut_r_stdca_coxph_pr_failure18_test_consequences.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/dca_tut_r_stdca_coxph_pr_failure18_test_consequences.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_r_simple_surv_dca_result_df():
@@ -123,7 +117,7 @@ def load_r_simple_surv_dca_result_df():
     time=1.5
     :return:
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/r_simple_surv_dca_result_df.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_simple_surv_dca_result_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_r_simple_surv_tpfp_calc_df():
@@ -136,18 +130,18 @@ def load_r_simple_surv_tpfp_calc_df():
     time=1.5
     :return:
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/r_simple_surv_tpfp_calc_df.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_simple_surv_tpfp_calc_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_r_simple_binary_dca_result_df():
-    stream = pkg_resources.resource_stream(__name__, 'data/r_simple_binary_dca_result_df.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_simple_binary_dca_result_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 
 # DCA Tutorial Benchmarking files
 
 def load_r_dca_famhistory():
-    stream = pkg_resources.resource_stream(__name__, 'data/r_dca_famhistory.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_dca_famhistory.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_r_df_cancer_dx():
@@ -155,14 +149,14 @@ def load_r_df_cancer_dx():
     Load data that can also be gotten from this link:
     "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_time_to_cancer_dx.csv"
     '''
-    stream = pkg_resources.resource_stream(__name__, 'data/df_cancer_dx.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_cancer_dx.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 def load_r_df_cancer_dx2():
     ''''
     Load data that is same as df_cancer_dx but with predictions from model as in dca-tutorial
     '''
-    stream = pkg_resources.resource_stream(__name__, 'data/df_cancer_dx2.csv')
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_cancer_dx2.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
 

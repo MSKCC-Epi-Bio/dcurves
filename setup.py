@@ -21,6 +21,7 @@ setup(
     long_description=(this_directory / "README.md").read_text(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
+    python_requires='>=3.8',
     install_requires=['pandas>=1.4.2',
                       'numpy>=1.21.6',
                       'beartype>=0.11.0',

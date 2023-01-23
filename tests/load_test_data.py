@@ -75,7 +75,28 @@ def load_r_case2_results():
     stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_case2_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
+def load_r_case3_results():
+    '''
 
+    Title: Binary, Cancer ~ marker
+
+    Analogous Python Settings:
+
+    df_cancer_dx = pd.read_csv('https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv')
+
+    data = df_cancer_dx
+    thresholds = np.arange(0, 0.36, 0.01)
+    outcome = 'cancer'
+    modelnames = ['marker']
+    models_to_prob = ['marker']
+    time = 1
+    time_to_outcome_col = 'ttcancer'
+    prevalence = None
+    harm = {'marker': 0.0333}
+    '''
+
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_case3_results.csv')
+    return pd.read_csv(stream, encoding='latin-1')
 
 # TUTORIAL BENCHMARKING
 
@@ -136,7 +157,6 @@ def load_r_simple_surv_tpfp_calc_df():
 def load_r_simple_binary_dca_result_df():
     stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_simple_binary_dca_result_df.csv')
     return pd.read_csv(stream, encoding='latin-1')
-
 
 # DCA Tutorial Benchmarking files
 

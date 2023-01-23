@@ -87,11 +87,11 @@ def _create_risks_df(
         values, and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
-    models_to_prob : list[str] (default: None)
+    models_to_prob : list[str]
         Columns that need to be converted to risk scores from 0 to 1
-    time : int or float (default: None)
+    time : int or float
         Time of interest in years, used in Survival DCA
-    time_to_outcome_col : str (default: None)
+    time_to_outcome_col : str
         Column name in data containing time to outcome values, used in Survival DCA
 
     Returns

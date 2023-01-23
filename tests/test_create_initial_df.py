@@ -8,6 +8,7 @@ from dcurves.dca import _rectify_model_risk_boundaries
 import pandas as pd
 import numpy as np
 
+
 def test_create_initial_df():
 
     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")

@@ -6,6 +6,7 @@ import lifelines
 
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 
+
 def _calc_prevalence(
         risks_df: pd.DataFrame,
         outcome: str,
@@ -427,7 +428,7 @@ def _calc_more_stats(
 
     initial_stats_df['net_intervention_avoided'] = (initial_stats_df.net_benefit - initial_stats_df.net_benefit_all) / \
                                                    (initial_stats_df.threshold / (
-                                                               1 - initial_stats_df.threshold)) * nper
+                                                           1 - initial_stats_df.threshold)) * nper
 
     # Drop 'net_benefit_all', as mentioned above
     initial_stats_df = initial_stats_df.drop(columns='net_benefit_all')

@@ -10,7 +10,7 @@ from typing import Optional
 def _plot_net_benefit(
         plot_df: pd.DataFrame,
         y_limits: list = [-0.05, 0.2],
-        color_names: Optional[list] = None,
+        color_names: Optional[list] = None
                 ) -> None:
     """
     Plot net benefit values against threshold values.
@@ -21,9 +21,10 @@ def _plot_net_benefit(
         Data containing threshold values, model columns of net benefit scores to be plotted
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis
-    color_names
+    color_names : list[str]
         Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
         included by default
+
     Returns
     -------
     None
@@ -66,14 +67,11 @@ def _plot_net_intervention_avoided(
     color_names
         Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
         included by default
+
     Returns
     -------
     None
     """
-
-    # Don't want to plot 'all'/'none' for net_intervention_avoided
-
-    # plot_df = plot_df[~(plot_df["model"].isin(['all', 'none']))]
 
     modelnames = plot_df['model'].value_counts().index
     if color_names is None:
@@ -94,6 +92,7 @@ def _plot_net_intervention_avoided(
         plt.ylabel('Calculated Net Reduction of Interventions')
     plt.show()
 
+
 @beartype
 def plot_graphs(plot_df: pd.DataFrame,
                 graph_type: str = 'net_benefit',
@@ -107,7 +106,7 @@ def plot_graphs(plot_df: pd.DataFrame,
     ----------
     plot_df : pd.DataFrame
         Data containing threshold values, model columns of net benefit/intervention scores to be plotted
-    graph_type : str (default: 'net_benefit')
+    graph_type : str
         Type of plot (either 'net_benefit' or 'net_intervention_avoided')
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis

@@ -25,12 +25,10 @@ setup(
     install_requires=['pandas>=1.4.2',
                       'numpy>=1.21.6',
                       'beartype>=0.11.0',
-                      'typing>=3.7.4.3',
                       'setuptools>=41.2.0',
                       'statsmodels>=0.13.2',
                       'lifelines>=0.26.4',
-                      'matplotlib>=3.5.0',
-                      'importlib_resources>=5.10.2'],
+                      'matplotlib>=3.5.0'],
     keywords=['python', 'dcurves', 'decision', 'curve', 'analysis', 'MSK'],
     classifiers=[
         "Development Status :: 1 - Planning",

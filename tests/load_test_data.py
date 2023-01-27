@@ -1,6 +1,5 @@
 import pandas as pd
 import pkg_resources
-import importlib_resources
 
 # Note: after speaking with Dan, can host data online on dropbox/s3/googledrive and pull using python script
 

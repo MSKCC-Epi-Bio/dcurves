@@ -28,6 +28,18 @@ def load_case_control_df():
     stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_case_control.csv')
     return pd.read_csv(stream, encoding='latin-1')
 
+
+def load_shishir_simdata():
+    """
+    Load simulation survival data from Shishir Rao, Oxford Doctoral Student, and check that my DCA functions work
+    correctly
+    Returns
+    -------
+    pd.DataFrame
+    """
+    stream = pkg_resources.resource_stream(__name__, 'benchmark_data/shishir_simdata.csv')
+    return pd.read_csv(stream, encoding='latin-1')
+
 # Load Benchmarking Data For QC On Local Functions
 
 # Case 1 R Results: Simple Binary case
@@ -76,7 +88,6 @@ def load_r_case2_results():
 
 def load_r_case3_results():
     '''
-
     Title: Binary, Cancer ~ marker
 
     Analogous Python Settings:
@@ -96,6 +107,16 @@ def load_r_case3_results():
 
     stream = pkg_resources.resource_stream(__name__, 'benchmark_data/r_case3_results.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
+# def load_r_case4_results():
+#     """
+#     Title: Survival,
+#     Returns
+#     -------
+#
+#     """
+#
+#     pass
 
 # TUTORIAL BENCHMARKING
 

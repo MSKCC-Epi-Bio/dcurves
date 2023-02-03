@@ -187,7 +187,7 @@ def _calc_risk_rate_among_test_pos(
 
         kmf = lifelines.KaplanMeierFitter()
 
-        if np.max(risks_df['ttcancer']) < time:
+        if np.max(risks_df[time_to_outcome_col]) < time:
             risk_rate_among_test_pos.append(None)
         elif len(risk_above_thresh_time) == 0 and len(risk_above_thresh_outcome) == 0:
             risk_rate_among_test_pos.append(float(0))

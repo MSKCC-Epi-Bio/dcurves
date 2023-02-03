@@ -22,6 +22,8 @@ def test_actual_dca2():
     from dcurves import dca, plot_graphs, load_test_data
     import numpy as np
 
+    # print('\n', load_test_data.load_survival_df()['ttcancer'].describe())
+
     dca_results = \
         dca(
             data=load_test_data.load_survival_df(),
@@ -36,7 +38,7 @@ def test_actual_dca2():
     # plot_graphs(
     #     plot_df=dca_results,
     #     graph_type='net_benefit',
-    #     y_limits=[-0.025, 0.175],
+    # y_limits=[-0.025, 0.175],
     #     color_names=['blue', 'red', 'green', 'purple', 'black']
     # )
 

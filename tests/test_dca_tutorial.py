@@ -1,5 +1,5 @@
 # Load Basic Tools
-import numpy as np
+# import numpy as np
 import pandas as pd
 
 # Load Data
@@ -43,6 +43,7 @@ def test_python_famhistory1():
                                  True]).reset_index(drop=True)
 
     for model in ['all', 'none', 'famhistory']:
+
         r_nb = df_r_dca_famhistory[df_r_dca_famhistory.variable == model][
             'net_benefit'].round(decimals=6).reset_index(drop=True)
         p_nb = dca_result_df[dca_result_df.model == model][
@@ -64,7 +65,7 @@ def test_python_famhistory2():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['famhistory'],
-            thresholds=np.arange(0, 0.36, 0.01),
+            thresholds=[i/100 for i in range(0, 36)],
         )
 
     # plot_graphs(
@@ -90,7 +91,7 @@ def test_python_dca_multi():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['famhistory', 'cancerpredmarker'],
-            thresholds=np.arange(0, 0.36, 0.01)
+            thresholds=[i/100 for i in range(0, 36)]
         )
 
     # plot_graphs(
@@ -101,17 +102,22 @@ def test_python_dca_multi():
 
 def test_python_pub_model():
 
+    # df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+    #
+    # df_cancer_dx['logodds_brown'] = 0.75 * df_cancer_dx['famhistory'] + 0.26*df_cancer_dx['age'] - 17.5
+    # df_cancer_dx['phat_brown'] = np.exp(df_cancer_dx['logodds_brown']) / (1 + np.exp(df_cancer_dx['logodds_brown']))
+
     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-    df_cancer_dx['logodds_brown'] = 0.75 * df_cancer_dx['famhistory'] + 0.26*df_cancer_dx['age'] - 17.5
-    df_cancer_dx['phat_brown'] = np.exp(df_cancer_dx['logodds_brown']) / (1 + np.exp(df_cancer_dx['logodds_brown']))
+    df_cancer_dx['logodds_brown'] = 0.75 * df_cancer_dx['famhistory'] + 0.26 * df_cancer_dx['age'] - 17.5
+    df_cancer_dx['phat_brown'] = 1 / (1 + (1 / (2.718281828 ** df_cancer_dx['logodds_brown'])))
 
     dca_pub_model_df = \
         dca(
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['phat_brown'],
-            thresholds=np.arange(0,0.36,0.01),
+            thresholds=[i/100 for i in range(0, 36)],
         )
 
     # plot_graphs(
@@ -121,36 +127,49 @@ def test_python_pub_model():
     # )
 
 def test_python_joint():
+    import pandas as pd
+
     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-    df_cancer_dx['high_risk'] = np.where(df_cancer_dx['risk_group'] == "high", 1, 0)
+    df_cancer_dx['high_risk'] = [1 if risk_group == "high" else 0 for risk_group in df_cancer_dx['risk_group']]
 
-    df_cancer_dx['joint'] = np.where((df_cancer_dx['risk_group'] == 'high') |
-                                     (df_cancer_dx['cancerpredmarker'] > 0.15), 1, 0)
+    df_cancer_dx['joint'] = [1 if (risk_group == 'high' or cancerpredmarker > 0.15) else 0 for
+                             risk_group, cancerpredmarker in
+                             zip(df_cancer_dx['risk_group'], df_cancer_dx['cancerpredmarker'])]
 
-    df_cancer_dx['conditional'] = np.where((df_cancer_dx['risk_group'] == "high") |
-                                           ((df_cancer_dx['risk_group'] == "intermediate") &
-                                            (df_cancer_dx['cancerpredmarker'] > 0.15)), 1, 0)
+    df_cancer_dx['conditional'] = [
+        1 if (risk_group == "high" or (risk_group == "intermediate" and cancerpredmarker > 0.15)) else 0 for
+        risk_group, cancerpredmarker in zip(df_cancer_dx['risk_group'], df_cancer_dx['cancerpredmarker'])]
 
 def test_python_dca_joint():
 
+    # df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+    #
+    # df_cancer_dx['high_risk'] = np.where(df_cancer_dx['risk_group'] == "high", 1, 0)
+    #
+    # df_cancer_dx['joint'] = np.where((df_cancer_dx['risk_group'] == 'high') |
+    #                                  (df_cancer_dx['cancerpredmarker'] > 0.15), 1, 0)
+    #
+    # df_cancer_dx['conditional'] = np.where((df_cancer_dx['risk_group'] == "high") |
+    #                                        ((df_cancer_dx['risk_group'] == "intermediate") &
+    #                                         (df_cancer_dx['cancerpredmarker'] > 0.15)), 1, 0)
+
     df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-    df_cancer_dx['high_risk'] = np.where(df_cancer_dx['risk_group'] == "high", 1, 0)
+    df_cancer_dx['high_risk'] = df_cancer_dx['risk_group'].apply(lambda x: 1 if x == 'high' else 0)
 
-    df_cancer_dx['joint'] = np.where((df_cancer_dx['risk_group'] == 'high') |
-                                     (df_cancer_dx['cancerpredmarker'] > 0.15), 1, 0)
+    df_cancer_dx['joint'] = df_cancer_dx.apply(
+        lambda x: 1 if x['risk_group'] == 'high' or x['cancerpredmarker'] > 0.15 else 0, axis=1)
 
-    df_cancer_dx['conditional'] = np.where((df_cancer_dx['risk_group'] == "high") |
-                                           ((df_cancer_dx['risk_group'] == "intermediate") &
-                                            (df_cancer_dx['cancerpredmarker'] > 0.15)), 1, 0)
+    df_cancer_dx['conditional'] = df_cancer_dx.apply(lambda x: 1 if x['risk_group'] == 'high' or (
+                x['risk_group'] == 'intermediate' and x['cancerpredmarker'] > 0.15) else 0, axis=1)
 
     dca_joint_df = \
         dca(
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['high_risk', 'joint', 'conditional'],
-            thresholds=np.arange(0, 0.36, 0.01)
+            thresholds=[i/100 for i in range(0, 36)]
         )
 
     # plot_graphs(
@@ -168,7 +187,7 @@ def test_python_dca_harm_simple():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['marker'],
-            thresholds=np.arange(0, 0.36, 0.01),
+            thresholds=[i/100 for i in range(0, 36)],
             harm={'marker': 0.0333},
             models_to_prob=['marker']
         )
@@ -191,7 +210,7 @@ def test_python_dca_harm():
             outcome='cancer',
             modelnames=['risk_group'],
             models_to_prob=['risk_group'],
-            thresholds=np.arange(0, 0.36, 0.01),
+            thresholds=[i/100 for i in range(0, 36)],
             harm={'risk_group': harm_conditional}
         )
 
@@ -210,7 +229,7 @@ def test_python_dca_table():
             outcome='cancer',
             modelnames=['marker'],
             models_to_prob=['marker'],
-            thresholds=np.arange(0.05, 0.36, 0.15)
+            thresholds=[i/100 for i in range(0, 36)]
         )
 
     # print('\n', dca_table_df[['model', 'threshold', 'net_benefit']])
@@ -224,7 +243,7 @@ def test_python_dca_intervention():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['marker'],
-            thresholds=np.arange(0.05, 0.36, 0.01),
+            thresholds=[i/100 for i in range(0, 36)],
             models_to_prob=['marker']
         )
 
@@ -291,7 +310,7 @@ def test_python_stdca_coxph():
             data=df_time_to_cancer_dx,
             outcome='cancer',
             modelnames=['pr_failure18'],
-            thresholds=np.arange(0, 0.51, 0.01),
+            thresholds=[i/100 for i in range(0, 51)],
             time=1.5,
             time_to_outcome_col='ttcancer'
         )
@@ -326,7 +345,7 @@ def test_python_dca_case_control():
             outcome='casecontrol',
             modelnames=['cancerpredmarker'],
             prevalence=0.20,
-            thresholds=np.arange(0, 0.51, 0.01)
+            thresholds=[i/100 for i in range(0, 51)]
         )
 
     # plot_graphs(

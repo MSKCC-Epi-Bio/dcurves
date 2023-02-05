@@ -1,20 +1,18 @@
 
 # Load Functions To Test/Needed For Testing
-from dcurves.dca import _calc_tp_rate, _calc_fp_rate, _calc_test_pos_rate
 from dcurves.dca import _calc_risk_rate_among_test_pos
 from dcurves.risks import _create_risks_df
 from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats, _calc_more_stats
 from dcurves.dca import _rectify_model_risk_boundaries
-from dcurves.plot_graphs import plot_graphs
+
 # Load Data for Testing
 from .load_test_data import load_r_case2_results
-from .load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_survival_df
 from .load_test_data import load_tutorial_r_stdca_coxph_df
 from .load_test_data import load_tutorial_r_stdca_coxph_pr_failure18_test_consequences
 
 # Load Tools
 import pandas as pd
-import numpy as np
 
 # Load Statistics Libraries
 import lifelines
@@ -28,7 +26,7 @@ def test_case2_surv_risk_rate_among_test_positive():
     # Note: To calc risk rate among test positive, divide tp_rate by test_pos_rate
 
     data = load_survival_df()
-    thresholds = np.arange(0.00, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     outcome = 'cancer'
     modelnames = ['cancerpredmarker']
     models_to_prob = None
@@ -107,7 +105,7 @@ def test_case2_all_stats():
     time_to_outcome_col = 'ttcancer'
     models_to_prob = None
     modelnames = ['cancerpredmarker']
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     harm = None
 
     risks_df = \
@@ -183,6 +181,7 @@ def test_tut_pr_failure18_tp_rate():
             duration_col='ttcancer',
             event_col='cancer',
             formula='age + famhistory + marker')
+
     cph_pred_vals = \
         cph.predict_survival_function(
             df_time_to_cancer_dx[['age',
@@ -190,7 +189,7 @@ def test_tut_pr_failure18_tp_rate():
                                   'marker']],
             times=[1.5]
         )
-    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+    df_time_to_cancer_dx.loc[:, 'pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
 
     df_time_to_cancer_dx = \
             pd.read_csv(
@@ -209,13 +208,13 @@ def test_tut_pr_failure18_tp_rate():
             times=[1.5]
         )
 
-    df_time_to_cancer_dx['pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
+    df_time_to_cancer_dx.loc[:, 'pr_failure18'] = [1 - val for val in cph_pred_vals.iloc[0, :]]
 
     outcome = 'cancer'
     prevalence = None
     time = 1.5
     time_to_outcome_col = 'ttcancer'
-    thresholds = np.arange(0, 0.51, 0.01)
+    thresholds = [i/100 for i in range(0, 51)]
     modelnames = ['pr_failure18']
     harm = None
 
@@ -290,18 +289,7 @@ def test_tut_pr_failure18_tp_rate():
         decimals=round_dec_num
     ))
 
-# def test_case3_r_python_discrepancy():
-#
-#     plot_r_df = load_r_case2_results()
-#
-#     print(
-#         plot_r_df.to_string()
-#     )
-#
-#     # plot_graphs(
-#     #     plot_df=load_r_case2_results()
-#     # )
-#     pass
+
 
 
 

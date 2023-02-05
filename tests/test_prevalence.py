@@ -1,13 +1,12 @@
 # Load Data
-from .load_test_data import load_binary_df, load_survival_df, load_case_control_df
+from .load_test_data import load_binary_df, load_survival_df
 from .load_test_data import load_r_case1_results
 
 # Load _calc_prevalence, other necessary functions
-from dcurves.dca import _calc_prevalence
-from dcurves.risks import _create_risks_df, _rectify_model_risk_boundaries
+from dcurves.prevalence import _calc_prevalence
 
 # Load Tools
-import pandas as pd
+# None
 
 def test_binary_prevalence():
 

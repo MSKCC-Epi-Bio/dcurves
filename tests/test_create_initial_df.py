@@ -6,8 +6,6 @@ from dcurves.risks import _create_risks_df
 from dcurves.dca import _rectify_model_risk_boundaries
 # load tools
 import pandas as pd
-import numpy as np
-
 
 def test_create_initial_df():
 
@@ -20,7 +18,7 @@ def test_create_initial_df():
     time_to_outcome_col = None
     modelnames = ['famhistory']
     prevalence = None
-    thresholds = np.arange(0, 1.01, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     harm = None
 
     risks_df = \
@@ -60,7 +58,7 @@ def test_create_initial_df():
             harm=harm
         )
 
-    assert len(initial_df)%3==0
+    assert len(initial_df) % 3 == 0
     assert 'all', 'none' in initial_df['model'].value_counts()
     assert len(risks_df) == initial_df['n'][0]
     assert prevalence_value == initial_df['prevalence'][0]

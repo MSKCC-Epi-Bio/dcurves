@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "dcurves"
+version = "1.0.5"
+description = 'Python package implementing Decision Curve Analysis method to evaluate prediction models, molecular markers,  and diagnostic tests'
+authors = ["shaunporwal <shaun.porwal@gmail.com>"]
+readme = ["docs/README.md"]
+
+[tool.poetry.dependencies]
+python = "~3.9.0"
+lifelines = "~0.27.4"
+matplotlib = "~3.5.2"
+pandas = "~1.4.2"
+scipy = "~1.8.0"
+statsmodels = "~0.13.2"
+typing = "~3.7.4.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "~5.3.5"
+jupyterlab = "~3.5.0"
+pytest-cov = "^4.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

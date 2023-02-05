@@ -8,7 +8,7 @@ def test_actual_dca1():
             data=load_test_data.load_binary_df(),
             outcome='cancer',
             modelnames=['famhistory'],
-            thresholds=np.arange(0, 0.45, 0.01)
+            thresholds=[i/100 for i in range(0, 46)]
         )
 
     # plot_graphs(
@@ -30,7 +30,7 @@ def test_actual_dca2():
             outcome='cancer',
             modelnames=['famhistory', 'marker', 'cancerpredmarker'],
             models_to_prob=['marker'],
-            thresholds=np.arange(0, 0.45, 0.01),
+            thresholds=[i/100 for i in range(0, 46)],
             time_to_outcome_col='ttcancer',
             time=1
         )

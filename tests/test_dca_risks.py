@@ -12,31 +12,19 @@ from dcurves.risks import _create_risks_df
 
 # load tools
 import pandas as pd
-import numpy as np
+import sys
 
 def test_bin_dca_risks_calc():
+    r_marker_risks_df = load_tutorial_bin_marker_risks_list().copy()
+    r_marker_risks_df = sorted(r_marker_risks_df['marker_risk'].tolist()).copy()
+    r_marker_risks = [round(x, 10) for x in r_marker_risks_df].copy()
 
-    r_marker_risks = np.round(sorted(load_tutorial_bin_marker_risks_list()['marker_risk'].tolist()), 10)
+    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
 
-    df_cancer_dx = \
-        pd.read_csv(
-            "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
-        )
+    binary_risks = sorted(_calc_binary_risks(data=df_cancer_dx, outcome='cancer', model='marker'))
+    p_marker_risks = [round(x, 10) for x in binary_risks]
 
-    p_marker_risks = \
-        np.round(
-            sorted(
-                _calc_binary_risks(
-                    data=df_cancer_dx,
-                    outcome='cancer',
-                    model='marker'
-                )
-            ),
-            10
-        )
-
-    assert all(r_marker_risks==p_marker_risks)
-
+    assert r_marker_risks == p_marker_risks
 
 def test_surv_dca_risks_calc():
 
@@ -77,7 +65,9 @@ def test_rectify_model_risk_boundaries():
             modelnames=modelnames
         )
 
-    machine_epsilon = np.finfo(float).eps
+    # machine_epsilon = np.finfo(float).eps
+    machine_epsilon = sys.float_info.epsilon
+
     assert rectified_risks_df['all'][0] == 1 + machine_epsilon
     assert not rectified_risks_df['all'][0] == 1
     assert rectified_risks_df['none'][0] == 0 - machine_epsilon

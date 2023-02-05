@@ -3,11 +3,9 @@ from typing import Optional, Union
 import statsmodels.api as sm
 import lifelines
 import sys
-def _calc_binary_risks(
-        data: pd.DataFrame,
-        outcome: str,
-        model: str
-) -> list:
+
+
+def _calc_binary_risks(data: pd.DataFrame, outcome: str, model: str) -> list:
     """
     Calculate Risks For a Model Column for binary DCA.
 
@@ -26,16 +24,20 @@ def _calc_binary_risks(
     list[float]
         list of predicted risk scores for a model column
     """
-    predicted_vals = sm.formula.glm(outcome + '~' + model, family=sm.families.Binomial(),
-                                    data=data).fit().predict()
+    predicted_vals = (
+        sm.formula.glm(outcome + "~" + model, family=sm.families.Binomial(), data=data)
+        .fit()
+        .predict()
+    )
     return [val for val in predicted_vals]
 
+
 def _calc_surv_risks(
-        data: pd.DataFrame,
-        outcome: str,
-        model: str,
-        time: Union[int, float],
-        time_to_outcome_col: str
+    data: pd.DataFrame,
+    outcome: str,
+    model: str,
+    time: Union[int, float],
+    time_to_outcome_col: str,
 ) -> list:
     """
     Calculate Risks For a Model Column for survival DCA.
@@ -68,12 +70,13 @@ def _calc_surv_risks(
     predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
     return [val for val in predicted_vals]
 
+
 def _create_risks_df(
-        data: pd.DataFrame,
-        outcome: str,
-        models_to_prob: Optional[list] = None,
-        time: Optional[Union[float, int]] = None,
-        time_to_outcome_col: Optional[str] = None
+    data: pd.DataFrame,
+    outcome: str,
+    models_to_prob: Optional[list] = None,
+    time: Optional[Union[float, int]] = None,
+    time_to_outcome_col: Optional[str] = None,
 ) -> pd.DataFrame:
     """
     Parameters
@@ -99,31 +102,27 @@ def _create_risks_df(
         pass
     elif time_to_outcome_col is None:
         for model in models_to_prob:
-            data.loc[:, model] = \
-                _calc_binary_risks(
-                    data=data,
-                    outcome=outcome,
-                    model=model
-                )
+            data.loc[:, model] = _calc_binary_risks(
+                data=data, outcome=outcome, model=model
+            )
     elif time_to_outcome_col is not None:
         for model in models_to_prob:
-            data.loc[:, model] = \
-                _calc_surv_risks(
-                    data=data,
-                    outcome=outcome,
-                    model=model,
-                    time=time,
-                    time_to_outcome_col=time_to_outcome_col
-                )
+            data.loc[:, model] = _calc_surv_risks(
+                data=data,
+                outcome=outcome,
+                model=model,
+                time=time,
+                time_to_outcome_col=time_to_outcome_col,
+            )
 
-    data.loc[:, 'all'] = [1 for i in range(0, len(data.index))]
-    data.loc[:, 'none'] = [0 for i in range(0, len(data.index))]
+    data.loc[:, "all"] = [1 for i in range(0, len(data.index))]
+    data.loc[:, "none"] = [0 for i in range(0, len(data.index))]
 
     return data
 
+
 def _rectify_model_risk_boundaries(
-        risks_df: pd.DataFrame,
-        modelnames: list
+    risks_df: pd.DataFrame, modelnames: list
 ) -> pd.DataFrame:
     """
     Parameters
@@ -142,9 +141,13 @@ def _rectify_model_risk_boundaries(
 
     machine_epsilon = sys.float_info.epsilon
 
-    modelnames = modelnames + ['all', 'none']
+    modelnames = modelnames + ["all", "none"]
     for modelname in modelnames:
-        risks_df[modelname].replace(to_replace=0, value=0 - machine_epsilon, inplace=True)
-        risks_df[modelname].replace(to_replace=1, value=1 + machine_epsilon, inplace=True)
+        risks_df[modelname].replace(
+            to_replace=0, value=0 - machine_epsilon, inplace=True
+        )
+        risks_df[modelname].replace(
+            to_replace=1, value=1 + machine_epsilon, inplace=True
+        )
 
     return risks_df

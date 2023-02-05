@@ -1,7 +1,6 @@
 from dcurves import dca, plot_graphs
 from .load_test_data import load_r_case3_results
 import pandas as pd
-import numpy as np
 
 def test_simple_binary_harms_1():
 
@@ -13,7 +12,7 @@ def test_simple_binary_harms_1():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['marker'],
-            thresholds=np.arange(0, 0.36, 0.01),
+            thresholds=[i/100 for i in range(0, 36)],
             harm={'marker': 0.0333},
             models_to_prob=['marker']
         )
@@ -27,10 +26,16 @@ def test_simple_binary_harms_1():
 
     for model in ['all', 'none', 'marker']:
         for stat in ['net_benefit', 'net_intervention_avoided', 'tp_rate', 'fp_rate']:
-            assert dca_harm_simple_df[dca_harm_simple_df.model == model][
-                stat].round(
-                decimals=6).reset_index(
-                drop=True).equals(
-                r_case3_benchmark_results[
-                    r_case3_benchmark_results.variable == model][
-                    stat].round(decimals=6).reset_index(drop=True))
+
+            p_model_stat_df = \
+                dca_harm_simple_df.loc[dca_harm_simple_df.model == model, stat]
+            p_model_stat_df = p_model_stat_df.round(decimals=6)
+            p_model_stat_df = p_model_stat_df.reset_index(drop=True)
+
+
+            r_model_stat_df = \
+                r_case3_benchmark_results.loc[r_case3_benchmark_results.variable == model, stat]
+            r_model_stat_df = r_model_stat_df.round(decimals=6)
+            r_model_stat_df = r_model_stat_df.reset_index(drop=True)
+
+            assert p_model_stat_df.equals(r_model_stat_df)

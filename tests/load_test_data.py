@@ -51,7 +51,7 @@ def load_r_case1_results():
     Analogous Python Settings:
 
     data = load_binary_df()
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     outcome = 'cancer'
     modelnames = ['famhistory']
     models_to_prob = None
@@ -73,7 +73,7 @@ def load_r_case2_results():
     Analogous Python Settings:
 
     data = load_surv_df()
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     outcome = 'cancer'
     modelnames = ['cancerpredmarker']
     models_to_prob = None
@@ -95,7 +95,7 @@ def load_r_case3_results():
     df_cancer_dx = pd.read_csv('https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv')
 
     data = df_cancer_dx
-    thresholds = np.arange(0, 0.36, 0.01)
+    thresholds = [i/100 for i in range(0, 36)]
     outcome = 'cancer'
     modelnames = ['marker']
     models_to_prob = ['marker']
@@ -153,7 +153,7 @@ def load_r_simple_surv_dca_result_df():
     Dataframe containing results from r survival dca case for simple testing
     outcome='cancer'
     models=['famhistory']
-    thresholds=np.arange(0, 1.0, 0.01)
+    thresholds=[i/100 for i in range(0, 46)]
     time_to_outcome_col='ttcancer'
     time=1.5
     :return:
@@ -166,7 +166,7 @@ def load_r_simple_surv_tpfp_calc_df():
     Dataframe containing columns used to calculate tp/fp rate from r survival dca case for simple testing
     outcome='cancer'
     models=['famhistory']
-    thresholds=np.arange(0, 1.0, 0.01)
+    thresholds=[i/100 for i in range(0, 46)]
     time_to_outcome_col='ttcancer'
     time=1.5
     :return:

@@ -1,11 +1,8 @@
-from beartype import beartype
 import pandas as pd
-import numpy as np
 from typing import Optional, Union
 import statsmodels.api as sm
 import lifelines
-
-@beartype
+import sys
 def _calc_binary_risks(
         data: pd.DataFrame,
         outcome: str,
@@ -33,7 +30,6 @@ def _calc_binary_risks(
                                     data=data).fit().predict()
     return [val for val in predicted_vals]
 
-@beartype
 def _calc_surv_risks(
         data: pd.DataFrame,
         outcome: str,
@@ -64,14 +60,14 @@ def _calc_surv_risks(
         list of coxph-predicted risk scores for a model column
 
     """
-    cph_df = data[[time_to_outcome_col, outcome, model]]
+    cph_df = data[[time_to_outcome_col, outcome, model]].copy()
     cph = lifelines.CoxPHFitter()
     cph.fit(cph_df, time_to_outcome_col, outcome)
-    cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
+    # cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
+    cph_df.loc[:, time_to_outcome_col] = [time for i in range(0, len(cph_df))]
     predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
     return [val for val in predicted_vals]
 
-@beartype
 def _create_risks_df(
         data: pd.DataFrame,
         outcome: str,
@@ -103,7 +99,7 @@ def _create_risks_df(
         pass
     elif time_to_outcome_col is None:
         for model in models_to_prob:
-            data[model] = \
+            data.loc[:, model] = \
                 _calc_binary_risks(
                     data=data,
                     outcome=outcome,
@@ -111,7 +107,7 @@ def _create_risks_df(
                 )
     elif time_to_outcome_col is not None:
         for model in models_to_prob:
-            data[model] = \
+            data.loc[:, model] = \
                 _calc_surv_risks(
                     data=data,
                     outcome=outcome,
@@ -120,12 +116,11 @@ def _create_risks_df(
                     time_to_outcome_col=time_to_outcome_col
                 )
 
-    data['all'] = [1 for i in range(0, len(data.index))]
-    data['none'] = [0 for i in range(0, len(data.index))]
+    data.loc[:, 'all'] = [1 for i in range(0, len(data.index))]
+    data.loc[:, 'none'] = [0 for i in range(0, len(data.index))]
 
     return data
 
-@beartype
 def _rectify_model_risk_boundaries(
         risks_df: pd.DataFrame,
         modelnames: list
@@ -145,8 +140,10 @@ def _rectify_model_risk_boundaries(
         greater than 0 and 1 thresholds for correct tp/fp evaluations
     """
 
-    machine_epsilon = np.finfo(float).eps
-    for modelname in np.append(modelnames, ['all', 'none']):
+    machine_epsilon = sys.float_info.epsilon
+
+    modelnames = modelnames + ['all', 'none']
+    for modelname in modelnames:
         risks_df[modelname].replace(to_replace=0, value=0 - machine_epsilon, inplace=True)
         risks_df[modelname].replace(to_replace=1, value=1 + machine_epsilon, inplace=True)
 

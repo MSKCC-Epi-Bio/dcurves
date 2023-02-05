@@ -19,8 +19,8 @@ def test_shishir_simdata():
 
 
 
-    for i in data.model.value_counts().index:
-        print(i)
+    # for i in data.model.value_counts().index:
+    #     print(i)
 
     # print(data.to_string())
 

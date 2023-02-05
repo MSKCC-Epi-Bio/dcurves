@@ -12,7 +12,6 @@ mpl.use('tkagg') # Sets backend for mpl to TkAgggraphical: GUI library for Pytho
 import matplotlib.pyplot as plt
 import random
 import pandas as pd
-import numpy as np
 
 def test_2_case1_plot_net_benefit():
 
@@ -25,7 +24,7 @@ def test_2_case1_plot_net_benefit():
             data=df_cancer_dx,
             outcome='cancer',
             modelnames=['famhistory'],
-            thresholds=np.arange(0, 0.45, 0.01)
+            thresholds=[i/100 for i in range(0, 46)]
         )
 
     # plot_graphs(

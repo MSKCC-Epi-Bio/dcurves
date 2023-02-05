@@ -18,7 +18,7 @@ def test_case1_binary_test_pos_rate():
 
     # Set Variables
     data = load_binary_df()
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     outcome = 'cancer'
     models_to_prob = None
     time = None
@@ -127,7 +127,7 @@ def test_case1_binary_tp_rate():
     models_to_prob = None
     modelnames = ['famhistory']
     model = modelnames[0]
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     harm = None
     # model = modelnames[0]
 
@@ -182,7 +182,7 @@ def test_case1_binary_fp_rate():
     models_to_prob = None
     modelnames = ['famhistory']
     model = modelnames[0]
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     harm = None
     # model = modelnames[0]
 
@@ -235,7 +235,7 @@ def test_case1_binary_calc_initial_stats():
     models_to_prob = None
     modelnames = ['famhistory']
     model = modelnames[0]
-    thresholds = np.arange(0, 1.0, 0.01)
+    thresholds = [i/100 for i in range(0, 100)]
     harm = None
 
     risks_df = \
@@ -284,6 +284,21 @@ def test_case1_binary_calc_initial_stats():
 
     for model in ['all', 'none', 'famhistory']:
         for stat in ['test_pos_rate', 'tp_rate', 'fp_rate']:
+            # print(' ')
+            # print(model)
+            # print(stat)
+            #
+            # print(
+            #     '\n',
+            #     pd.concat(
+            #         [
+            #             initial_stats_df[initial_stats_df.model == model][
+            #                 stat].round(decimals=6).reset_index(drop=True),
+            #             r_benchmark_results_df[
+            #                 r_benchmark_results_df.variable == model][stat].round(decimals=6).reset_index(drop=True)
+            #         ], axis=1
+            #     )
+            # )
 
             assert initial_stats_df[initial_stats_df.model == model][
                 stat].round(decimals=6).reset_index(drop=True).equals(r_benchmark_results_df[

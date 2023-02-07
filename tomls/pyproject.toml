@@ -3,7 +3,7 @@ name = "dcurves"
 version = "1.0.5"
 description = 'Python package implementing Decision Curve Analysis method to evaluate prediction models, molecular markers,  and diagnostic tests'
 authors = ["shaunporwal <shaun.porwal@gmail.com>"]
-readme = ["docs/README.md"]
+readme = "docs/README.md"
 
 [tool.poetry.dependencies]
 python = "~3.11.1"

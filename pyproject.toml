@@ -1,7 +1,18 @@
 [tool.poetry]
 name = "dcurves"
 version = "1.0.5"
-description = 'Python package implementing Decision Curve Analysis method to evaluate prediction models, molecular markers,  and diagnostic tests'
+description = """
+Python package implementing Decision Curve Analysis method to evaluate prediction
+models, molecular markers,  and diagnostic tests
+
+Release notes for Version 1.0.5:
+
+- Updated all dependencies to latest
+- Fixed matplotlib bug that prevented usage of plot_graphs
+- Removed beartype and numpy as hard dependencies to make project lighter
+- Expanded acceptable iterable inputs to all iterables
+- Reduced unnecessary data structures to speed up code
+"""
 authors = ["shaunporwal <shaun.porwal@gmail.com>"]
 readme = "docs/README.md"
 

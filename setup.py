@@ -1,4 +1,4 @@
-# DEPRECATED, USING `poetry` NOW
+# DEPRECATED, USING `poetry`/pyproject.toml NOW
 # from setuptools import setup, find_packages
 # import codecs
 # import os

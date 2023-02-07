@@ -1,8 +1,14 @@
-import pandas as pd
+"""
+This module houses the functions used to calculate risk scores for
+binary and survival endpoints. It is kept in a separate module
+from dca.py to disperse the code and make clear its individual
+dependencies.
+"""
+import sys
 from typing import Optional, Union
+import pandas as pd
 import statsmodels.api as sm
 import lifelines
-import sys
 
 
 def _calc_binary_risks(data: pd.DataFrame, outcome: str, model: str) -> list:
@@ -12,8 +18,8 @@ def _calc_binary_risks(data: pd.DataFrame, outcome: str, model: str) -> list:
     Parameters
     ----------
     data : pd.DataFrame
-        Initial raw data ideally containing risk scores (scores ranging from 0 to 1), or else predictor/model
-        values, and outcome of interest
+        Initial raw data ideally containing risk scores (scores ranging from 0 to 1),
+        or else predictor/model values, and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
     model
@@ -29,7 +35,7 @@ def _calc_binary_risks(data: pd.DataFrame, outcome: str, model: str) -> list:
         .fit()
         .predict()
     )
-    return [val for val in predicted_vals]
+    return list(predicted_vals)
 
 
 def _calc_surv_risks(
@@ -45,8 +51,8 @@ def _calc_surv_risks(
     Parameters
     ----------
     data : pd.DataFrame
-        Initial raw data ideally containing risk scores (scores ranging from 0 to 1), or else predictor/model
-        values, and outcome of interest
+        Initial raw data ideally containing risk scores (scores ranging from 0 to 1),
+        or else predictor/model values, and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
     model : str
@@ -65,10 +71,9 @@ def _calc_surv_risks(
     cph_df = data[[time_to_outcome_col, outcome, model]].copy()
     cph = lifelines.CoxPHFitter()
     cph.fit(cph_df, time_to_outcome_col, outcome)
-    # cph_df[time_to_outcome_col] = [time for i in range(0, len(cph_df))]
-    cph_df.loc[:, time_to_outcome_col] = [time for i in range(0, len(cph_df))]
+    cph_df = cph_df.assign(**{time_to_outcome_col: time}).copy()
     predicted_vals = cph.predict_survival_function(cph_df, times=time).values[0]
-    return [val for val in predicted_vals]
+    return list(predicted_vals)
 
 
 def _create_risks_df(
@@ -82,8 +87,8 @@ def _create_risks_df(
     Parameters
     ----------
     data : pd.DataFrame
-        Initial raw data ideally containing risk scores (scores ranging from 0 to 1), or else predictor/model
-        values, and outcome of interest
+        Initial raw data ideally containing risk scores (scores ranging from 0 to 1),
+        or else predictor/model values, and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
     models_to_prob : list[str]
@@ -102,21 +107,23 @@ def _create_risks_df(
         pass
     elif time_to_outcome_col is None:
         for model in models_to_prob:
-            data.loc[:, model] = _calc_binary_risks(
-                data=data, outcome=outcome, model=model
-            )
+            binary_risks = _calc_binary_risks(data=data, outcome=outcome, model=model)
+
+            data = data.assign(**{model: binary_risks}).copy()
+
     elif time_to_outcome_col is not None:
         for model in models_to_prob:
-            data.loc[:, model] = _calc_surv_risks(
+            surv_risks = _calc_surv_risks(
                 data=data,
                 outcome=outcome,
                 model=model,
                 time=time,
                 time_to_outcome_col=time_to_outcome_col,
             )
+            data = data.assign(**{model: surv_risks}).copy()
 
-    data.loc[:, "all"] = [1 for i in range(0, len(data.index))]
-    data.loc[:, "none"] = [0 for i in range(0, len(data.index))]
+    data = data.assign(**{"all": 1}).copy()
+    data = data.assign(**{"none": 0}).copy()
 
     return data
 
@@ -128,15 +135,16 @@ def _rectify_model_risk_boundaries(
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1) and outcome of interest
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1)
+        and outcome of interest
     modelnames : list[str]
         Column names from risks_df that contain model risk scores
 
     Returns
     -------
     pd.DataFrame
-        Data with model column risk scores 0 and 1 changed to 0 - e and 1 + e, respectively, to evaluate as less/
-        greater than 0 and 1 thresholds for correct tp/fp evaluations
+        Data with model column risk scores 0 and 1 changed to 0 - e and 1 + e, respectively,
+        to evaluate as less/greater than 0 and 1 thresholds for correct tp/fp evaluations
     """
 
     machine_epsilon = sys.float_info.epsilon

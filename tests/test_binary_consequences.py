@@ -1,6 +1,6 @@
 
 # Load Functions To Test/Needed For Testing
-from dcurves.dca import _calc_tp_rate, _calc_fp_rate
+from dcurves.dca import _calc_tp_rate, _calc_fp_rate, dca
 from dcurves.risks import _create_risks_df
 from dcurves.dca import _calc_prevalence, _create_initial_df, _calc_initial_stats
 from dcurves.dca import _calc_more_stats
@@ -183,8 +183,6 @@ def test_case1_binary_fp_rate():
     modelnames = ['famhistory']
     model = modelnames[0]
     thresholds = [i/100 for i in range(0, 100)]
-    harm = None
-    # model = modelnames[0]
 
     risks_df = \
         _create_risks_df(
@@ -220,6 +218,17 @@ def test_case1_binary_fp_rate():
             prevalence_value=prevalence_value
         )
 
+    dca_result_df = \
+        dca(
+            data=data,
+            outcome='cancer',
+            modelnames=modelnames
+        )
+
+    # print('\n', dca_result_df.to_string())
+    #
+    # print('\n', r_benchmark_results_df.to_string())
+
     bm_fp_rate = r_benchmark_results_df[r_benchmark_results_df.variable == 'famhistory'].fp_rate.reset_index(drop=True)
 
     assert bm_fp_rate.round(decimals=6).equals(p_fp_rate.round(decimals=6))
@@ -234,7 +243,6 @@ def test_case1_binary_calc_initial_stats():
     time_to_outcome_col = None
     models_to_prob = None
     modelnames = ['famhistory']
-    model = modelnames[0]
     thresholds = [i/100 for i in range(0, 100)]
     harm = None
 
@@ -287,22 +295,20 @@ def test_case1_binary_calc_initial_stats():
             # print(' ')
             # print(model)
             # print(stat)
-            #
-            # print(
-            #     '\n',
-            #     pd.concat(
-            #         [
-            #             initial_stats_df[initial_stats_df.model == model][
-            #                 stat].round(decimals=6).reset_index(drop=True),
-            #             r_benchmark_results_df[
-            #                 r_benchmark_results_df.variable == model][stat].round(decimals=6).reset_index(drop=True)
-            #         ], axis=1
-            #     )
-            # )
 
-            assert initial_stats_df[initial_stats_df.model == model][
-                stat].round(decimals=6).reset_index(drop=True).equals(r_benchmark_results_df[
-                r_benchmark_results_df.variable == model][stat].round(decimals=6).reset_index(drop=True))
+            # Extract the relevant data for the given model and stat
+            model_df = initial_stats_df[initial_stats_df.model == model][stat].round(decimals=6).reset_index(drop=True)
+            benchmark_df = r_benchmark_results_df[r_benchmark_results_df.variable == model][stat].round(
+                decimals=6).reset_index(drop=True)
+
+            # Concatenate the data frames horizontally
+            compared_df = pd.concat([model_df, benchmark_df], axis=1)
+
+            # Print the concatenated data frame
+            # print(compared_df)
+
+            # Check if the extracted data is equal
+            assert model_df.equals(benchmark_df)
 
 
 def test_case1_binary_calc_more_stats():

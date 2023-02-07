@@ -1,5 +1,9 @@
-import pandas as pd
+"""
+This module houses most of the functions used in performing decision curve analysis,
+along with the main user-facing dca() functions used for binary and survival outcomes.
+"""
 from typing import Optional, Union, Iterable
+import pandas as pd
 import lifelines
 
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
@@ -14,13 +18,14 @@ def _create_initial_df(
     harm: Optional[dict] = None,
 ) -> pd.DataFrame:
     """
-    Create initial dataframe that will form the outputted table containing net benefit/interventions avoided
-    values for plotting.
+    Create initial dataframe that will form the outputted table containing
+    net benefit/interventions avoided values for plotting.
 
     Parameters
     ----------
     thresholds : Iterable
-        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+        Threshold values (x values) at which net benefit and net interventions avoided will be
+        calculated
     modelnames : list[str]
         Column names from risks_df that contain model risk scores
     input_df_rownum : int
@@ -69,13 +74,14 @@ def _calc_test_pos_rate(
     risks_df: pd.DataFrame, thresholds: Iterable, model: str
 ) -> pd.Series:
     """
-    Calculate each test positive rate per threshold value, which will be used to calculate true and false positive
-    rates per threshold values in the survival DCA case.
+    Calculate each test positive rate per threshold value, which will be used to calculate true
+    and false positive rates per threshold values in the survival DCA case.
 
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1
+        for columns of interest)
     thresholds : Iterable
         Threshold values (x values) at which net test positive rate will be calculated
     model : str
@@ -111,19 +117,22 @@ def _calc_risk_rate_among_test_pos(
     time_to_outcome_col: str,
 ) -> pd.Series:
     """
-    Calculate the risk rate among test positive cases for each threshold value, which will be used to calculate true
-    and false positive rates per threshold values in the survival DCA case.
+    Calculate the risk rate among test positive cases for each threshold value
+    , which will be used to calculate true and false positive rates per threshold
+    values in the survival DCA case.
 
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging
+        from 0 to 1 for columns of interest)
     outcome : str
         Column name of outcome of interest in risks_df
     model : str
         Model column name in risks_df
     thresholds : Iterable
-        Threshold values (x values) at which risk rate among test positives will be calculated
+        Threshold values (x values) at which risk rate among test positives
+        will be calculated
     time : int or float
         Time of interest in years, used in Survival DCA
     time_to_outcome_col : str
@@ -178,7 +187,8 @@ def _calc_tp_rate(
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging from 0
+        to 1 for columns of interest)
     thresholds : Iterable
         Threshold values (x values) at which true positive rate will be calculated
     model : str
@@ -200,7 +210,6 @@ def _calc_tp_rate(
         Calculated true positive rate for each threshold value
     """
 
-    # Survival
     if time_to_outcome_col is not None:
         risk_rate_among_test_pos = _calc_risk_rate_among_test_pos(
             risks_df=risks_df,
@@ -211,25 +220,20 @@ def _calc_tp_rate(
             time=time,
         )
         tp_rate = risk_rate_among_test_pos * test_pos_rate
-    # Binary
-    elif time_to_outcome_col is None:
-        # Below done in 2 steps to avoid chained indexing
-        selected_rows = risks_df[risks_df[outcome] == True].copy()
+    else:
+        selected_rows = risks_df[risks_df[outcome].isin([True])].copy()
+
         true_outcome = selected_rows[[model]].copy()
+        num_true_outcomes = len(true_outcome[model])
 
         tp_rate = []
         for threshold in thresholds:
-            true_tf_above_thresh_dict = dict(
-                pd.Series(true_outcome[model] >= threshold).value_counts()
+            true_tf_above_thresh_count = (
+                (true_outcome[model] >= threshold).value_counts().get(True, 0)
             )
-            if True not in true_tf_above_thresh_dict:
-                tp_rate.append(0 / len(true_outcome[model]) * prevalence_value)
-            elif True in true_tf_above_thresh_dict:
-                tp_rate.append(
-                    true_tf_above_thresh_dict[True]
-                    / len(true_outcome[model])
-                    * prevalence_value
-                )
+            tp_rate.append(
+                true_tf_above_thresh_count / num_true_outcomes * prevalence_value
+            )
 
     return pd.Series(tp_rate)
 
@@ -250,7 +254,8 @@ def _calc_fp_rate(
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to
+        1 for columns of interest)
     thresholds : Iterable
         Threshold values (x values) at which false positive rate will be calculated
     model : str
@@ -270,7 +275,6 @@ def _calc_fp_rate(
     pd.Series
         Calculated false positive rate for each threshold value
     """
-
     # Survival
     if time_to_outcome_col is not None:
         risk_rate_among_test_pos = _calc_risk_rate_among_test_pos(
@@ -284,22 +288,18 @@ def _calc_fp_rate(
         fp_rate = (1 - risk_rate_among_test_pos) * test_pos_rate
     # Binary
     elif time_to_outcome_col is None:
-        # Below done in 2 steps to avoid chained indexing
-        selected_rows = risks_df[risks_df[outcome] == False].copy()
-        false_outcome = selected_rows[[model]].copy()
-
-        # false_outcome = risks_df[risks_df[outcome] == False][[model]]
+        false_outcome = risks_df[risks_df[outcome].isin([False])][[model]]
 
         fp_rate = []
         for threshold in thresholds:
             try:
+                fp_counts = pd.Series(false_outcome[model] >= threshold).value_counts()
                 fp_rate.append(
-                    pd.Series(false_outcome[model] >= threshold).value_counts()[1]
-                    / len(false_outcome[model])
-                    * (1 - prevalence_value)
+                    fp_counts[True] / len(false_outcome[model]) * (1 - prevalence_value)
                 )
-            except:
+            except KeyError:
                 fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
+
     return pd.Series(fp_rate)
 
 
@@ -320,9 +320,11 @@ def _calc_initial_stats(
     initial_df : pd.DataFrame
         DataFrame set with initial parameters
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1 for columns of interest)
+        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1
+        for columns of interest)
     thresholds : Iterable
-        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+        Threshold values (x values) at which net benefit and net interventions avoided
+        will be calculated
     outcome : str
         Column name of outcome of interest in risks_df
     prevalence_value : int or float
@@ -335,7 +337,8 @@ def _calc_initial_stats(
     Returns
     -------
     pd.DataFrame
-        Initially set data with calculated test pos rate, true positive rate, false positive rate per threshold
+        Initially set data with calculated test pos rate, true positive rate, false
+        positive rate per threshold
     """
 
     for model in initial_df["model"].value_counts().index:
@@ -380,18 +383,22 @@ def _calc_initial_stats(
 
 def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFrame:
     """
-    Calculate additional statistics (net benefit, net interventions avoided) and add them to initial_stats_df.
+    Calculate additional statistics (net benefit, net interventions avoided) and
+    add them to initial_stats_df.
 
     Parameters
     ----------
     initial_stats_df : pd.DataFrame
-        Initially set data with calculated test pos rate, true positive rate, false positive rate per threshold
+        Initially set data with calculated test pos rate, true positive rate, false
+        positive rate per threshold
     nper : int
-        Total number of interventions, multiplies proportion of interventions avoided to get scaled plots
+        Total number of interventions, multiplies proportion of interventions
+        avoided to get scaled plots
     Returns
     -------
     pd.DataFrame
-        Data of full set of stats offered by the package per each threshold value (test_pos_rate, tp, fp, nb, nia)
+        Data of full set of stats offered by the package per each threshold
+        value (test_pos_rate, tp, fp, nb, nia)
 
     """
     initial_stats_df["net_benefit"] = (
@@ -451,39 +458,44 @@ def dca(
     nper: Optional[int] = 1,
 ) -> pd.DataFrame:
     """
-    Decision curve analysis is a method for evaluating and comparing prediction models that incorporates clinical
-    consequences, requiring only the data set on which the models are tested, and can be applied to models that have
-    either continuous or dichotomous results. The dca function performs decision curve analysis for binary and survival
-    outcomes.
+    Decision curve analysis is a method for evaluating and comparing prediction
+    models that incorporates clinical consequences, requiring only the data set
+    on which the models are tested, and can be applied to models that have
+    either continuous or dichotomous results. The dca function performs decision
+    curve analysis for binary and survival outcomes.
 
     Parameters
     ----------
     data : pd.DataFrame
-        Initial raw data ideally containing risk scores (scores ranging from 0 to 1), or else predictor/model
-        values, and outcome of interest
+        Initial raw data ideally containing risk scores (scores ranging from 0
+        to 1), or else predictor/model values, and outcome of interest
     outcome : str
         Column name of outcome of interest in risks_df
     modelnames : list[str]
         Column names from data that contain model risk scores or values
     thresholds : Iterable
-        Threshold values (x values) at which net benefit and net interventions avoided will be calculated
+        Threshold values (x values) at which net benefit and net interventions
+        avoided will be calculated
     harm : dict[float]
         Models with their associated harm values
     models_to_prob : list[str]
         Columns that need to be converted to risk scores from 0 to 1
     prevalence : int or float
-        Value that indicates the prevalence among the population, only to be specified in case-control situations
+        Value that indicates the prevalence among the population, only to be
+        specified in case-control situations
     time : int or float
         Time of interest in years, used in Survival DCA
     time_to_outcome_col : str
         Column name in data containing time to outcome values, used in Survival DCA
     nper : int
-        Total number of interventions, multiplies proportion of interventions avoided to get scaled plots
+        Total number of interventions, multiplies proportion of interventions
+        avoided to get scaled plots
 
     Returns
     -------
     pd.DataFrame
-        Data containing net benefit and interventions avoided scores to be plotted against threshold values
+        Data containing net benefit and interventions avoided scores to be plotted
+        against threshold values
 
     Examples
     ________

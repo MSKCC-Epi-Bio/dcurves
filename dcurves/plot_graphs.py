@@ -1,16 +1,33 @@
-import pandas as pd
-import matplotlib as mpl
-
-mpl.use("tkagg")
-import matplotlib.pyplot as plt
+"""
+This module houses plotting functions used in the user-facing plot_graphs() function
+to plot net-benefit scores and net interventions avoided.
+"""
+from typing import Optional, Iterable
 import random
-from typing import Optional
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+def _get_colors(num_colors=None):
+    """
+    Generate a random tuple of colors of length num_colors
+
+    Parameters
+    ----------
+    num_colors : int
+        Number of colors to be outputted in tuple form
+
+    Returns
+    -------
+    tuple
+    """
+    return [f"#{format(random.randint(0, 0xFFFFFF), '06x')}" for _ in range(num_colors)]
 
 
 def _plot_net_benefit(
     plot_df: pd.DataFrame,
-    y_limits: list = [-0.05, 0.2],
-    color_names: Optional[list] = None,
+    y_limits: Iterable = (-0.05, 1),
+    color_names: Iterable = None,
 ) -> None:
     """
     Plot net benefit values against threshold values.
@@ -18,12 +35,13 @@ def _plot_net_benefit(
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net benefit scores to be plotted
+        Data containing threshold values, model columns of net benefit scores
+        to be plotted
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis
     color_names : list[str]
-        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
-        included by default
+        Colors to render each model (if n models supplied, then need n+2 colors,
+        since 'all' and 'none' models will be included by default
 
     Returns
     -------
@@ -31,15 +49,6 @@ def _plot_net_benefit(
     """
 
     modelnames = plot_df["model"].value_counts().index
-    if color_names is None:
-        get_colors = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
-        color_names = get_colors(len(modelnames))
-        # get_colors(3)  # sample return:  ['#8af5da', '#fbc08c', '#b741d0']
-    elif color_names is not None:
-        if len(color_names) < len(modelnames):
-            ValueError(
-                "More predictors than color_names, please enter more color names in color_names list and try again"
-            )
     for modelname, color_name in zip(modelnames, color_names):
         single_model_df = plot_df[plot_df["model"] == modelname]
         plt.plot(
@@ -57,8 +66,8 @@ def _plot_net_benefit(
 
 def _plot_net_intervention_avoided(
     plot_df: pd.DataFrame,
-    y_limits: list = [-0.05, 0.2],
-    color_names: Optional[list] = None,
+    y_limits: Iterable = (-0.05, 1),
+    color_names: Iterable = None,
 ) -> None:
     """
     Plot net interventions avoided values against threshold values.
@@ -66,12 +75,13 @@ def _plot_net_intervention_avoided(
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net intervention scores to be plotted
+        Data containing threshold values, model columns of net intervention
+        scores to be plotted
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis
     color_names
-        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
-        included by default
+        Colors to render each model (if n models supplied, then need n+2 colors,
+        since 'all' and 'none' models will be included by default
 
     Returns
     -------
@@ -79,14 +89,6 @@ def _plot_net_intervention_avoided(
     """
 
     modelnames = plot_df["model"].value_counts().index
-    if color_names is None:
-        get_colors = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
-        color_names = get_colors(len(modelnames))
-    elif color_names is not None:
-        if len(color_names) < len(modelnames):
-            ValueError(
-                "More predictors than color_names, please enter more color names in color_names list and try again"
-            )
     for modelname, color_name in zip(modelnames, color_names):
         single_model_df = plot_df[plot_df["model"] == modelname]
         plt.plot(
@@ -106,8 +108,8 @@ def _plot_net_intervention_avoided(
 def plot_graphs(
     plot_df: pd.DataFrame,
     graph_type: str = "net_benefit",
-    y_limits: list = [-0.05, 1],
-    color_names: Optional[list] = None,
+    y_limits: Iterable = (-0.05, 1),
+    color_names: Optional[Iterable] = None,
 ) -> None:
     """
     Plot either net benefit or interventions avoided per threshold.
@@ -115,14 +117,15 @@ def plot_graphs(
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net benefit/intervention scores to be plotted
+        Data containing threshold values, model columns of net benefit/intervention
+        scores to be plotted
     graph_type : str
         Type of plot (either 'net_benefit' or 'net_intervention_avoided')
-    y_limits : list[float]
+    y_limits : Iterable[Lower Bound, Upper Bound]
         2 floats, lower and upper bounds for y-axis
-    color_names : list[str]
-        Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
-        included by default
+    color_names : Iterable[str]
+        Colors to render each model (if n models supplied, then need n+2 colors,
+        since 'all' and 'none' models will be included by default
 
     Returns
     -------
@@ -130,9 +133,20 @@ def plot_graphs(
     """
 
     if graph_type not in ["net_benefit", "net_intervention_avoided"]:
-        ValueError(
-            "graph_type must be one of 2 strings: net_benefit, net_intervention_avoided"
+        raise ValueError(
+            "graph_type must be one of 2 strings: net_benefit,"
+            " net_intervention_avoided"
         )
+
+    modelnames = plot_df["model"].value_counts().index
+    if color_names is None:
+        color_names = _get_colors(num_colors=len(modelnames))
+    elif color_names is not None:
+        if len(color_names) < len(modelnames):
+            raise ValueError(
+                "More predictors than color_names, please enter more color names"
+                " in color_names list and try again"
+            )
 
     if graph_type == "net_benefit":
         _plot_net_benefit(plot_df=plot_df, y_limits=y_limits, color_names=color_names)
@@ -140,66 +154,3 @@ def plot_graphs(
         _plot_net_intervention_avoided(
             plot_df=plot_df, y_limits=y_limits, color_names=color_names
         )
-    return
-
-
-# import pandas as pd
-# import matplotlib as mpl
-# mpl.use('tkagg')
-# import matplotlib.pyplot as plt
-# import random
-# from typing import Optional
-#
-# def get_colors(n, color_names):
-#     if color_names is None:
-#         return ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
-#     elif len(color_names) < n:
-#         raise ValueError(
-#             'More predictors than color_names, please enter more color names in color_names list and try again')
-#     return color_names
-#
-# def plot_scores(
-#         plot_df: pd.DataFrame,
-#         score_col: str,
-#         y_limits: list = [-0.05, 0.2],
-#         color_names: Optional[list] = None
-#         ) -> None:
-#
-#     modelnames = plot_df['model'].value_counts().index
-#     colors = get_colors(len(modelnames), color_names)
-#     for modelname, color in zip(modelnames, colors):
-#         single_model_df = plot_df[plot_df['model'] == modelname]
-#         plt.plot(single_model_df['threshold'], single_model_df[score_col], color=color)
-#
-#         plt.ylim(y_limits)
-#         plt.legend(modelnames)
-#         plt.grid(b=True, which='both', axis='both')
-#         plt.xlabel('Threshold Values')
-#         plt.ylabel(f'Calculated {score_col.capitalize().replace("_", " ")}')
-#     plt.show()
-#
-# def plot_graphs(plot_df: pd.DataFrame,
-#                 graph_type: str = 'net_benefit',
-#                 y_limits: list = [-0.05, 1],
-#                 color_names: Optional[list] = None
-#                 ) -> None:
-#     """
-#     Plot either net benefit or interventions avoided per threshold.
-#
-#     Parameters
-#     ----------
-#     plot_df : pd.DataFrame
-#         Data containing threshold values, model columns of net benefit/intervention scores to be plotted
-#     graph_type : str
-#         Type of plot (either 'net_benefit' or 'net_intervention_avoided')
-#     y_limits : list[float]
-#         2 floats, lower and upper bounds for y-axis
-#     color_names
-#         Colors to render each model (if n models supplied, then need n+2 colors, since 'all' and 'none' models will be
-#         included by default
-#
-#     Returns
-#     -------
-#     None
-#     """
-#     plot_scores(plot_df, graph_type, y_limits, color_names)

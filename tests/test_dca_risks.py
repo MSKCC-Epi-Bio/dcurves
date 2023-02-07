@@ -43,7 +43,7 @@ def test_surv_dca_risks_calc():
 
     comp_df = \
         pd.DataFrame({'r_marker_risks': r_surv_risk_test_df['marker'].tolist(),
-                      'p_marker_risks': surv_marker_calc_list}).round(decimals=4)
+                      'p_marker_risks': surv_marker_calc_list}).round(decimals=4).copy()
 
     assert comp_df['r_marker_risks'].equals(comp_df['p_marker_risks'])
 

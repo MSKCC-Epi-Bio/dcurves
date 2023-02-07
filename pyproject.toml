@@ -1,18 +1,7 @@
 [tool.poetry]
 name = "dcurves"
 version = "1.0.5"
-description = """
-Python package implementing Decision Curve Analysis method to evaluate prediction
-models, molecular markers,  and diagnostic tests
-
-Release notes for Version 1.0.5:
-
-- Updated all dependencies to latest
-- Fixed matplotlib bug that prevented usage of plot_graphs
-- Removed beartype and numpy as hard dependencies to make project lighter
-- Expanded acceptable iterable inputs to all iterables
-- Reduced unnecessary data structures to speed up code
-"""
+description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
 authors = ["shaunporwal <shaun.porwal@gmail.com>"]
 readme = "docs/README.md"
 
@@ -34,3 +23,6 @@ pylint = "^2.16.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[repositories]
+pypi = {url = "https://pypi.org/"}

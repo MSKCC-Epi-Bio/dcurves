@@ -1,3 +1,7 @@
+"""
+This module is commented out, and will be populated in the future to add checks
+and display helpful error messages.
+"""
 # from .dca import *
 #
 #
@@ -186,6 +190,6 @@
 #
 #     if graph_type == 'net_intervention_avoided':
 #         if 'net_intervention_avoided' not in after_dca_df.columns:
-#             raise ValueError("""net_intervention_avoided field not found in inputted dataframe columns - must run
-#             net_intervention_avoided() function to calculate net interventions avoided, and reinput returned dataframe
-#             into plotting function""")
+#             raise ValueError("""net_intervention_avoided field not found in inputted dataframe
+#             columns - must run net_intervention_avoided() function to calculate net
+#             interventions avoided, and reinput returned dataframe into plotting function""")

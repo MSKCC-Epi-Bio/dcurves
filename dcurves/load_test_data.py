@@ -1,3 +1,7 @@
+"""
+This module houses user-facing simulation data-retrieval functions for end-users.
+These data were also used for testing.
+"""
 import pandas as pd
 import pkg_resources
 
@@ -23,7 +27,8 @@ def load_survival_df():
 
 def load_case_control_df():
     """
-    Load Simulation Data For Binary Endpoints DCA With User-Specified Outcome Prevalence (Case-Control)
+    Load Simulation Data For Binary Endpoints DCA With User-Specified Outcome
+    Prevalence (Case-Control)
     :return pd.DataFrame that contains binary data
     """
     stream = pkg_resources.resource_stream(__name__, "data/df_case_control.csv")

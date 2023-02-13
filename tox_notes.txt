@@ -1,0 +1,3 @@
+Used this site to use tox, really useful:
+
+https://consoledotlog.co.uk/tox-with-pyenv-and-poetry-to-test-projects-with-multiple-python-versions.html

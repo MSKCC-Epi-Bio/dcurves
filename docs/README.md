@@ -1,3 +1,7 @@
+## Contributors
+
+- Shaun Porwal (shaun.porwal@gmail.com)
+
 # dcurves
 Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical
 consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of

@@ -19,6 +19,7 @@ jupyterlab = "~3.6.1"
 pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^2.16.1"
+tox = "^4.4.5"
 
 [build-system]
 requires = ["poetry-core"]

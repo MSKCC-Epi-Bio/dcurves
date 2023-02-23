@@ -6,7 +6,7 @@ authors = ["shaunporwal <shaun.porwal@gmail.com>"]
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "~3.11.1"
+python = "^3.8"
 lifelines = "~0.27.4"
 matplotlib = "^3.5.2"
 pandas = "~1.5.3"
@@ -16,13 +16,13 @@ typing = "~3.7.4.3"
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"
 jupyterlab = "~3.6.1"
+tox = "^4.4.6"
 pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^2.16.1"
-tox = "^4.4.5"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [repositories]

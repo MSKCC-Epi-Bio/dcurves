@@ -2873,38 +2873,6 @@ files = [
 
 [[package]]
 name = "scipy"
-version = "1.6.1"
-description = "SciPy: Scientific Library for Python"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "scipy-1.6.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:a15a1f3fc0abff33e792d6049161b7795909b40b97c6cc2934ed54384017ab76"},
-    {file = "scipy-1.6.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:e79570979ccdc3d165456dd62041d9556fb9733b86b4b6d818af7a0afc15f092"},
-    {file = "scipy-1.6.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:a423533c55fec61456dedee7b6ee7dce0bb6bfa395424ea374d25afa262be261"},
-    {file = "scipy-1.6.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:33d6b7df40d197bdd3049d64e8e680227151673465e5d85723b3b8f6b15a6ced"},
-    {file = "scipy-1.6.1-cp37-cp37m-win32.whl", hash = "sha256:6725e3fbb47da428794f243864f2297462e9ee448297c93ed1dcbc44335feb78"},
-    {file = "scipy-1.6.1-cp37-cp37m-win_amd64.whl", hash = "sha256:5fa9c6530b1661f1370bcd332a1e62ca7881785cc0f80c0d559b636567fab63c"},
-    {file = "scipy-1.6.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:bd50daf727f7c195e26f27467c85ce653d41df4358a25b32434a50d8870fc519"},
-    {file = "scipy-1.6.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:f46dd15335e8a320b0fb4685f58b7471702234cba8bb3442b69a3e1dc329c345"},
-    {file = "scipy-1.6.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:0e5b0ccf63155d90da576edd2768b66fb276446c371b73841e3503be1d63fb5d"},
-    {file = "scipy-1.6.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:2481efbb3740977e3c831edfd0bd9867be26387cacf24eb5e366a6a374d3d00d"},
-    {file = "scipy-1.6.1-cp38-cp38-win32.whl", hash = "sha256:68cb4c424112cd4be886b4d979c5497fba190714085f46b8ae67a5e4416c32b4"},
-    {file = "scipy-1.6.1-cp38-cp38-win_amd64.whl", hash = "sha256:5f331eeed0297232d2e6eea51b54e8278ed8bb10b099f69c44e2558c090d06bf"},
-    {file = "scipy-1.6.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:0c8a51d33556bf70367452d4d601d1742c0e806cd0194785914daf19775f0e67"},
-    {file = "scipy-1.6.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:83bf7c16245c15bc58ee76c5418e46ea1811edcc2e2b03041b804e46084ab627"},
-    {file = "scipy-1.6.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:794e768cc5f779736593046c9714e0f3a5940bc6dcc1dba885ad64cbfb28e9f0"},
-    {file = "scipy-1.6.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:5da5471aed911fe7e52b86bf9ea32fb55ae93e2f0fac66c32e58897cfb02fa07"},
-    {file = "scipy-1.6.1-cp39-cp39-win32.whl", hash = "sha256:8e403a337749ed40af60e537cc4d4c03febddcc56cd26e774c9b1b600a70d3e4"},
-    {file = "scipy-1.6.1-cp39-cp39-win_amd64.whl", hash = "sha256:a5193a098ae9f29af283dcf0041f762601faf2e595c0db1da929875b7570353f"},
-    {file = "scipy-1.6.1.tar.gz", hash = "sha256:c4fceb864890b6168e79b0e714c585dbe2fd4222768ee90bc1aa0f8218691b11"},
-]
-
-[package.dependencies]
-numpy = ">=1.16.5"
-
-[[package]]
-name = "scipy"
 version = "1.9.3"
 description = "Fundamental algorithms for scientific computing in Python"
 category = "main"
@@ -3017,56 +2985,34 @@ tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
 name = "statsmodels"
-version = "0.13.5"
+version = "0.14.0.dev749+g27b28335f"
 description = "Statistical computations and models for Python"
 category = "main"
 optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "statsmodels-0.13.5-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c75319fddded9507cc310fc3980e4ae4d64e3ff37b322ad5e203a84f89d85203"},
-    {file = "statsmodels-0.13.5-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:6f148920ef27c7ba69a5735724f65de9422c0c8bcef71b50c846b823ceab8840"},
-    {file = "statsmodels-0.13.5-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5cc4d3e866bfe0c4f804bca362d0e7e29d24b840aaba8d35a754387e16d2a119"},
-    {file = "statsmodels-0.13.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:072950d6f7820a6b0bd6a27b2d792a6d6f952a1d2f62f0dcf8dd808799475855"},
-    {file = "statsmodels-0.13.5-cp310-cp310-win_amd64.whl", hash = "sha256:159ae9962c61b31dcffe6356d72ae3d074bc597ad9273ec93ae653fe607b8516"},
-    {file = "statsmodels-0.13.5-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:9061c0d5ee4f3038b590afedd527a925e5de27195dc342381bac7675b2c5efe4"},
-    {file = "statsmodels-0.13.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e1d89cba5fafc1bf8e75296fdfad0b619de2bfb5e6c132913991d207f3ead675"},
-    {file = "statsmodels-0.13.5-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:01bc16e7c66acb30cd3dda6004c43212c758223d1966131226024a5c99ec5a7e"},
-    {file = "statsmodels-0.13.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5d5cd9ab5de2c7489b890213cba2aec3d6468eaaec547041c2dfcb1e03411f7e"},
-    {file = "statsmodels-0.13.5-cp311-cp311-win_amd64.whl", hash = "sha256:857d5c0564a68a7ef77dc2252bb43c994c0699919b4e1f06a9852c2fbb588765"},
-    {file = "statsmodels-0.13.5-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:5a5348b2757ab31c5c31b498f25eff2ea3c42086bef3d3b88847c25a30bdab9c"},
-    {file = "statsmodels-0.13.5-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9b21648e3a8e7514839ba000a48e495cdd8bb55f1b71c608cf314b05541e283b"},
-    {file = "statsmodels-0.13.5-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1b829eada6cec07990f5e6820a152af4871c601fd458f76a896fb79ae2114985"},
-    {file = "statsmodels-0.13.5-cp37-cp37m-win_amd64.whl", hash = "sha256:872b3a8186ef20f647c7ab5ace512a8fc050148f3c2f366460ab359eec3d9695"},
-    {file = "statsmodels-0.13.5-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:bc1abb81d24f56425febd5a22bb852a1b98e53b80c4a67f50938f9512f154141"},
-    {file = "statsmodels-0.13.5-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:a2c46f1b0811a9736db37badeb102c0903f33bec80145ced3aa54df61aee5c2b"},
-    {file = "statsmodels-0.13.5-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:947f79ba9662359f1cfa6e943851f17f72b06e55f4a7c7a2928ed3bc57ed6cb8"},
-    {file = "statsmodels-0.13.5-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:046251c939c51e7632bcc8c6d6f31b8ca0eaffdf726d2498463f8de3735c9a82"},
-    {file = "statsmodels-0.13.5-cp38-cp38-win_amd64.whl", hash = "sha256:84f720e8d611ef8f297e6d2ffa7248764e223ef7221a3fc136e47ae089609611"},
-    {file = "statsmodels-0.13.5-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:b0d1d24e4adf96ec3c64d9a027dcee2c5d5096bb0dad33b4d91034c0a3c40371"},
-    {file = "statsmodels-0.13.5-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:0f0e5c9c58fb6cba41db01504ec8dd018c96a95152266b7d5d67e0de98840474"},
-    {file = "statsmodels-0.13.5-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5b034aa4b9ad4f4d21abc4dd4841be0809a446db14c7aa5c8a65090aea9f1143"},
-    {file = "statsmodels-0.13.5-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:73f97565c29241e839ffcef74fa995afdfe781910ccc27c189e5890193085958"},
-    {file = "statsmodels-0.13.5-cp39-cp39-win_amd64.whl", hash = "sha256:2ff331e508f2d1a53d3a188305477f4cf05cd8c52beb6483885eb3d51c8be3ad"},
-    {file = "statsmodels-0.13.5.tar.gz", hash = "sha256:593526acae1c0fda0ea6c48439f67c3943094c542fe769f8b90fe9e6c6cc4871"},
-]
+python-versions = ">=3.8"
+files = []
+develop = false
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.17", markers = "python_version != \"3.10\" or platform_system != \"Windows\" or platform_python_implementation == \"PyPy\""},
+    {version = ">=1.18", markers = "python_version != \"3.10\" or platform_system != \"Windows\" or platform_python_implementation == \"PyPy\""},
     {version = ">=1.22.3", markers = "python_version == \"3.10\" and platform_system == \"Windows\" and platform_python_implementation != \"PyPy\""},
 ]
 packaging = ">=21.3"
-pandas = ">=0.25"
+pandas = ">=1.0"
 patsy = ">=0.5.2"
-scipy = [
-    {version = ">=1.3", markers = "(python_version > \"3.9\" or platform_system != \"Windows\" or platform_machine != \"x86\") and python_version < \"3.12\""},
-    {version = ">=1.3,<1.9", markers = "python_version == \"3.8\" and platform_system == \"Windows\" and platform_machine == \"x86\" or python_version == \"3.9\" and platform_system == \"Windows\" and platform_machine == \"x86\""},
-]
+scipy = ">=1.4,<1.9.2 || >1.9.2"
 
 [package.extras]
-build = ["cython (>=0.29.32)"]
-develop = ["Jinja2", "colorama", "cython (>=0.29.32)", "cython (>=0.29.32,<3.0.0)", "flake8", "isort", "joblib", "matplotlib (>=3)", "oldest-supported-numpy (>=2022.4.18)", "pytest (>=7.0.1,<7.1.0)", "pytest-randomly", "pytest-xdist", "pywinpty", "setuptools-scm[toml] (>=7.0.0,<7.1.0)"]
-docs = ["ipykernel", "jupyter-client", "matplotlib", "nbconvert", "nbformat", "numpydoc", "pandas-datareader", "sphinx"]
+build = ["cython (>=0.29.26)"]
+develop = ["colorama", "cython (>=0.29.26)", "cython (>=0.29.28,<3.0.0)", "flake8", "isort", "joblib", "matplotlib (>=3)", "oldest-supported-numpy (>=2022.4.18)", "pytest (>=7.0.1,<7.1.0)", "pytest-randomly", "pytest-xdist", "pywinpty", "setuptools_scm[toml] (>=7.0.0,<7.1.0)"]
+docs = ["ipykernel", "jupyter_client", "matplotlib", "nbconvert", "nbformat", "numpydoc", "pandas-datareader", "sphinx"]
+
+[package.source]
+type = "git"
+url = "https://github.com/statsmodels/statsmodels.git"
+reference = "main"
+resolved_reference = "27b28335f5921accbbda5f8ea6f0bc1768db282a"
 
 [[package]]
 name = "terminado"
@@ -3516,4 +3462,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f7ef3f08642a0b4fcb62522f5703f8db18640bcc5d19435e0d080e4493f11195"
+content-hash = "b11fbb7e9ac65b79f837f8326ebc1bd73d70cfdc0869b4929a586c96ebf4629e"

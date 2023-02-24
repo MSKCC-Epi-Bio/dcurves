@@ -2,7 +2,7 @@
 name = "dcurves"
 version = "1.0.5"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
-authors = ["shaunporwal <shaun.porwal@gmail.com>"]
+authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
@@ -10,7 +10,7 @@ python = "^3.8"
 lifelines = "~0.27.4"
 matplotlib = "^3.5.2"
 pandas = "~1.5.3"
-statsmodels = "~0.13.2"
+statsmodels = {git = "https://github.com/statsmodels/statsmodels.git", rev = "main"}
 typing = "~3.7.4.3"
 
 [tool.poetry.group.dev.dependencies]

@@ -154,3 +154,4 @@ def plot_graphs(
         _plot_net_intervention_avoided(
             plot_df=plot_df, y_limits=y_limits, color_names=color_names
         )
+

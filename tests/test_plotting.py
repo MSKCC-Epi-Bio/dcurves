@@ -67,3 +67,7 @@ def test_case1_plot_net_intervention_avoided():
     #     y_limits=y_limits,
     #     color_names=['blue', 'red', 'green']
     # )
+
+def test_plot_rough_dca():
+
+    pass

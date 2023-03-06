@@ -12,6 +12,9 @@ matplotlib = "^3.5.2"
 pandas = "~1.5.3"
 statsmodels = {git = "https://github.com/statsmodels/statsmodels.git", rev = "main"}
 typing = "~3.7.4.3"
+mkdocs = "^1.4.2"
+mkdocstrings = {extras = ["python"], version = "^0.20.0"}
+mkdocs-material = "^9.0.14"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"

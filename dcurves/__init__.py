@@ -1,6 +1,15 @@
 """
-Load user-facing functions.
+Decision Curve Analysis in Python
+
+Modules exported by this package:
+
+- `dca`
+- `plot_graphs`
+- `prevalence`
+- `risks`
+
 """
+
 
 from dcurves import load_test_data
 from dcurves.dca import dca

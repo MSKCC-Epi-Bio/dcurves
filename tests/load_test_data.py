@@ -3,6 +3,7 @@ import pkg_resources
 
 # Note: after speaking with Dan, can host data online on dropbox/s3/googledrive and pull using python script
 
+
 # Load Simulation Data
 def load_binary_df():
     '''
@@ -11,6 +12,7 @@ def load_binary_df():
     '''
     stream = pkg_resources.resource_stream(__name__, 'benchmark_data/df_binary.csv')
     return pd.read_csv(stream, encoding='latin-1')
+
 
 def load_survival_df():
     """

@@ -1,0 +1,28 @@
+name: dcurves
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          curl -sSL https://install.python-poetry.org | python -
+          poetry install 
+      - name: Lint with pylint
+        run: |
+          poetry run pylint --fail-under 5 **/*.py
+      - name: Test with pytest
+        run: |
+          poetry run pytest --cov=myproj tests/

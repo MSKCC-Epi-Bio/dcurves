@@ -1,7 +1,9 @@
 """
-This module houses most of the functions used in performing decision curve analysis,
-along with the main user-facing dca() functions used for binary and survival outcomes.
+This module houses most of the functions used in performing decision curve 
+analysis, along with the main user-facing dca() functions used for binary
+and survival outcomes.
 """
+
 from typing import Optional, Union, Iterable
 import pandas as pd
 import lifelines
@@ -24,8 +26,8 @@ def _create_initial_df(
     Parameters
     ----------
     thresholds : Iterable
-        Threshold values (x values) at which net benefit and net interventions avoided will be
-        calculated
+        Threshold values (x values) at which net benefit and net
+        interventions avoided will be calculated
     modelnames : list[str]
         Column names from risks_df that contain model risk scores
     input_df_rownum : int
@@ -43,7 +45,9 @@ def _create_initial_df(
 
     modelnames = modelnames + ["all", "none"]
     rows = len(thresholds) * len(modelnames)
-    model_column = pd.Series([x for y in modelnames for x in [y] * len(thresholds)])
+    model_column = pd.Series(
+        [x for y in modelnames
+         for x in [y] * len(thresholds)])
     threshold_column = pd.Series(list(thresholds) * len(modelnames))
     n_column = pd.Series([input_df_rownum] * rows)
     prevalence_column = pd.Series([prevalence_value] * rows)
@@ -74,16 +78,18 @@ def _calc_test_pos_rate(
     risks_df: pd.DataFrame, thresholds: Iterable, model: str
 ) -> pd.Series:
     """
-    Calculate each test positive rate per threshold value, which will be used to calculate true
-    and false positive rates per threshold values in the survival DCA case.
+    Calculate each test positive rate per threshold value,
+    which will be used to calculate true and false positive rates 
+    per threshold values in the survival DCA case.
 
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores (scores ranging from 0 to 1
-        for columns of interest)
+        Data containing (converted if necessary) risk scores 
+        (scores ranging from 0 to 1 for columns of interest)
     thresholds : Iterable
-        Threshold values (x values) at which net test positive rate will be calculated
+        Threshold values (x values) at which net test positive 
+        rate will be calculated
     model : str
         Model column name in risks_df
 
@@ -103,7 +109,8 @@ def _calc_test_pos_rate(
         if True not in risk_above_thresh_tf_dict:
             test_pos_rate.append(0 / len(risks_df.index))
         elif True in risk_above_thresh_tf_dict:
-            test_pos_rate.append(risk_above_thresh_tf_dict[True] / len(risks_df.index))
+            test_pos_rate.append(
+                risk_above_thresh_tf_dict[True] / len(risks_df.index))
 
     return pd.Series(test_pos_rate)
 
@@ -118,8 +125,8 @@ def _calc_risk_rate_among_test_pos(
 ) -> pd.Series:
     """
     Calculate the risk rate among test positive cases for each threshold value
-    , which will be used to calculate true and false positive rates per threshold
-    values in the survival DCA case.
+    , which will be used to calculate true and false positive rates per 
+    threshold values in the survival DCA case.
 
     Parameters
     ----------
@@ -232,7 +239,8 @@ def _calc_tp_rate(
                 (true_outcome[model] >= threshold).value_counts().get(True, 0)
             )
             tp_rate.append(
-                true_tf_above_thresh_count / num_true_outcomes * prevalence_value
+                (true_tf_above_thresh_count /
+                 num_true_outcomes) * prevalence_value
             )
 
     return pd.Series(tp_rate)
@@ -455,21 +463,21 @@ def dca(
     prevalence: Optional[Union[float, int]] = None,
     time: Optional[Union[float, int]] = None,
     time_to_outcome_col: Optional[str] = None,
-    nper: Optional[int] = 1,
+    nper: Optional[int] = 1
 ) -> pd.DataFrame:
     """
     Decision curve analysis is a method for evaluating and comparing prediction
     models that incorporates clinical consequences, requiring only the data set
-    on which the models are tested, and can be applied to models that have
-    either continuous or dichotomous results. The dca function performs decision
+    on which the models are tested, and can be applied to models that have eit-
+    her continuous or dichotomous results. The dca function performs decision
     curve analysis for binary and survival outcomes.
 
     Parameters
     ----------
-    data : pd.DataFrame
+    data: pd.DataFrame
         Initial raw data ideally containing risk scores (scores ranging from 0
         to 1), or else predictor/model values, and outcome of interest
-    outcome : str
+    outcome: str
         Column name of outcome of interest in risks_df
     modelnames : list[str]
         Column names from data that contain model risk scores or values
@@ -498,7 +506,7 @@ def dca(
         against threshold values
 
     Examples
-    ________
+    --------
     from dcurves import dca, plot_graphs, load_test_data
 
     import numpy as np

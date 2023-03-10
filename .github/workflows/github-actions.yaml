@@ -22,7 +22,7 @@ jobs:
           poetry install 
       - name: Lint with pylint
         run: |
-          pylint **/*.py
+          poetry run pylint **/*.py
       - name: Test with pytest
         run: |
           pytest --cov=myproj tests/

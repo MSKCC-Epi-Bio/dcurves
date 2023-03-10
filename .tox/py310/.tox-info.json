@@ -2,5 +2,38 @@
   "ToxEnv": {
     "name": "py310",
     "type": "VirtualEnvRunner"
+  },
+  "Python": {
+    "version_info": [
+      3,
+      10,
+      9,
+      "final",
+      0
+    ],
+    "executable": "/usr/local/Cellar/python@3.10/3.10.9/Frameworks/Python.framework/Versions/3.10/bin/python3.10",
+    "virtualenv version": "20.19.0"
+  },
+  "PythonRun": {
+    "deps": {
+      "options": [],
+      "requirements": [
+        "pytest"
+      ],
+      "constraints": [],
+      "constraint_options": {
+        "constrain_package_deps": false,
+        "use_frozen_constraints": false
+      }
+    }
+  },
+  "RunToxEnv": {
+    "package_deps": [
+      "lifelines<0.28.0,>=0.27.4",
+      "matplotlib<4.0.0,>=3.5.2",
+      "pandas<1.6.0,>=1.5.3",
+      "statsmodels<0.14.0,>=0.13.2",
+      "typing<3.8.0.0,>=3.7.4.3"
+    ]
   }
 }

@@ -2,27 +2,30 @@
 name = "dcurves"
 version = "1.0.5"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
-authors = ["shaunporwal <shaun.porwal@gmail.com>"]
+authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "~3.11.1"
+python = "^3.8"
 lifelines = "~0.27.4"
 matplotlib = "^3.5.2"
 pandas = "~1.5.3"
-statsmodels = "~0.13.2"
+statsmodels = {git = "https://github.com/statsmodels/statsmodels.git", rev = "main"}
 typing = "~3.7.4.3"
+mkdocs = "^1.4.2"
+mkdocstrings = {extras = ["python"], version = "^0.20.0"}
+mkdocs-material = "^9.0.14"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"
 jupyterlab = "~3.6.1"
+tox = "^4.4.6"
 pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^2.16.1"
-tox = "^4.4.5"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [repositories]

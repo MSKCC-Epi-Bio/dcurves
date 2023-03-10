@@ -1,6 +1,6 @@
 """
-This module houses plotting functions used in the user-facing plot_graphs() function
-to plot net-benefit scores and net interventions avoided.
+This module houses plotting functions used in the user-facing plot_graphs() 
+function to plot net-benefit scores and net interventions avoided.
 """
 from typing import Optional, Iterable
 import random

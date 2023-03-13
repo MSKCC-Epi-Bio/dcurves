@@ -27,7 +27,9 @@ jobs:
         run: |
           poetry run pytest --cov=./dcurves --cov-report xml
       - name: Coveralls
-        uses: coverallsapp/githubaction@master
+        uses: coverallsapp/github-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage.xml
+          flag-name: run-${{ join(matrix.*, '-') }}
+          parallel: true

@@ -34,7 +34,7 @@ your use case by looking at the different pages.
 
 
 ## In-depth tutorial and explanations:
-###### https://www.danieldsjoberg.com/dca-tutorial/dca-tutorial-python.html
+###### www.decisioncurveanalysis.org
 
 ## Contributing
 

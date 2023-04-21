@@ -2,27 +2,25 @@
 This module houses user-facing simulation data-retrieval functions for end-users.
 These data were also used for testing.
 """
+from importlib.resources import files
 import pandas as pd
-import pkg_resources
+from dcurves import data
 
-
-# Load Simulation Data
 def load_binary_df():
     """
     Load Simulation Data For Binary Endpoints DCA
     :return pd.DataFrame that contains binary data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_binary.csv")
-    return pd.read_csv(stream, encoding="latin-1")
-
+    file_path = files(data).joinpath("df_binary.csv")
+    return pd.read_csv(file_path)
 
 def load_survival_df():
     """
     Load Simulation Data For Survival Endpoints DCA
     :return pd.DataFrame that contains survival data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_surv.csv")
-    return pd.read_csv(stream, encoding="latin-1")
+    file_path = files(data).joinpath("df_surv.csv")
+    return pd.read_csv(file_path)
 
 
 def load_case_control_df():
@@ -31,5 +29,5 @@ def load_case_control_df():
     Prevalence (Case-Control)
     :return pd.DataFrame that contains binary data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_case_control.csv")
-    return pd.read_csv(stream, encoding="latin-1")
+    file_path = files(data).joinpath("df_case_control.csv")
+    return pd.read_csv(file_path)

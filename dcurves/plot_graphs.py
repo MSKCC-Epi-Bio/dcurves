@@ -58,9 +58,9 @@ def _plot_net_benefit(
         )
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(b=True, which="both", axis="both")
+        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
         plt.xlabel("Threshold Values")
-        plt.ylabel("Calculated Net Benefit")
+        plt.ylabel("Net Benefit")
     plt.show()
 
 
@@ -99,9 +99,9 @@ def _plot_net_intervention_avoided(
 
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(b=True, which="both", axis="both")
+        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
         plt.xlabel("Threshold Values")
-        plt.ylabel("Calculated Net Reduction of Interventions")
+        plt.ylabel("Net Reduction of Interventions")
     plt.show()
 
 

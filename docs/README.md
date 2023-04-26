@@ -1,6 +1,7 @@
 ## Contributors
 
 - Shaun Porwal (shaun.porwal@gmail.com)
+- Rohan Singh (singhrohan@outlook.com)
 
 # dcurves
 Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical

@@ -54,12 +54,13 @@ def _create_initial_df(
     harm_column = pd.Series([0] * rows)
 
     if harm is not None:
-        for model in harm.keys():
-            harm_column.loc[model_column == model] = harm[model]
-    elif harm is None:
+        if isinstance(harm, dict):
+            for model in harm.keys():
+                harm_column.loc[model_column == model] = harm[model]
+        elif not isinstance(harm, dict):
+            raise ValueError("Harm should be either None or dict")
+    else :
         pass
-    else:
-        raise ValueError("Harm should be either None or dict")
 
     initial_df = pd.DataFrame(
         {

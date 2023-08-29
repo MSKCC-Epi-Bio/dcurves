@@ -24,6 +24,7 @@ pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^2.16.1"
 towncrier = "^22.12.0"
+pytest-mock = "^3.11.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

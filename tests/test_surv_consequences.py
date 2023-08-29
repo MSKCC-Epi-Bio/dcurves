@@ -94,6 +94,32 @@ def test_case2_surv_risk_rate_among_test_positive():
             r_benchmark_results.variable == model]['risk_rate_among_test_pos'].reset_index(drop=True).round(decimals=5))
 
 
+
+def test_risk_rate_among_test_pos_max_time_less_than_time():
+    # Given:
+    # Create a sample risks_df where all times are less than 5
+    sample_data = {
+        'cancerpredmarker': [0.1, 0.5, 0.8, 0.3, 0.7],
+        'cancer': [1, 0, 1, 0, 0],
+        'ttcancer': [1, 2, 3, 4, 4.5]  # Notice all times are below 5
+    }
+    risks_df = pd.DataFrame(sample_data)
+    outcome = 'cancer'
+    model = 'cancerpredmarker'
+    thresholds = [0.2, 0.4, 0.6]
+    time = 5  # This is greater than all times in our sample data
+    time_to_outcome_col = 'ttcancer'
+
+    # When:
+    result = _calc_risk_rate_among_test_pos(risks_df, outcome, model, thresholds, time, time_to_outcome_col)
+
+    # Then:
+    # All the values in the result should be None since our condition will be triggered
+    expected_result = [None, None, None]
+    assert result == expected_result, f"Expected {expected_result} but got {result}"
+
+
+
 def test_case2_all_stats():
 
     r_benchmark_results = load_r_case2_results()

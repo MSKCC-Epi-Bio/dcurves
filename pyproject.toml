@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dcurves"
-version = "1.0.6.3"
+version = "1.0.6.4"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
 authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
 readme = "docs/README.md"
@@ -9,7 +9,7 @@ readme = "docs/README.md"
 python = "^3.9"
 lifelines = "~0.27.7"
 matplotlib = "~3.7.1"
-pandas = "^2.1.0"
+pandas = ">=1.5.3,<3.0.0"
 statsmodels = "~0.13.5"
 typing = "~3.7.4.3"
 mkdocs = "^1.4.2"
@@ -44,6 +44,8 @@ issue_format = "GH-{issue}"
 
 [tool.pytest.ini_options]
 filterwarnings = [
-    "ignore::DeprecationWarning:pkg_resources.*:"
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore::DeprecationWarning:lifelines",
+    "ignore::DeprecationWarning:patsy"
 ]
 

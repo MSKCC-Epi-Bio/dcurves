@@ -11,7 +11,6 @@ import lifelines
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 from .prevalence import _calc_prevalence
 
-
 def _create_initial_df(
     thresholds: Iterable,
     modelnames: list,
@@ -389,7 +388,6 @@ def _calc_initial_stats(
 
     return initial_df
 
-
 def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFrame:
     """
     Calculate additional statistics (net benefit, net interventions avoided) and
@@ -452,7 +450,6 @@ def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFr
     final_dca_df = initial_stats_df
 
     return final_dca_df
-
 
 def dca(
     data: pd.DataFrame,

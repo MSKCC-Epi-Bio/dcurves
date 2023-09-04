@@ -7,7 +7,6 @@ import random
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
 def _get_colors(num_colors=None):
     """
     Generate a random tuple of colors of length num_colors

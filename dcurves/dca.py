@@ -51,12 +51,12 @@ def _create_initial_df(
     threshold_column = pd.Series(list(thresholds) * len(modelnames))
     n_column = pd.Series([input_df_rownum] * rows)
     prevalence_column = pd.Series([prevalence_value] * rows)
-    harm_column = pd.Series([0] * rows)
+    harm_column = pd.Series([float(0)] * rows)
 
     if harm is not None:
         if isinstance(harm, dict):
             for model in harm.keys():
-                harm_column.loc[model_column == model] = harm[model]
+                harm_column.loc[model_column == model] = float(harm[model])
         elif not isinstance(harm, dict):
             raise ValueError("Harm should be either None or dict")
     else :
@@ -173,7 +173,7 @@ def _calc_risk_rate_among_test_pos(
                 risk_rate_among_test_pos.append(None)
             elif timeline >= time:
                 risk_rate_among_test_pos.append(
-                    1 - float(kmf.survival_function_at_times(time))
+                    1 - float(kmf.survival_function_at_times(time).iloc[0])
                 )
 
     return pd.Series(risk_rate_among_test_pos)

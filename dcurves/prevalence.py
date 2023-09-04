@@ -52,5 +52,5 @@ def _calc_prevalence(
 
         kmf = lifelines.KaplanMeierFitter()
         kmf.fit(risks_df[time_to_outcome_col], risks_df[outcome] * 1)
-        prevalence = 1 - kmf.survival_function_at_times(time)
+        prevalence = 1 - kmf.survival_function_at_times(time).iloc[0]
     return float(prevalence)

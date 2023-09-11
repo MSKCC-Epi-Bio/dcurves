@@ -6,7 +6,7 @@ authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlo
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 lifelines = "~0.27.7"
 matplotlib = "~3.7.1"
 pandas = ">=1.5.3,<3.0.0"
@@ -26,6 +26,7 @@ black = "^23.1.0"
 pylint = "^2.16.1"
 towncrier = "^22.12.0"
 pytest-mock = "^3.11.1"
+tomli = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

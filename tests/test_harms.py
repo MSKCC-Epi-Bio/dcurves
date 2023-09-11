@@ -32,7 +32,6 @@ def test_simple_binary_harms_1():
             p_model_stat_df = p_model_stat_df.round(decimals=6)
             p_model_stat_df = p_model_stat_df.reset_index(drop=True)
 
-
             r_model_stat_df = \
                 r_case3_benchmark_results.loc[r_case3_benchmark_results.variable == model, stat]
             r_model_stat_df = r_model_stat_df.round(decimals=6)

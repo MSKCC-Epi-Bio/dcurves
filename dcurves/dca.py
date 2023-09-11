@@ -11,7 +11,6 @@ import lifelines
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 from .prevalence import _calc_prevalence
 
-
 def _create_initial_df(
     thresholds: Iterable,
     modelnames: list,
@@ -51,15 +50,16 @@ def _create_initial_df(
     threshold_column = pd.Series(list(thresholds) * len(modelnames))
     n_column = pd.Series([input_df_rownum] * rows)
     prevalence_column = pd.Series([prevalence_value] * rows)
-    harm_column = pd.Series([0] * rows)
+    harm_column = pd.Series([float(0)] * rows)
 
     if harm is not None:
-        for model in harm.keys():
-            harm_column.loc[model_column == model] = harm[model]
-    elif harm is None:
+        if isinstance(harm, dict):
+            for model in harm.keys():
+                harm_column.loc[model_column == model] = float(harm[model])
+        elif not isinstance(harm, dict):
+            raise ValueError("Harm should be either None or dict")
+    else :
         pass
-    else:
-        raise ValueError("Harm should be either None or dict")
 
     initial_df = pd.DataFrame(
         {
@@ -172,7 +172,7 @@ def _calc_risk_rate_among_test_pos(
                 risk_rate_among_test_pos.append(None)
             elif timeline >= time:
                 risk_rate_among_test_pos.append(
-                    1 - float(kmf.survival_function_at_times(time))
+                    1 - float(kmf.survival_function_at_times(time).iloc[0])
                 )
 
     return pd.Series(risk_rate_among_test_pos)
@@ -388,7 +388,6 @@ def _calc_initial_stats(
 
     return initial_df
 
-
 def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFrame:
     """
     Calculate additional statistics (net benefit, net interventions avoided) and
@@ -451,7 +450,6 @@ def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFr
     final_dca_df = initial_stats_df
 
     return final_dca_df
-
 
 def dca(
     data: pd.DataFrame,

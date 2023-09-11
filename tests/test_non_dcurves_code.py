@@ -8,7 +8,6 @@ import pandas as pd
 # Load Statistics Libraries
 import lifelines
 
-
 def test_tutorial_python_coxph():
 
     r_coxph_pr_failure18_series = load_tutorial_coxph_pr_failure18_vals()['pr_failure18']

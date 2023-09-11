@@ -56,3 +56,20 @@ def test_survival_prevalence():
 
     assert round(number=float(local_prevalence_calc),
                  ndigits=6) == 0.147287
+
+
+import pytest
+
+def test_prevalence_in_survival_case():
+
+    surv_df = load_survival_df()
+
+    # This should raise an error since prevalence is supplied for survival outcomes
+    with pytest.raises(ValueError, match="In survival outcomes, prevalence should not be supplied"):
+        _calc_prevalence(
+            risks_df=surv_df,
+            outcome='cancer',
+            prevalence=0.5,  # Providing prevalence for a survival outcome
+            time=1,
+            time_to_outcome_col='ttcancer'  # Indicating this is a survival case
+        )

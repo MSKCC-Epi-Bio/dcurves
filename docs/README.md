@@ -13,7 +13,6 @@ dichotomous results. The dca function performs decision curve analysis for binar
 DCA tutorial (towards the bottom) for a detailed walk-through of various applications. Also, see
 www.decisioncurveanalysis.org for more information.
 
-
 ## Table Of Contents
 
 The documentation follows the best practice for
@@ -33,9 +32,10 @@ your use case by looking at the different pages.
 
 ::: dcurves
 
-
 ## In-depth tutorial and explanations:
-###### www.decisioncurveanalysis.org
+
+###### https://www.decisioncurveanalysis.org 
+
 
 ## Contributing
 
@@ -48,3 +48,4 @@ your use case by looking at the different pages.
 
 ## Note
 ###### setup.py is deprecated now that dependencies are managed by `poetry` package manager
+

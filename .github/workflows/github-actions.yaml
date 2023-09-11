@@ -20,9 +20,10 @@ jobs:
           python -m pip install --upgrade pip
           curl -sSL https://install.python-poetry.org | python -
           poetry install 
+      - name: Lint with pylint
+        run: |
+          poetry run pylint --fail-under 5 dcurves/*.py
       - name: Test with pytest
         run: |
           poetry run pytest --cov=dcurves --cov-report html
-      - name: Lint with pylint
-        run: |
-          poetry run pylint --fail-under 5 **/*.py
+

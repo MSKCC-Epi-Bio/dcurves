@@ -1,20 +1,21 @@
 [tool.poetry]
 name = "dcurves"
-version = "1.0.5"
+version = "1.0.6.4"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
 authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
 readme = "docs/README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-lifelines = "~0.27.4"
-matplotlib = "^3.5.2"
-pandas = "~1.5.3"
-statsmodels = {git = "https://github.com/statsmodels/statsmodels.git", rev = "main"}
+python = "^3.9"
+lifelines = "~0.27.7"
+matplotlib = "~3.7.1"
+pandas = ">=1.5.3,<3.0.0"
+statsmodels = "~0.13.5"
 typing = "~3.7.4.3"
 mkdocs = "^1.4.2"
 mkdocstrings = {extras = ["python"], version = "^0.20.0"}
 mkdocs-material = "^9.0.14"
+setuptools = "^68.1.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"
@@ -23,6 +24,9 @@ tox = "^4.4.6"
 pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^2.16.1"
+towncrier = "^22.12.0"
+pytest-mock = "^3.11.1"
+tomli = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -30,3 +34,19 @@ build-backend = "poetry.core.masonry.api"
 
 [repositories]
 pypi = {url = "https://pypi.org/"}
+
+[tool.towncrier]
+directory = "newsfragments"
+package = "dcurves"
+package_dir = "dcurves"
+filename = "NEWS.md"
+underlines = ["^", "~"]
+issue_format = "GH-{issue}"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore::DeprecationWarning:lifelines",
+    "ignore::DeprecationWarning:patsy"
+]
+

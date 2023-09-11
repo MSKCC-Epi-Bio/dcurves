@@ -97,7 +97,11 @@ def test_python_dca_multi():
     # plot_graphs(
     #     plot_df=dca_multi_df,
     #     y_limits=[-0.05, 0.2],
-    #     graph_type='net_benefit'
+    #     graph_type='net_benefit',
+    #     color_names=['cyan',
+    #                  'purple',
+    #                  'red',
+    #                  'blue']
     # )
 
 def test_python_pub_model():

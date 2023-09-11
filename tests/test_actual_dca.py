@@ -1,7 +1,7 @@
 
 
 def test_actual_dca1():
-    from dcurves import dca, load_test_data
+    from dcurves import dca, plot_graphs, load_test_data
     import numpy as np
 
     dca_results = \
@@ -42,4 +42,3 @@ def test_actual_dca2():
     #     y_limits=[-0.025, 0.175],
     #     color_names=['blue', 'red', 'green', 'purple', 'black']
     # )
-

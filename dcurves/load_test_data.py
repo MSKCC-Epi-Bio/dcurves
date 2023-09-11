@@ -1,29 +1,68 @@
+# """
+# This module houses user-facing simulation data-retrieval functions for end-users.
+# These data were also used for testing.
+# """
+# from importlib.resources import files
+# import pandas as pd
+# from dcurves import data
+
+# def load_binary_df():
+#     """
+#     Load Simulation Data For Binary Endpoints DCA
+#     :return pd.DataFrame that contains binary data
+#     """
+#     file_path = files(data).joinpath("df_binary.csv")
+#     return pd.read_csv(file_path)
+
+# def load_survival_df():
+#     """
+#     Load Simulation Data For Survival Endpoints DCA
+#     :return pd.DataFrame that contains survival data
+#     """
+#     file_path = files(data).joinpath("df_surv.csv")
+#     return pd.read_csv(file_path)
+
+
+# def load_case_control_df():
+#     """
+#     Load Simulation Data For Binary Endpoints DCA With User-Specified Outcome
+#     Prevalence (Case-Control)
+#     :return pd.DataFrame that contains binary data
+#     """
+#     file_path = files(data).joinpath("df_case_control.csv")
+#     return pd.read_csv(file_path)
+
 """
 This module houses user-facing simulation data-retrieval functions for end-users.
 These data were also used for testing.
 """
+import os
 import pandas as pd
-import pkg_resources
 
+def _load_data_from_local(filename):
+    """
+    Load data from the local 'data' directory.
+    :param filename: Name of the file to be loaded.
+    :return: pd.DataFrame containing the data from the file.
+    """
+    # Assuming data directory is in the same level as this file
+    data_dir = os.path.join(os.path.dirname(__file__), 'data')
+    file_path = os.path.join(data_dir, filename)
+    return pd.read_csv(file_path)
 
-# Load Simulation Data
 def load_binary_df():
     """
     Load Simulation Data For Binary Endpoints DCA
     :return pd.DataFrame that contains binary data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_binary.csv")
-    return pd.read_csv(stream, encoding="latin-1")
-
+    return _load_data_from_local('df_binary.csv')
 
 def load_survival_df():
     """
     Load Simulation Data For Survival Endpoints DCA
     :return pd.DataFrame that contains survival data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_surv.csv")
-    return pd.read_csv(stream, encoding="latin-1")
-
+    return _load_data_from_local('df_surv.csv')
 
 def load_case_control_df():
     """
@@ -31,5 +70,4 @@ def load_case_control_df():
     Prevalence (Case-Control)
     :return pd.DataFrame that contains binary data
     """
-    stream = pkg_resources.resource_stream(__name__, "data/df_case_control.csv")
-    return pd.read_csv(stream, encoding="latin-1")
+    return _load_data_from_local('df_case_control.csv')

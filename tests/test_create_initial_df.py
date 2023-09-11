@@ -6,6 +6,7 @@ from dcurves.risks import _create_risks_df
 from dcurves.dca import _rectify_model_risk_boundaries
 # load tools
 import pandas as pd
+import pytest
 
 def test_create_initial_df():
 
@@ -67,5 +68,61 @@ def test_create_initial_df():
 
     # print(initial_df['model'].value_counts())
     # print('\n', initial_df.to_string())
+
+def test_create_initial_df_harms():
+    """
+    Test that a non-dict non-None harm raises the correct exception
+    """    
+
+    df_cancer_dx = pd.read_csv("https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv")
+
+    data = df_cancer_dx
+    outcome = 'cancer'
+    models_to_prob = None
+    time = None
+    time_to_outcome_col = None
+    modelnames = ['famhistory']
+    prevalence = None
+    thresholds = [i/100 for i in range(0, 100)]
+    harm = 'a'
+
+    risks_df = \
+        _create_risks_df(
+            data=data,
+            outcome=outcome,
+            models_to_prob=models_to_prob,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    rectified_risks_df = \
+        _rectify_model_risk_boundaries(
+            risks_df=risks_df,
+            modelnames=modelnames
+        )
+
+    # 3. calculate prevalences
+
+    prevalence_value = \
+        _calc_prevalence(
+            risks_df=rectified_risks_df,
+            outcome=outcome,
+            prevalence=prevalence,
+            time=time,
+            time_to_outcome_col=time_to_outcome_col
+        )
+
+    # 4. Create initial dataframe for binary/survival cases
+
+    with pytest.raises(ValueError) as excinfo:  
+        _create_initial_df(
+            thresholds=thresholds,
+            modelnames=modelnames,
+            input_df_rownum=len(rectified_risks_df.index),
+            prevalence_value=prevalence_value,
+            harm=harm
+        )
+
+    assert str(excinfo.value) == "Harm should be either None or dict"              
 
 # Note: Need to add tests for when harm is specified to make sure each model has a different associated harm

@@ -7,7 +7,6 @@ import random
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
 def _get_colors(num_colors=None):
     """
     Generate a random tuple of colors of length num_colors
@@ -58,9 +57,9 @@ def _plot_net_benefit(
         )
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(b=True, which="both", axis="both")
+        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
         plt.xlabel("Threshold Values")
-        plt.ylabel("Calculated Net Benefit")
+        plt.ylabel("Net Benefit")
     plt.show()
 
 
@@ -99,9 +98,9 @@ def _plot_net_intervention_avoided(
 
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(b=True, which="both", axis="both")
+        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
         plt.xlabel("Threshold Values")
-        plt.ylabel("Calculated Net Reduction of Interventions")
+        plt.ylabel("Net Reduction of Interventions")
     plt.show()
 
 
@@ -154,3 +153,4 @@ def plot_graphs(
         _plot_net_intervention_avoided(
             plot_df=plot_df, y_limits=y_limits, color_names=color_names
         )
+

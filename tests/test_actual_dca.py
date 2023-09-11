@@ -42,4 +42,3 @@ def test_actual_dca2():
     #     y_limits=[-0.025, 0.175],
     #     color_names=['blue', 'red', 'green', 'purple', 'black']
     # )
-

@@ -72,6 +72,3 @@ def test_rectify_model_risk_boundaries():
     assert not rectified_risks_df['all'][0] == 1
     assert rectified_risks_df['none'][0] == 0 - machine_epsilon
     assert not rectified_risks_df['none'][0] == 0
-
-
-

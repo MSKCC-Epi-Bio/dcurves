@@ -125,5 +125,4 @@ def test_create_initial_df_harms():
 
     assert str(excinfo.value) == "Harm should be either None or dict"              
 
-
 # Note: Need to add tests for when harm is specified to make sure each model has a different associated harm

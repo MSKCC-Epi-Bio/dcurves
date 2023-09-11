@@ -314,8 +314,3 @@ def test_tut_pr_failure18_tp_rate():
     ).equals(comp_df['r_test_pos_rate'].round(
         decimals=round_dec_num
     ))
-
-
-
-
-

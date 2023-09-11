@@ -191,7 +191,3 @@ def load_r_df_cancer_dx2():
     Load data that is same as df_cancer_dx but with predictions from model as in dca-tutorial
     '''
     return load_data_file('df_cancer_dx2.csv')
-
-
-
-

@@ -1,1 +1,0 @@
-In GitHub Actions, adjusted the sequence to run pylint before pytest. Additionally, pylint now runs exclusively on the 'dcurves' directory, excluding tests.

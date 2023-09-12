@@ -44,7 +44,8 @@ filterwarnings = [
 
 [tool.towncrier]
 directory = "newsfragments"
-filename = "NEWS.md"
+filename = "CHANGELOG.md"
+template = "changelog.d/changelog_template.jinja"
 start_string = "<!-- towncrier release notes start -->\n"
 underlines = ["^", "~"]
 issue_format = "GH-{issue}"

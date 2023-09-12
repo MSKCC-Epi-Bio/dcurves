@@ -35,18 +35,51 @@ build-backend = "poetry.core.masonry.api"
 [repositories]
 pypi = {url = "https://pypi.org/"}
 
-[tool.towncrier]
-directory = "newsfragments"
-package = "dcurves"
-package_dir = "dcurves"
-filename = "NEWS.md"
-underlines = ["^", "~"]
-issue_format = "GH-{issue}"
-
 [tool.pytest.ini_options]
 filterwarnings = [
     "ignore::DeprecationWarning:pkg_resources",
     "ignore::DeprecationWarning:lifelines",
     "ignore::DeprecationWarning:patsy"
 ]
+
+[tool.towncrier]
+directory = "newsfragments"
+filename = "NEWS.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["^", "~"]
+issue_format = "GH-{issue}"
+
+	# Improvements
+	[[tool.towncrier.type]]
+	directory = "improvement"
+	name = "Improvement"
+	showcontent = true
+
+	# New Features
+	[[tool.towncrier.type]]
+	directory = "feature"
+	name = "Feature"
+	showcontent = true
+
+	# Bug Fixes
+	[[tool.towncrier.type]]
+	directory = "bugfix"
+	name = "Bugfix"
+	showcontent = true
+
+	# Additions
+	[[tool.towncrier.type]]
+	directory = "addition"
+	name = "Addition"
+	showcontent = true
+
+	# Removals
+	[[tool.towncrier.type]]
+	directory = "removal"
+	name = "Removal"
+	showcontent = true
+
+
+
+
 

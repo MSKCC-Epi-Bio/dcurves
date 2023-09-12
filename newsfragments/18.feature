@@ -1,0 +1,1 @@
+Updated to support the latest Pandas version.

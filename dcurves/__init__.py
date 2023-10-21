@@ -12,7 +12,6 @@ Modules exported by this package:
 
 __version__ = "1.0.6.4"
 
-
 from dcurves import load_test_data
 from dcurves.dca import dca
 from dcurves.plot_graphs import plot_graphs

@@ -360,63 +360,60 @@ def test_python_dca_case_control():
 
 def test_python_cross_validation():
 
-    # Code below from converting R cross validation via ChatGPT, needs to be tweaked
+    import random
+    import pandas as pd
+    import numpy as np
+    from sklearn.model_selection import RepeatedKFold
+    from sklearn.metrics import log_loss
+    import statsmodels.api as sm
+    import dcurves
 
-    # import random
-    # import numpy as np
-    # import pandas as pd
-    # from sklearn.linear_model import LogisticRegression
-    # from sklearn.metrics import roc_auc_score
-    # from sklearn.metrics import net_benefit
-    # from sklearn.metrics import plot_roc_curve
-    # from sklearn.metrics import roc_curve
-    # from sklearn.metrics import auc
-    # from sklearn.metrics import classification_report
-    # from sklearn.metrics import confusion_matrix
-    # from sklearn.model_selection import RepeatedKFold
-    # from sklearn.model_selection import cross_val_score
-    #
-    # df_cancer_dx = \
-    #     pd.read_csv(
-    #         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx_case_control.csv"
-    #     )
-    #
-    # # set seed
-    # random.seed(112358)
-    #
-    # # Create a 10-fold cross validation set
-    # cv = RepeatedKFold(n_splits=10, n_repeats=25, random_state=112358)
-    #
-    # for train_index, test_index in cv.split(df_cancer_dx):
-    #     # for each cut of the data, build logistic regression on the 90% (analysis set),
-    #     # and perform DCA on the 10% (assessment set)
-    #     X_train, X_test = df_cancer_dx.iloc[train_index], df_cancer_dx.iloc[test_index]
-    #     y_train, y_test = df_cancer_dx.iloc[train_index], df_cancer_dx.iloc[test_index]
-    #
-    #     # build regression model on analysis set
-    #     logistic = LogisticRegression()
-    #     logistic.fit(X_train, y_train)
-    #     logistic_pred = logistic.predict(X_test)
-    #     logistic_pred_prob = logistic.predict_proba(X_test)
-    #
-    #     # get predictions for assessment set
-    #     df_assessment = pd.DataFrame(logistic_pred_prob)
-    #     df_assessment.columns = logistic.classes_
-    #     df_assessment["predict"] = logistic_pred
-    #     df_assessment["real"] = y_test
-    #     df_assessment["fitted"] = logistic.predict_proba(X_test)[:, 1]
-    #
-    #     # calculate net benefit on assessment set
-    #     thresholds = np.linspace(0, 0.35, 36)
-    #     dca_assessment = []
-    #     for threshold in thresholds:
-    #         predict = df_assessment["fitted"].apply(lambda x: 1 if x > threshold else 0)
-    #         net_benefit_val = net_benefit(df_assessment["real"], predict)
-    #         dca_assessment.append(net_benefit_val)
-    #     dca_assessment = pd.DataFrame(dca_assessment)
-    #     dca_assessment.columns = ["net_benefit"]
-    #
-    #     # pool results from the 10-fold cross validation
-    #     dca_assessment = dca_assessment.mean()
-    #     print(dca_assessment)
-    pass
+    random.seed(112358)
+
+    df_cancer_dx = \
+        pd.read_csv(
+            "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+        )
+
+    # Create a 10-fold cross validation set
+    cv = RepeatedKFold(n_splits=10, n_repeats=25, random_state=112358)
+
+    # Define the formula (make sure the column names in your DataFrame match these)
+    formula = 'cancer ~ marker + age + famhistory'
+
+    # Create cross-validation object
+    rkf = RepeatedKFold(n_splits=10, n_repeats=1, random_state=112358)
+
+    # Placeholder for predictions
+    cv_predictions = []
+
+    # Perform cross-validation
+    for train_index, test_index in rkf.split(df_cancer_dx):
+        # Split data into training and test sets
+        train, test = df_cancer_dx.iloc[train_index], df_cancer_dx.iloc[test_index]
+
+        # Fit the model
+        model = sm.Logit.from_formula(formula, data=train).fit(disp=0)
+
+        # Make predictions on the test set
+        test['cv_prediction'] = model.predict(test)
+
+        # Store predictions
+        cv_predictions.append(test[['patientid', 'cv_prediction']])
+
+    # Concatenate predictions from all folds
+    df_predictions = pd.concat(cv_predictions)
+
+    # Calculate mean prediction per patient
+    df_mean_predictions = df_predictions.groupby('patientid')['cv_prediction'].mean().reset_index()
+
+    # Join with original data
+    df_cv_pred = pd.merge(df_cancer_dx, df_mean_predictions, on='patientid', how='left')
+
+    # Decision curve analysis
+    # Generate net benefit score for each threshold value
+    df_dca_cv = dcurves.dca(
+            data=df_cv_pred, modelnames=['cv_prediction'], outcome='cancer'
+        )
+    
+    assert isinstance(df_dca_cv, pd.DataFrame), "df_dca_cv is not a pandas DataFrame"

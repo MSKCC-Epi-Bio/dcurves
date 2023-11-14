@@ -364,9 +364,8 @@ def test_python_cross_validation():
     import pandas as pd
     import numpy as np
     from sklearn.model_selection import RepeatedKFold
-    from sklearn.metrics import log_loss
     import statsmodels.api as sm
-    import dcurves
+    from dcurves import dca
 
     random.seed(112358)
 
@@ -412,7 +411,7 @@ def test_python_cross_validation():
 
     # Decision curve analysis
     # Generate net benefit score for each threshold value
-    df_dca_cv = dcurves.dca(
+    df_dca_cv = dca(
             data=df_cv_pred, modelnames=['cv_prediction'], outcome='cancer'
         )
     

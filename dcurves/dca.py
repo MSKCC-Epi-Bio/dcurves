@@ -11,6 +11,7 @@ import lifelines
 from .risks import _create_risks_df, _rectify_model_risk_boundaries
 from .prevalence import _calc_prevalence
 
+
 def _create_initial_df(
     thresholds: Iterable,
     modelnames: list,
@@ -44,9 +45,7 @@ def _create_initial_df(
 
     modelnames = modelnames + ["all", "none"]
     rows = len(thresholds) * len(modelnames)
-    model_column = pd.Series(
-        [x for y in modelnames
-         for x in [y] * len(thresholds)])
+    model_column = pd.Series([x for y in modelnames for x in [y] * len(thresholds)])
     threshold_column = pd.Series(list(thresholds) * len(modelnames))
     n_column = pd.Series([input_df_rownum] * rows)
     prevalence_column = pd.Series([prevalence_value] * rows)
@@ -58,7 +57,7 @@ def _create_initial_df(
                 harm_column.loc[model_column == model] = float(harm[model])
         elif not isinstance(harm, dict):
             raise ValueError("Harm should be either None or dict")
-    else :
+    else:
         pass
 
     initial_df = pd.DataFrame(
@@ -79,16 +78,16 @@ def _calc_test_pos_rate(
 ) -> pd.Series:
     """
     Calculate each test positive rate per threshold value,
-    which will be used to calculate true and false positive rates 
+    which will be used to calculate true and false positive rates
     per threshold values in the survival DCA case.
 
     Parameters
     ----------
     risks_df : pd.DataFrame
-        Data containing (converted if necessary) risk scores 
+        Data containing (converted if necessary) risk scores
         (scores ranging from 0 to 1 for columns of interest)
     thresholds : Iterable
-        Threshold values (x values) at which net test positive 
+        Threshold values (x values) at which net test positive
         rate will be calculated
     model : str
         Model column name in risks_df
@@ -109,8 +108,7 @@ def _calc_test_pos_rate(
         if True not in risk_above_thresh_tf_dict:
             test_pos_rate.append(0 / len(risks_df.index))
         elif True in risk_above_thresh_tf_dict:
-            test_pos_rate.append(
-                risk_above_thresh_tf_dict[True] / len(risks_df.index))
+            test_pos_rate.append(risk_above_thresh_tf_dict[True] / len(risks_df.index))
 
     return pd.Series(test_pos_rate)
 
@@ -125,7 +123,7 @@ def _calc_risk_rate_among_test_pos(
 ) -> pd.Series:
     """
     Calculate the risk rate among test positive cases for each threshold value
-    , which will be used to calculate true and false positive rates per 
+    , which will be used to calculate true and false positive rates per
     threshold values in the survival DCA case.
 
     Parameters
@@ -239,8 +237,7 @@ def _calc_tp_rate(
                 (true_outcome[model] >= threshold).value_counts().get(True, 0)
             )
             tp_rate.append(
-                (true_tf_above_thresh_count /
-                 num_true_outcomes) * prevalence_value
+                (true_tf_above_thresh_count / num_true_outcomes) * prevalence_value
             )
 
     return pd.Series(tp_rate)
@@ -388,6 +385,7 @@ def _calc_initial_stats(
 
     return initial_df
 
+
 def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFrame:
     """
     Calculate additional statistics (net benefit, net interventions avoided) and
@@ -451,6 +449,7 @@ def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFr
 
     return final_dca_df
 
+
 def dca(
     data: pd.DataFrame,
     outcome: str,
@@ -461,7 +460,7 @@ def dca(
     prevalence: Optional[Union[float, int]] = None,
     time: Optional[Union[float, int]] = None,
     time_to_outcome_col: Optional[str] = None,
-    nper: Optional[int] = 1
+    nper: Optional[int] = 1,
 ) -> pd.DataFrame:
     """
     Decision curve analysis is a method for evaluating and comparing prediction

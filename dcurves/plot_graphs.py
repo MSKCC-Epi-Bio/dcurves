@@ -7,6 +7,7 @@ import random
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 def _get_colors(num_colors=None):
     """
     Generate a random tuple of colors of length num_colors
@@ -27,20 +28,23 @@ def _plot_net_benefit(
     plot_df: pd.DataFrame,
     y_limits: Iterable = (-0.05, 1),
     color_names: Iterable = None,
+    show_grid: bool = True,
 ) -> None:
     """
-    Plot net benefit values against threshold values.
+    Plot net benefit values against threshold probability values.
 
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net benefit scores
+        Data containing threshold probability values, model columns of net benefit scores
         to be plotted
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis
     color_names : list[str]
         Colors to render each model (if n models supplied, then need n+2 colors,
         since 'all' and 'none' models will be included by default
+    show_grid : bool, optional
+        Flag to enable or disable gridlines in the plot. Default is True, displaying gridlines. Set to False to hide gridlines.
 
     Returns
     -------
@@ -57,8 +61,11 @@ def _plot_net_benefit(
         )
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
-        plt.xlabel("Threshold Values")
+        if show_grid:
+            plt.grid(color="black", which="both", axis="both", linewidth="0.3")
+        else:
+            plt.grid(False)
+        plt.xlabel("Threshold Probability")
         plt.ylabel("Net Benefit")
     plt.show()
 
@@ -67,20 +74,23 @@ def _plot_net_intervention_avoided(
     plot_df: pd.DataFrame,
     y_limits: Iterable = (-0.05, 1),
     color_names: Iterable = None,
+    show_grid: bool = True,
 ) -> None:
     """
-    Plot net interventions avoided values against threshold values.
+    Plot net interventions avoided values against threshold probability values.
 
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net intervention
+        Data containing threshold probability values, model columns of net intervention
         scores to be plotted
     y_limits : list[float]
         2 floats, lower and upper bounds for y-axis
     color_names
         Colors to render each model (if n models supplied, then need n+2 colors,
         since 'all' and 'none' models will be included by default
+    show_grid : bool, optional
+        Flag to enable or disable gridlines in the plot. Default is True, displaying gridlines. Set to False to hide gridlines.
 
     Returns
     -------
@@ -98,8 +108,11 @@ def _plot_net_intervention_avoided(
 
         plt.ylim(y_limits)
         plt.legend(modelnames)
-        plt.grid(color='black', which="both", axis="both", linewidth="0.3")
-        plt.xlabel("Threshold Values")
+        if show_grid:
+            plt.grid(color="black", which="both", axis="both", linewidth="0.3")
+        else:
+            plt.grid(False)
+        plt.xlabel("Threshold Probability")
         plt.ylabel("Net Reduction of Interventions")
     plt.show()
 
@@ -109,6 +122,7 @@ def plot_graphs(
     graph_type: str = "net_benefit",
     y_limits: Iterable = (-0.05, 1),
     color_names: Optional[Iterable] = None,
+    show_grid: bool = True,
 ) -> None:
     """
     Plot either net benefit or interventions avoided per threshold.
@@ -116,7 +130,7 @@ def plot_graphs(
     Parameters
     ----------
     plot_df : pd.DataFrame
-        Data containing threshold values, model columns of net benefit/intervention
+        Data containing threshold probability values, model columns of net benefit/intervention
         scores to be plotted
     graph_type : str
         Type of plot (either 'net_benefit' or 'net_intervention_avoided')
@@ -125,6 +139,8 @@ def plot_graphs(
     color_names : Iterable[str]
         Colors to render each model (if n models supplied, then need n+2 colors,
         since 'all' and 'none' models will be included by default
+    show_grid : bool, optional
+        Flag to enable or disable gridlines in the plot. Default is True, displaying gridlines. Set to False to hide gridlines.
 
     Returns
     -------
@@ -148,9 +164,16 @@ def plot_graphs(
             )
 
     if graph_type == "net_benefit":
-        _plot_net_benefit(plot_df=plot_df, y_limits=y_limits, color_names=color_names)
+        _plot_net_benefit(
+            plot_df=plot_df,
+            y_limits=y_limits,
+            color_names=color_names,
+            show_grid=show_grid,
+        )
     elif graph_type == "net_intervention_avoided":
         _plot_net_intervention_avoided(
-            plot_df=plot_df, y_limits=y_limits, color_names=color_names
+            plot_df=plot_df,
+            y_limits=y_limits,
+            color_names=color_names,
+            show_grid=show_grid,
         )
-

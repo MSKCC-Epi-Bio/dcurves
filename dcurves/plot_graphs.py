@@ -32,7 +32,7 @@ def _plot_net_benefit(
     color_names: Iterable = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smoothed_data: Optional[dict] = None  # Corrected parameter
+    smoothed_data: Optional[dict] = None,  # Corrected parameter
 ) -> None:
     """
     Plot net benefit values against threshold probability values. Can use pre-computed smoothed data if provided.
@@ -41,13 +41,13 @@ def _plot_net_benefit(
     ----------
     plot_df : pd.DataFrame
         Data containing threshold probability values and model columns of net benefit scores to be plotted.
-    y_limits : Iterable[float]
+    y_limits : Iterable[float], optional
         Tuple or list with two floats specifying the y-axis limits.
-    color_names : Iterable[str]
+    color_names : Iterable[str], optional
         List of colors for each model line. Must match the number of unique models if provided.
-    show_grid : bool
+    show_grid : bool, optional
         If True, display grid lines on the plot. Default is True.
-    show_legend : bool
+    show_legend : bool, optional
         If True, display the legend on the plot. Default is True.
     smoothed_data : dict, optional
         Pre-computed smoothed data for each model. Keys are model names, and values are arrays with smoothed points.
@@ -99,7 +99,6 @@ def _plot_net_benefit(
         plt.grid(False)
     plt.xlabel("Threshold Probability")
     plt.ylabel("Net Benefit")
-    plt.show()
 
 
 def _plot_net_intervention_avoided(
@@ -178,7 +177,6 @@ def _plot_net_intervention_avoided(
         plt.grid(False)
     plt.xlabel("Threshold Probability")
     plt.ylabel("Net Reduction of Interventions")
-    plt.show()
 
 
 def plot_graphs(
@@ -189,6 +187,8 @@ def plot_graphs(
     show_grid: bool = True,
     show_legend: bool = True,
     smooth_frac: float = 0.0,  # Default to 0, indicating no smoothing unless specified
+    file_name: Optional[str] = None,
+    dpi: int = 100
 ) -> None:
     """
     Plot specified graph type for the given data, either net benefit or net interventions avoided,
@@ -213,6 +213,10 @@ def plot_graphs(
     smooth_frac : float, optional
         Fraction of data points used when estimating each y-value in the smoothed line,
         making the smoothing more sensitive to local variations. Set to 0 for no smoothing. Default is 0.
+    file_name : str, optional
+        Path and file name where the figure will be saved. If None, the figure is not saved.
+    dpi : int, optional
+        Resolution of the saved figure in dots per inch.
 
     Raises
     ------
@@ -268,3 +272,9 @@ def plot_graphs(
         smoothed_data=smoothed_data if smooth_frac > 0 else None,  # Pass smoothed_data only if smoothing was applied
     )
 
+    if file_name:
+        try:
+            plt.savefig(file_name, dpi=dpi)
+        except Exception as e:
+            print(f"Error saving figure: {e}")
+    plt.show()

@@ -529,6 +529,9 @@ def dca(
 
     """
 
+    if not isinstance(data, pd.DataFrame):
+        raise ValueError("'data' must be a pandas DataFrame")
+
     risks_df = _create_risks_df(
         data=data,
         outcome=outcome,

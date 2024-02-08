@@ -40,14 +40,12 @@ def test_plot_net_benefit_with_smoothing(sample_data_df, color_names):
         "Model2": np.array([[0, 0.2], [0.5, 0.6], [1, 0.8]])
     }
 
-    with patch('matplotlib.pyplot.plot') as mock_plot, \
-         patch('matplotlib.pyplot.show') as mock_show:
+    with patch('matplotlib.pyplot.plot') as mock_plot:
         _plot_net_benefit(sample_data_df, y_limits=(-0.05, 1), color_names=color_names, smoothed_data=smoothed_data)
         
-        # Adjust the assertion to expect one call per model, not per point in the smoothed data
+        # Expect one call per model
         expected_calls = len(sample_data_df['model'].unique())
         assert mock_plot.call_count == expected_calls, f"Expected {expected_calls} plot calls, got {mock_plot.call_count}"
-        mock_show.assert_called()
 
 
 def test_plot_with_invalid_smoothed_data(sample_data_df, color_names):

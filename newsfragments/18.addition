@@ -1,1 +1,0 @@
-Update to include latest Pandas version, bring tests to 100% coverage, remove support for Python 3.8 and include for 3.11

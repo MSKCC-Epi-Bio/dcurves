@@ -1,12 +1,13 @@
 """
 Decision Curve Analysis in Python
 
-Modules exported by this package:
+Functions exported by this package:
 
 - `dca`
 - `plot_graphs`
-- `prevalence`
-- `risks`
+- `load_binary_df`
+- `load_survival_df`
+- `load_case_control_df`
 
 """
 

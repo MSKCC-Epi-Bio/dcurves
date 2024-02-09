@@ -13,29 +13,13 @@ dichotomous results. The dca function performs decision curve analysis for binar
 DCA tutorial (towards the bottom) for a detailed walk-through of various applications. Also, see
 www.decisioncurveanalysis.org for more information.
 
-## Table Of Contents
-
-The documentation follows the best practice for
-project documentation as described by Daniele Procida
-in the [Diátaxis documentation framework](https://diataxis.fr/)
-and consists of four separate parts:
-
-1. [Tutorials](tutorials.md)
-2. [How-To Guides](how-to-guides.md)
-3. [Reference](reference.md)
-4. [Explanation](explanation.md)
-
-Quickly find what you're looking for depending on
-your use case by looking at the different pages.
-
 ## Project Overview
 
 ::: dcurves
 
-## In-depth tutorial and explanations:
+## In-depth tutorial, explanations, peer-reviewed literature, and discussion board:
 
 ###### https://www.decisioncurveanalysis.org 
-
 
 ## Contributing
 
@@ -53,5 +37,5 @@ your use case by looking at the different pages.
 
 ###### creating a newsfragment example (format is PR/Issue#.type for newsfragment): poetry run towncrier create -c "Added support for Python 3.11." 18.addition
 ###### Make sure the newsfragments are tracked by git before building
-###### building newsfragments example (dryrun with draft): poetry run towncrier build --draft --version 1.0.6.4
+###### building newsfragments example (dryrun with draft): poetry run towncrier build --draft --version 1.1.0
 ###### Creating custom towncrier types: check pyproject.toml for example, as all of those are custom types

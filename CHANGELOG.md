@@ -7,7 +7,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 Starting from version 1.1.0, this project uses [*towncrier*](https://towncrier.readthedocs.io/) for managing changelog entries.
 
-## [1.1.0] - Release Date
+## [1.1.0] - 02/09/24
 
 ### Feature
 - Merge split_dca with main branch. GH-6

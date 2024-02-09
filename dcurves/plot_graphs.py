@@ -71,12 +71,16 @@ def _plot_net_benefit(
 
     # Validate y_limits
     if len(y_limits) != 2 or y_limits[0] >= y_limits[1]:
-        raise ValueError("y_limits must contain two floats where the first is less than the second")
+        raise ValueError(
+            "y_limits must contain two floats where the first is less than the second"
+        )
 
     # Validate color_names
     modelnames = plot_df["model"].unique()
     if color_names and len(color_names) != len(modelnames):
-        raise ValueError("The length of color_names must match the number of unique models")
+        raise ValueError(
+            "The length of color_names must match the number of unique models"
+        )
 
     # Plotting
     for idx, modelname in enumerate(plot_df["model"].unique()):
@@ -85,10 +89,17 @@ def _plot_net_benefit(
         if smoothed_data and modelname in smoothed_data:
             smoothed = smoothed_data[modelname]
             if not isinstance(smoothed, ndarray):
-                raise ValueError(f"Smoothed data for '{modelname}' must be a NumPy array.")
+                raise ValueError(
+                    f"Smoothed data for '{modelname}' must be a NumPy array."
+                )
             plt.plot(smoothed[:, 0], smoothed[:, 1], color=color, label=modelname)
         else:
-            plt.plot(model_df["threshold"], model_df["net_benefit"], color=color, label=modelname)
+            plt.plot(
+                model_df["threshold"],
+                model_df["net_benefit"],
+                color=color,
+                label=modelname,
+            )
 
     plt.ylim(y_limits)
     if show_legend:
@@ -107,7 +118,7 @@ def _plot_net_intervention_avoided(
     color_names: Iterable = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smoothed_data: Optional[dict] = None  # Updated to accept smoothed data
+    smoothed_data: Optional[dict] = None,  # Updated to accept smoothed data
 ) -> None:
     """
     Plot net interventions avoided values against threshold probability values. Can use pre-computed smoothed data if provided.
@@ -146,12 +157,16 @@ def _plot_net_intervention_avoided(
 
     # Validate y_limits
     if len(y_limits) != 2 or y_limits[0] >= y_limits[1]:
-        raise ValueError("y_limits must contain two floats where the first is less than the second")
+        raise ValueError(
+            "y_limits must contain two floats where the first is less than the second"
+        )
 
     # Validate color_names
     modelnames = plot_df["model"].unique()
     if color_names and len(color_names) != len(modelnames):
-        raise ValueError("The length of color_names must match the number of unique models")
+        raise ValueError(
+            "The length of color_names must match the number of unique models"
+        )
 
     # Plotting
     for idx, modelname in enumerate(plot_df["model"].unique()):
@@ -163,10 +178,17 @@ def _plot_net_intervention_avoided(
             smoothed = smoothed_data[modelname]
             if smoothed_data and modelname in smoothed_data:
                 if not isinstance(smoothed, ndarray):
-                    raise ValueError(f"Smoothed data for '{modelname}' must be a NumPy array.")
+                    raise ValueError(
+                        f"Smoothed data for '{modelname}' must be a NumPy array."
+                    )
             plt.plot(smoothed[:, 0], smoothed[:, 1], color=color, label=modelname)
         else:
-            plt.plot(model_df["threshold"], model_df["net_intervention_avoided"], color=color, label=modelname)
+            plt.plot(
+                model_df["threshold"],
+                model_df["net_intervention_avoided"],
+                color=color,
+                label=modelname,
+            )
 
     plt.ylim(y_limits)
     if show_legend:
@@ -188,7 +210,7 @@ def plot_graphs(
     show_legend: bool = True,
     smooth_frac: float = 0.0,  # Default to 0, indicating no smoothing unless specified
     file_name: Optional[str] = None,
-    dpi: int = 100
+    dpi: int = 100,
 ) -> None:
     """
     Plot specified graph type for the given data, either net benefit or net interventions avoided,
@@ -236,10 +258,14 @@ def plot_graphs(
         raise ValueError("The input DataFrame is empty.")
 
     if graph_type not in ["net_benefit", "net_intervention_avoided"]:
-        raise ValueError("graph_type must be 'net_benefit' or 'net_intervention_avoided'")
+        raise ValueError(
+            "graph_type must be 'net_benefit' or 'net_intervention_avoided'"
+        )
 
     if len(y_limits) != 2 or y_limits[0] >= y_limits[1]:
-        raise ValueError("y_limits must contain two floats where the first is less than the second")
+        raise ValueError(
+            "y_limits must contain two floats where the first is less than the second"
+        )
 
     if not 0 <= smooth_frac <= 1:
         raise ValueError("smooth_frac must be between 0 and 1")
@@ -248,28 +274,42 @@ def plot_graphs(
     if color_names is None:
         color_names = _get_colors(num_colors=len(modelnames))
     elif len(color_names) < len(modelnames):
-        raise ValueError("color_names must match the number of unique models in plot_df")
+        raise ValueError(
+            "color_names must match the number of unique models in plot_df"
+        )
 
     smoothed_data = {}
     if smooth_frac > 0:  # Apply smoothing only if smooth_frac is greater than 0
         lowess = sm.nonparametric.lowess
         for modelname in plot_df["model"].unique():
             # Skip 'all' and 'none' models from smoothing
-            if modelname.lower() in ['all', 'none']:
+            if modelname.lower() in ["all", "none"]:
                 continue
 
             model_df = plot_df[plot_df["model"] == modelname]
-            y_col = "net_benefit" if graph_type == "net_benefit" else "net_intervention_avoided"
-            smoothed_data[modelname] = lowess(model_df[y_col], model_df["threshold"], frac=smooth_frac)
+            y_col = (
+                "net_benefit"
+                if graph_type == "net_benefit"
+                else "net_intervention_avoided"
+            )
+            smoothed_data[modelname] = lowess(
+                model_df[y_col], model_df["threshold"], frac=smooth_frac
+            )
 
-    plot_function = _plot_net_benefit if graph_type == "net_benefit" else _plot_net_intervention_avoided
+    plot_function = (
+        _plot_net_benefit
+        if graph_type == "net_benefit"
+        else _plot_net_intervention_avoided
+    )
     plot_function(
         plot_df=plot_df,
         y_limits=y_limits,
         color_names=color_names,
         show_grid=show_grid,
         show_legend=show_legend,
-        smoothed_data=smoothed_data if smooth_frac > 0 else None,  # Pass smoothed_data only if smoothing was applied
+        smoothed_data=smoothed_data
+        if smooth_frac > 0
+        else None,  # Pass smoothed_data only if smoothing was applied
     )
 
     if file_name:

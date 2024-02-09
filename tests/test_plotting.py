@@ -5,7 +5,8 @@ import re
 import pytest
 
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from .load_test_data import load_binary_df
@@ -148,127 +149,174 @@ def test_default_colors_net_benefit(mocker):
 
 def test_plot_net_benefit_missing_columns():
     df_missing_columns = pd.DataFrame({"model": ["model1"], "threshold": [0.1]})
-    with pytest.raises(ValueError, match="plot_df must contain the following columns: threshold, model, net_benefit"):
+    with pytest.raises(
+        ValueError,
+        match="plot_df must contain the following columns: threshold, model, net_benefit",
+    ):
         with patch("matplotlib.pyplot.show"):
-            _plot_net_benefit(df_missing_columns, y_limits=(-0.05, 1), color_names=["blue"])
+            _plot_net_benefit(
+                df_missing_columns, y_limits=(-0.05, 1), color_names=["blue"]
+            )
 
 
 def test_plot_net_benefit_invalid_y_limits():
-    with pytest.raises(ValueError, match="y_limits must contain two floats where the first is less than the second"):
+    with pytest.raises(
+        ValueError,
+        match="y_limits must contain two floats where the first is less than the second",
+    ):
         _plot_net_benefit(SAMPLE_DATA_DF, y_limits=(-1, -2), color_names=["blue"])
 
 
 def test_plot_net_benefit_mismatched_color_names():
-    df_two_models = pd.DataFrame({
-        "model": ["model1", "model2"],
-        "threshold": [0.1, 0.2],
-        "net_benefit": [0.3, 0.4]
-    })
-    with pytest.raises(ValueError, match="The length of color_names must match the number of unique models"):
+    df_two_models = pd.DataFrame(
+        {
+            "model": ["model1", "model2"],
+            "threshold": [0.1, 0.2],
+            "net_benefit": [0.3, 0.4],
+        }
+    )
+    with pytest.raises(
+        ValueError,
+        match="The length of color_names must match the number of unique models",
+    ):
         _plot_net_benefit(df_two_models, y_limits=(-0.05, 1), color_names=["blue"])
 
 
 def test_plot_net_benefit_grid_enabled():
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.grid") as mock_grid, \
-         patch("matplotlib.pyplot.show"):  # Mock plt.show() to prevent plot display
-        _plot_net_benefit(SAMPLE_DATA_DF, y_limits=(-0.05, 1), color_names=["blue", "red"], show_grid=True)
-        mock_grid.assert_called_with(color="black", which="both", axis="both", linewidth="0.3")
+    with patch("matplotlib.pyplot.grid") as mock_grid, patch(
+        "matplotlib.pyplot.show"
+    ):  # Mock plt.show() to prevent plot display
+        _plot_net_benefit(
+            SAMPLE_DATA_DF,
+            y_limits=(-0.05, 1),
+            color_names=["blue", "red"],
+            show_grid=True,
+        )
+        mock_grid.assert_called_with(
+            color="black", which="both", axis="both", linewidth="0.3"
+        )
 
 
 def test_plot_net_benefit_show_legend_enabled(mocker):
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, \
-         patch("matplotlib.pyplot.show"):  # Mock plt.show() to prevent plot display
-        _plot_net_benefit(SAMPLE_DATA_DF, y_limits=(-0.05, 1), color_names=["blue", "red"], show_legend=True)
+    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
+        "matplotlib.pyplot.show"
+    ):  # Mock plt.show() to prevent plot display
+        _plot_net_benefit(
+            SAMPLE_DATA_DF,
+            y_limits=(-0.05, 1),
+            color_names=["blue", "red"],
+            show_legend=True,
+        )
         mock_legend.assert_called_once()
 
 
 def test_plot_net_benefit_show_legend_disabled(mocker):
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, \
-         patch("matplotlib.pyplot.show"):  # Mock plt.show() to prevent plot display
-        _plot_net_benefit(SAMPLE_DATA_DF, y_limits=(-0.05, 1), color_names=["blue", "red"], show_legend=False)
+    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
+        "matplotlib.pyplot.show"
+    ):  # Mock plt.show() to prevent plot display
+        _plot_net_benefit(
+            SAMPLE_DATA_DF,
+            y_limits=(-0.05, 1),
+            color_names=["blue", "red"],
+            show_legend=False,
+        )
         mock_legend.assert_not_called()
 
 
 def test_plot_net_intervention_avoided_show_legend_enabled(mocker):
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, \
-         patch("matplotlib.pyplot.show"):  # Mock plt.show() to prevent plot display
-        _plot_net_intervention_avoided(SAMPLE_DATA_DF, y_limits=(-0.05, 1), color_names=["blue", "red"], show_legend=True)
+    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
+        "matplotlib.pyplot.show"
+    ):  # Mock plt.show() to prevent plot display
+        _plot_net_intervention_avoided(
+            SAMPLE_DATA_DF,
+            y_limits=(-0.05, 1),
+            color_names=["blue", "red"],
+            show_legend=True,
+        )
         mock_legend.assert_called_once()
 
 
 def test_plot_net_intervention_avoided_show_legend_disabled(mocker):
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, \
-         patch("matplotlib.pyplot.show"):  # Mock plt.show() to prevent plot display
-        _plot_net_intervention_avoided(SAMPLE_DATA_DF, y_limits=(-0.05, 1), color_names=["blue", "red"], show_legend=False)
+    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
+        "matplotlib.pyplot.show"
+    ):  # Mock plt.show() to prevent plot display
+        _plot_net_intervention_avoided(
+            SAMPLE_DATA_DF,
+            y_limits=(-0.05, 1),
+            color_names=["blue", "red"],
+            show_legend=False,
+        )
         mock_legend.assert_not_called()
 
 
 def test_plot_graphs_y_limits(mock_plot):
     custom_y_limits = (0, 0.5)
-    plot_graphs(SAMPLE_DATA_DF, 'net_benefit', y_limits=custom_y_limits)
-    mock_plot.assert_called_with(SAMPLE_DATA_DF, custom_y_limits, None, True, True, False)
+    plot_graphs(SAMPLE_DATA_DF, "net_benefit", y_limits=custom_y_limits)
+    mock_plot.assert_called_with(
+        SAMPLE_DATA_DF, custom_y_limits, None, True, True, False
+    )
+
 
 def test_integration_with_dca_results():
     data = load_binary_df()
     dca_results = get_dca_results(data)
     # This test would check if the plotting function can handle the output format of `get_dca_results` directly.
-    with patch('matplotlib.pyplot.show'):
-        plot_graphs(dca_results, 'net_benefit')
+    with patch("matplotlib.pyplot.show"):
+        plot_graphs(dca_results, "net_benefit")
 
 
 def test_plot_graphs_function_selection():
-    SAMPLE_DATA_DF = pd.DataFrame({
-        "model": ["Model1", "Model2"],
-        "threshold": [0.2, 0.5],
-        "net_benefit": [0.7, 0.8],
-        "net_intervention_avoided": [0.3, 0.4],
-    })
+    SAMPLE_DATA_DF = pd.DataFrame(
+        {
+            "model": ["Model1", "Model2"],
+            "threshold": [0.2, 0.5],
+            "net_benefit": [0.7, 0.8],
+            "net_intervention_avoided": [0.3, 0.4],
+        }
+    )
 
     # Call plot_graphs for each graph type without mock assertions
-    plot_graphs(SAMPLE_DATA_DF, 'net_benefit')
-    plot_graphs(SAMPLE_DATA_DF, 'net_intervention_avoided')
+    plot_graphs(SAMPLE_DATA_DF, "net_benefit")
+    plot_graphs(SAMPLE_DATA_DF, "net_intervention_avoided")
     # No direct assertions on the mock calls; consider other ways to verify the expected behavior
 
 
 def test_plot_graphs_custom_colors():
-    SAMPLE_DATA_DF = pd.DataFrame({
-        "model": ["Model1", "Model2"],
-        "threshold": [0.2, 0.5],
-        "net_benefit": [0.7, 0.8],
-        "net_intervention_avoided": [0.3, 0.4],
-    })
-    custom_colors = ['green', 'purple']
+    SAMPLE_DATA_DF = pd.DataFrame(
+        {
+            "model": ["Model1", "Model2"],
+            "threshold": [0.2, 0.5],
+            "net_benefit": [0.7, 0.8],
+            "net_intervention_avoided": [0.3, 0.4],
+        }
+    )
+    custom_colors = ["green", "purple"]
     # Directly call plot_graphs without mock assertions
-    plot_graphs(SAMPLE_DATA_DF, 'net_benefit', color_names=custom_colors)
+    plot_graphs(SAMPLE_DATA_DF, "net_benefit", color_names=custom_colors)
     # Verifying the color usage in the plot is not straightforward in a unit test
 
 
 def test_plot_graphs_y_limits():
-    SAMPLE_DATA_DF = pd.DataFrame({
-        "model": ["Model1", "Model2"],
-        "threshold": [0.2, 0.5],
-        "net_benefit": [0.7, 0.8],
-        "net_intervention_avoided": [0.3, 0.4],
-    })
+    SAMPLE_DATA_DF = pd.DataFrame(
+        {
+            "model": ["Model1", "Model2"],
+            "threshold": [0.2, 0.5],
+            "net_benefit": [0.7, 0.8],
+            "net_intervention_avoided": [0.3, 0.4],
+        }
+    )
     custom_y_limits = (0, 0.5)
     # Directly call plot_graphs without mock assertions
-    plot_graphs(SAMPLE_DATA_DF, 'net_benefit', y_limits=custom_y_limits)
+    plot_graphs(SAMPLE_DATA_DF, "net_benefit", y_limits=custom_y_limits)
     # Asserts here would need to focus on the resulting plot, which is more complex and may not be ideal for unit testing
 
 
 def test_plot_graphs_with_empty_dataframe():
     empty_df = pd.DataFrame()
     with pytest.raises(ValueError):
-        plot_graphs(empty_df, 'net_benefit')
-
-
-
-
-
-
-
+        plot_graphs(empty_df, "net_benefit")

@@ -11,7 +11,7 @@ Functions exported by this package:
 
 """
 
-__version__ = "1.0.6.4"
+__version__ = "1.1.0"
 
 import os
 from dcurves import load_test_data

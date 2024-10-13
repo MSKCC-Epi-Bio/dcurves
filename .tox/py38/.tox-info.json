@@ -2,5 +2,27 @@
   "ToxEnv": {
     "name": "py38",
     "type": "VirtualEnvRunner"
+  },
+  "Python": {
+    "version_info": [
+      3,
+      8,
+      19,
+      "final",
+      0
+    ],
+    "executable": "/opt/homebrew/Cellar/python@3.8/3.8.19/Frameworks/Python.framework/Versions/3.8/bin/python3.8",
+    "virtualenv version": "20.24.5"
+  },
+  "PythonRun": {
+    "deps": {
+      "options": [],
+      "requirements": [],
+      "constraints": [],
+      "constraint_options": {
+        "constrain_package_deps": false,
+        "use_frozen_constraints": false
+      }
+    }
   }
 }

@@ -72,7 +72,7 @@ def test_dca_surv():
         models_to_prob=["marker"],
         thresholds=[i / 100 for i in range(0, 46)],
         time_to_outcome_col="ttcancer",
-        time=1,
+        time=1
     )
 
     # Check if the output is a DataFrame

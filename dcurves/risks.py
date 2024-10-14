@@ -7,6 +7,7 @@ dependencies.
 import sys
 from typing import Optional, Union
 import pandas as pd
+import numpy as np
 import statsmodels.api as sm
 import lifelines
 
@@ -150,12 +151,10 @@ def _rectify_model_risk_boundaries(
     machine_epsilon = sys.float_info.epsilon
 
     modelnames = modelnames + ["all", "none"]
+    risks_df = risks_df.copy()  # Create a copy to avoid SettingWithCopyWarning
     for modelname in modelnames:
-        risks_df[modelname].replace(
-            to_replace=0, value=0 - machine_epsilon, inplace=True
-        )
-        risks_df[modelname].replace(
-            to_replace=1, value=1 + machine_epsilon, inplace=True
+        risks_df[modelname] = risks_df[modelname].replace(
+            {0: 0 - machine_epsilon, 1: 1 + machine_epsilon}
         )
 
     return risks_df

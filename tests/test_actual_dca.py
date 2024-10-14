@@ -76,3 +76,4 @@ def test_error_handling():
 
     with pytest.raises(KeyError):
         dca(data=data, outcome="nonexistent_column", modelnames=["famhistory"])
+        

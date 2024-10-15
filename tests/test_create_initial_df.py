@@ -1,15 +1,21 @@
-# load risk functions
-from dcurves.dca import _create_initial_df
-from dcurves.dca import _calc_prevalence
-from dcurves.risks import _create_risks_df
-from dcurves.dca import _rectify_model_risk_boundaries
+"""
+This module contains tests for the _create_initial_df function and related functionality.
+"""
 
-# load tools
+# Third-party imports
 import pandas as pd
 import pytest
 
+# Local imports
+from dcurves.dca import _create_initial_df, _calc_prevalence
+from dcurves.risks import _create_risks_df
+from dcurves.dca import _rectify_model_risk_boundaries
+
 
 def test_create_initial_df():
+    """
+    Test the _create_initial_df function with default parameters.
+    """
     df_cancer_dx = pd.read_csv(
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
@@ -36,8 +42,6 @@ def test_create_initial_df():
         risks_df=risks_df, modelnames=modelnames
     )
 
-    # 3. calculate prevalences
-
     prevalence_value = _calc_prevalence(
         risks_df=rectified_risks_df,
         outcome=outcome,
@@ -45,8 +49,6 @@ def test_create_initial_df():
         time=time,
         time_to_outcome_col=time_to_outcome_col,
     )
-
-    # 4. Create initial dataframe for binary/survival cases
 
     initial_df = _create_initial_df(
         thresholds=thresholds,
@@ -57,20 +59,16 @@ def test_create_initial_df():
     )
 
     assert len(initial_df) % 3 == 0
-    assert "all", "none" in initial_df["model"].value_counts()
+    assert set(["all", "none"]).issubset(set(initial_df["model"].unique()))
     assert len(risks_df) == initial_df["n"][0]
     assert prevalence_value == initial_df["prevalence"][0]
     assert initial_df["harm"][0] == 0
 
-    # print(initial_df['model'].value_counts())
-    # print('\n', initial_df.to_string())
-
 
 def test_create_initial_df_harms():
     """
-    Test that a non-dict non-None harm raises the correct exception
+    Test that a non-dict non-None harm raises the correct exception.
     """
-
     df_cancer_dx = pd.read_csv(
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
@@ -97,8 +95,6 @@ def test_create_initial_df_harms():
         risks_df=risks_df, modelnames=modelnames
     )
 
-    # 3. calculate prevalences
-
     prevalence_value = _calc_prevalence(
         risks_df=rectified_risks_df,
         outcome=outcome,
@@ -107,9 +103,7 @@ def test_create_initial_df_harms():
         time_to_outcome_col=time_to_outcome_col,
     )
 
-    # 4. Create initial dataframe for binary/survival cases
-
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(ValueError, match="Harm should be either None or dict"):
         _create_initial_df(
             thresholds=thresholds,
             modelnames=modelnames,
@@ -118,7 +112,4 @@ def test_create_initial_df_harms():
             harm=harm,
         )
 
-    assert str(excinfo.value) == "Harm should be either None or dict"
-
-
-# Note: Need to add tests for when harm is specified to make sure each model has a different associated harm
+# TODO: Add tests for when harm is specified to make sure each model has a different associated harm

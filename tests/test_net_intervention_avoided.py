@@ -1,10 +1,18 @@
-from dcurves.dca import dca
+"""
+This module contains tests for the net intervention avoided calculations in the DCA function.
+"""
 
-from .load_test_data import load_binary_df, load_survival_df
-from .load_test_data import load_r_case1_results, load_r_case2_results
+from dcurves.dca import dca
+from .load_test_data import (
+    load_binary_df,
+    load_survival_df,
+    load_r_case1_results,
+    load_r_case2_results,
+)
 
 
 def test_case1_binary_net_interventions_avoided():
+    """Test net interventions avoided for binary case."""
     data = load_binary_df()
     outcome = "cancer"
     modelnames = ["famhistory"]
@@ -28,6 +36,7 @@ def test_case1_binary_net_interventions_avoided():
 
 
 def test_case2_surv_net_interventions_avoided():
+    """Test net interventions avoided for survival case."""
     data = load_survival_df()
     outcome = "cancer"
     modelnames = ["cancerpredmarker"]
@@ -56,3 +65,4 @@ def test_case2_surv_net_interventions_avoided():
             .reset_index(drop=True)
         )
         assert dca_model_nia.equals(r_model_nia)
+        

@@ -129,9 +129,7 @@ def _create_risks_df(
     return data
 
 
-def _rectify_model_risk_boundaries(
-    risks_df: pd.DataFrame, modelnames: list
-) -> pd.DataFrame:
+def _rectify_model_risk_boundaries(risks_df: pd.DataFrame, modelnames: list) -> pd.DataFrame:
     """
     Parameters
     ----------

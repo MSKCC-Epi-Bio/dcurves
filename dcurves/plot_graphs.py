@@ -10,6 +10,7 @@ import pandas as pd
 import statsmodels.api as sm
 from numpy import ndarray
 
+
 def _get_colors(modelnames):
     """
     Generate a tuple of colors based on the provided model names.
@@ -28,7 +29,7 @@ def _get_colors(modelnames):
     """
     color_dict = {
         "none": "#0000FF",  # Blue
-        "all": "#FF0000",   # Red
+        "all": "#FF0000",  # Red
     }
     predefined_colors = ["#00FF00", "#800080", "#FFA500", "#00FFFF"]  # Green, Purple, Orange, Cyan
 
@@ -128,7 +129,7 @@ def _plot_net_intervention_avoided(
     color_names: Iterable = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smoothed_data: Optional[dict] = None
+    smoothed_data: Optional[dict] = None,
 ) -> None:
     """
     Plot net interventions avoided values against threshold probability values. Can use pre-computed smoothed data if provided.
@@ -186,7 +187,12 @@ def _plot_net_intervention_avoided(
                 raise ValueError(f"Smoothed data for '{modelname}' must be a NumPy array.")
             plt.plot(smoothed[:, 0], smoothed[:, 1], color=color, label=modelname)
         else:
-            plt.plot(model_df["threshold"], model_df["net_intervention_avoided"], color=color, label=modelname)
+            plt.plot(
+                model_df["threshold"],
+                model_df["net_intervention_avoided"],
+                color=color,
+                label=modelname,
+            )
 
     plt.ylim(y_limits)
     if show_legend:
@@ -208,7 +214,7 @@ def plot_graphs(
     show_legend: bool = True,
     smooth_frac: float = 0.0,
     file_name: Optional[str] = None,
-    dpi: int = 100
+    dpi: int = 100,
 ) -> None:
     """
     Plot specified graph type for the given data, either net benefit or net interventions avoided,
@@ -275,21 +281,27 @@ def plot_graphs(
         lowess = sm.nonparametric.lowess
         for modelname in plot_df["model"].unique():
             # Skip 'all' and 'none' models from smoothing
-            if modelname.lower() in ['all', 'none']:
+            if modelname.lower() in ["all", "none"]:
                 continue
 
             model_df = plot_df[plot_df["model"] == modelname]
             y_col = "net_benefit" if graph_type == "net_benefit" else "net_intervention_avoided"
-            smoothed_data[modelname] = lowess(model_df[y_col], model_df["threshold"], frac=smooth_frac)
+            smoothed_data[modelname] = lowess(
+                model_df[y_col], model_df["threshold"], frac=smooth_frac
+            )
 
-    plot_function = _plot_net_benefit if graph_type == "net_benefit" else _plot_net_intervention_avoided
+    plot_function = (
+        _plot_net_benefit if graph_type == "net_benefit" else _plot_net_intervention_avoided
+    )
     plot_function(
         plot_df=plot_df,
         y_limits=y_limits,
         color_names=color_names,
         show_grid=show_grid,
         show_legend=show_legend,
-        smoothed_data=smoothed_data if smooth_frac > 0 else None,  # Pass smoothed_data only if smoothing was applied
+        smoothed_data=smoothed_data
+        if smooth_frac > 0
+        else None,  # Pass smoothed_data only if smoothing was applied
     )
 
     if file_name:

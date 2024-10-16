@@ -73,9 +73,7 @@ def _create_initial_df(
     return initial_df
 
 
-def _calc_test_pos_rate(
-    risks_df: pd.DataFrame, thresholds: Iterable, model: str
-) -> pd.Series:
+def _calc_test_pos_rate(risks_df: pd.DataFrame, thresholds: Iterable, model: str) -> pd.Series:
     """
     Calculate each test positive rate per threshold value,
     which will be used to calculate true and false positive rates
@@ -101,9 +99,7 @@ def _calc_test_pos_rate(
     test_pos_rate = []
 
     for threshold in thresholds:
-        risk_above_thresh_tf_dict = dict(
-            pd.Series(risks_df[model] >= threshold).value_counts()
-        )
+        risk_above_thresh_tf_dict = dict(pd.Series(risks_df[model] >= threshold).value_counts())
 
         if True not in risk_above_thresh_tf_dict:
             test_pos_rate.append(0 / len(risks_df.index))
@@ -236,9 +232,7 @@ def _calc_tp_rate(
             true_tf_above_thresh_count = (
                 (true_outcome[model] >= threshold).value_counts().get(True, 0)
             )
-            tp_rate.append(
-                (true_tf_above_thresh_count / num_true_outcomes) * prevalence_value
-            )
+            tp_rate.append((true_tf_above_thresh_count / num_true_outcomes) * prevalence_value)
 
     return pd.Series(tp_rate)
 
@@ -299,9 +293,7 @@ def _calc_fp_rate(
         for threshold in thresholds:
             try:
                 fp_counts = pd.Series(false_outcome[model] >= threshold).value_counts()
-                fp_rate.append(
-                    fp_counts[True] / len(false_outcome[model]) * (1 - prevalence_value)
-                )
+                fp_rate.append(fp_counts[True] / len(false_outcome[model]) * (1 - prevalence_value))
             except KeyError:
                 fp_rate.append(0 / len(false_outcome[model]) * (1 - prevalence_value))
 
@@ -347,9 +339,7 @@ def _calc_initial_stats(
     """
 
     for model in initial_df["model"].value_counts().index:
-        test_pos_rate = _calc_test_pos_rate(
-            risks_df=risks_df, thresholds=thresholds, model=model
-        )
+        test_pos_rate = _calc_test_pos_rate(risks_df=risks_df, thresholds=thresholds, model=model)
         tp_rate = _calc_tp_rate(
             risks_df=risks_df,
             thresholds=thresholds,
@@ -376,12 +366,8 @@ def _calc_initial_stats(
         initial_df.loc[
             initial_df["model"] == model, "test_pos_rate"
         ] = test_pos_rate.tolist().copy()
-        initial_df.loc[
-            initial_df["model"] == model, "tp_rate"
-        ] = tp_rate.tolist().copy()
-        initial_df.loc[
-            initial_df["model"] == model, "fp_rate"
-        ] = fp_rate.tolist().copy()
+        initial_df.loc[initial_df["model"] == model, "tp_rate"] = tp_rate.tolist().copy()
+        initial_df.loc[initial_df["model"] == model, "fp_rate"] = fp_rate.tolist().copy()
 
     return initial_df
 
@@ -540,9 +526,7 @@ def dca(
         time_to_outcome_col=time_to_outcome_col,
     )
 
-    rectified_risks_df = _rectify_model_risk_boundaries(
-        risks_df=risks_df, modelnames=modelnames
-    )
+    rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
 
     prevalence_value = _calc_prevalence(
         risks_df=rectified_risks_df,

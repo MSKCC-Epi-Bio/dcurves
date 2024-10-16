@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dcurves"
-version = "1.0.7.0"
+version = "1.1.1"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
 authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
 readme = "docs/README.md"
@@ -24,7 +24,6 @@ tox = "^4.4.6"
 pytest-cov = "^4.0.0"
 black = "^23.1.0"
 pylint = "^3.3.1"
-towncrier = "^22.12.0"
 pytest-mock = "^3.11.1"
 tomli = "^2.0.1"
 scikit-learn = "^1.3.2"
@@ -65,41 +64,3 @@ extend-exclude = '''
   | dist
 )/
 '''
-
-[tool.towncrier]
-directory = "newsfragments"
-filename = "CHANGELOG.md"
-template = "changelog.d/changelog_template.jinja"
-start_string = "<!-- towncrier release notes start -->\n"
-underlines = ["^", "~"]
-issue_format = "GH-{issue}"
-
-	# Improvements
-	[[tool.towncrier.type]]
-	directory = "improvement"
-	name = "Improvement"
-	showcontent = true
-
-	# New Features
-	[[tool.towncrier.type]]
-	directory = "feature"
-	name = "Feature"
-	showcontent = true
-
-	# Bug Fixes
-	[[tool.towncrier.type]]
-	directory = "bugfix"
-	name = "Bugfix"
-	showcontent = true
-
-	# Additions
-	[[tool.towncrier.type]]
-	directory = "addition"
-	name = "Addition"
-	showcontent = true
-
-	# Removals
-	[[tool.towncrier.type]]
-	directory = "removal"
-	name = "Removal"
-	showcontent = true

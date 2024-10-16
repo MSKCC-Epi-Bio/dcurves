@@ -1,14 +1,12 @@
 """
-Decision Curve Analysis Plotting Module
+Decision Curve Analysis Plotting Module Tests
 
-This module provides functions for creating decision curve analysis plots.
+This package contains tests for the Decision Curve Analysis plotting module.
 
-Imported Functions:
-    plot_graphs: Main function to generate and display decision curve analysis graphs.
-    _plot_net_benefit: Helper function to plot net benefit curves.
-    _plot_net_intervention_avoided: Helper function to plot net intervention avoided curves.
+The module being tested provides functionality for creating and displaying
+decision curve analysis graphs, including net benefit curves and net
+intervention avoided curves.
 
-These functions are used to visualize the performance of prediction models or diagnostic tests
-across different threshold probabilities in clinical decision-making scenarios.
+Individual test files in this package will import the necessary functions
+and classes directly from the main module as needed for testing.
 """
-# If these are needed for tests, keep them and add a # noqa: F401 comment

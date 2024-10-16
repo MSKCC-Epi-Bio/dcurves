@@ -73,18 +73,22 @@ def test_case1_plot_net_intervention_avoided():
 def test_get_colors():
     """Test color generation function."""
     random.seed(42)
-    num_colors = 5
-    colors = _get_colors(num_colors=num_colors)
+    modelnames = ["Model1", "Model2", "Model3", "Model4", "Model5"]
+    colors = _get_colors(modelnames)
 
-    assert len(colors) == num_colors, f"Expected {num_colors} colors, got {len(colors)} colors."
+    assert len(colors) == len(modelnames)
 
     for color in colors:
         assert re.match(r"^#[0-9A-Fa-f]{6}$", color), f"Invalid color code: {color}"
 
     random.seed(42)
-    assert colors == _get_colors(
-        num_colors=num_colors
-    ), "Expected the same colors with the same seed."
+    assert colors == _get_colors(modelnames), "Expected the same colors with the same seed."
+
+    # Test that 'none' and 'all' get their specific colors
+    special_modelnames = ["none", "all", "Model1", "Model2"]
+    special_colors = _get_colors(special_modelnames)
+    assert special_colors[0] == "#0000FF", "'none' should be blue"
+    assert special_colors[1] == "#FF0000", "'all' should be red"
 
 
 @pytest.mark.parametrize(

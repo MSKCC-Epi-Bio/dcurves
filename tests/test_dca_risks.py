@@ -32,9 +32,7 @@ def test_bin_dca_risks_calc():
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
-    binary_risks = sorted(
-        _calc_binary_risks(data=df_cancer_dx, outcome="cancer", model="marker")
-    )
+    binary_risks = sorted(_calc_binary_risks(data=df_cancer_dx, outcome="cancer", model="marker"))
     p_marker_risks = [round(x, 10) for x in binary_risks]
 
     assert r_marker_risks == p_marker_risks
@@ -79,9 +77,7 @@ def test_rectify_model_risk_boundaries():
 
     risks_df = _create_risks_df(data=data, outcome="cancer")
 
-    rectified_risks_df = _rectify_model_risk_boundaries(
-        risks_df=risks_df, modelnames=modelnames
-    )
+    rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
 
     machine_epsilon = sys.float_info.epsilon
 
@@ -89,4 +85,3 @@ def test_rectify_model_risk_boundaries():
     assert not rectified_risks_df["all"][0] == 1
     assert rectified_risks_df["none"][0] == 0 - machine_epsilon
     assert not rectified_risks_df["none"][0] == 0
-    

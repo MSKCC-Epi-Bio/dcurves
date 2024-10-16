@@ -64,7 +64,7 @@ def test_dca_surv():
         models_to_prob=["marker"],
         thresholds=[i / 100 for i in range(0, 46)],
         time_to_outcome_col="ttcancer",
-        time=1
+        time=1,
     )
 
     assert isinstance(dca_results, pd.DataFrame), "DCA results are not a DataFrame"
@@ -76,4 +76,3 @@ def test_error_handling():
 
     with pytest.raises(KeyError):
         dca(data=data, outcome="nonexistent_column", modelnames=["famhistory"])
-        

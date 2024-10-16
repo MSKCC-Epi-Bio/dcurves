@@ -525,4 +525,5 @@ ignored-argument-names = "_.*|^ignored_|^unused_"
 # builtins.
 redefining-builtins-modules = ["six.moves", "past.builtins", "future.builtins", "builtins", "io"]
 
-
+[MESSAGES CONTROL]
+disable=C0303,C0304,R0801

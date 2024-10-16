@@ -38,9 +38,7 @@ def test_create_initial_df():
         time_to_outcome_col=time_to_outcome_col,
     )
 
-    rectified_risks_df = _rectify_model_risk_boundaries(
-        risks_df=risks_df, modelnames=modelnames
-    )
+    rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
 
     prevalence_value = _calc_prevalence(
         risks_df=rectified_risks_df,
@@ -91,9 +89,7 @@ def test_create_initial_df_harms():
         time_to_outcome_col=time_to_outcome_col,
     )
 
-    rectified_risks_df = _rectify_model_risk_boundaries(
-        risks_df=risks_df, modelnames=modelnames
-    )
+    rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
 
     prevalence_value = _calc_prevalence(
         risks_df=rectified_risks_df,
@@ -111,5 +107,6 @@ def test_create_initial_df_harms():
             prevalence_value=prevalence_value,
             harm=harm,
         )
+
 
 # TODO: Add tests for when harm is specified to make sure each model has a different associated harm

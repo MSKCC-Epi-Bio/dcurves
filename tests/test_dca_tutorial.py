@@ -32,8 +32,7 @@ def test_python_famhistory1():
     )
 
     df_cancer_dx = pd.read_csv(
-        "https://raw.githubusercontent.com/"
-        "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+        "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
     dca_result_df = (
@@ -60,8 +59,7 @@ def test_python_famhistory1():
 def test_python_famhistory2():
     """Test DCA with family history and custom thresholds."""
     df_cancer_dx = pd.read_csv(
-        "https://raw.githubusercontent.com/"
-        "ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
+        "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
     dca(
@@ -109,9 +107,7 @@ def test_python_pub_model():
     df_cancer_dx["logodds_brown"] = (
         0.75 * df_cancer_dx["famhistory"] + 0.26 * df_cancer_dx["age"] - 17.5
     )
-    df_cancer_dx["phat_brown"] = 1 / (
-        1 + (1 / (2.718281828 ** df_cancer_dx["logodds_brown"]))
-    )
+    df_cancer_dx["phat_brown"] = 1 / (1 + (1 / (2.718281828 ** df_cancer_dx["logodds_brown"])))
 
     dca(
         data=df_cancer_dx,
@@ -127,9 +123,7 @@ def test_python_joint():
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
-    df_cancer_dx["high_risk"] = df_cancer_dx["risk_group"].apply(
-        lambda x: 1 if x == "high" else 0
-    )
+    df_cancer_dx["high_risk"] = df_cancer_dx["risk_group"].apply(lambda x: 1 if x == "high" else 0)
 
     df_cancer_dx["joint"] = df_cancer_dx.apply(
         lambda x: 1 if x["risk_group"] == "high" or x["cancerpredmarker"] > 0.15 else 0,
@@ -151,9 +145,7 @@ def test_python_dca_joint():
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
-    df_cancer_dx["high_risk"] = df_cancer_dx["risk_group"].apply(
-        lambda x: 1 if x == "high" else 0
-    )
+    df_cancer_dx["high_risk"] = df_cancer_dx["risk_group"].apply(lambda x: 1 if x == "high" else 0)
 
     df_cancer_dx["joint"] = df_cancer_dx.apply(
         lambda x: 1 if x["risk_group"] == "high" or x["cancerpredmarker"] > 0.15 else 0,
@@ -194,6 +186,8 @@ def test_python_dca_harm_simple():
 
 def test_python_dca_harm():
     """Test DCA with more complex harm incorporation."""
+
+    # pylint: disable=R0801
     df_cancer_dx = pd.read_csv(
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
@@ -210,6 +204,7 @@ def test_python_dca_harm():
         thresholds=[i / 100 for i in range(36)],
         harm={"risk_group": harm_conditional},
     )
+    # pylint: enable=R0801
 
 
 def test_python_dca_table():
@@ -230,8 +225,7 @@ def test_python_dca_table():
 def test_python_dca_intervention():
     """Test DCA with intervention avoided calculation."""
     df_cancer_dx = pd.read_csv(
-    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/"
-    "main/data/df_cancer_dx.csv"
+        "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_cancer_dx.csv"
     )
 
     dca(
@@ -243,11 +237,14 @@ def test_python_dca_intervention():
     )
 
 
+# pylint: disable=duplicate-code
+
+
 def test_python_coxph():
     """Test Cox proportional hazards model."""
     df_time_to_cancer_dx = pd.read_csv(
-    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/"
-    "main/data/df_time_to_cancer_dx.csv"
+        "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/"
+        "main/data/df_time_to_cancer_dx.csv"
     )
 
     cph = lifelines.CoxPHFitter()
@@ -259,19 +256,23 @@ def test_python_coxph():
     )
 
     cph_pred_vals = cph.predict_survival_function(
-        df_time_to_cancer_dx[["age", "famhistory", "marker"]],
-        times=[1.5]
+        df_time_to_cancer_dx[["age", "famhistory", "marker"]], times=[1.5]
     )
 
     df_time_to_cancer_dx["pr_failure18"] = 1 - cph_pred_vals.iloc[0, :]
 
 
+# pylint: enable=duplicate-code
+
+
 def test_python_stdca_coxph():
     """Test standardized DCA with Cox proportional hazards model."""
+
+    # pylint: disable=duplicate-code
     df_time_to_cancer_dx = pd.read_csv(
-    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/"
-    "main/data/df_time_to_cancer_dx.csv"
-)
+        "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/"
+        "main/data/df_time_to_cancer_dx.csv"
+    )
 
     cph = lifelines.CoxPHFitter()
     cph.fit(
@@ -280,10 +281,10 @@ def test_python_stdca_coxph():
         event_col="cancer",
         formula="age + famhistory + marker",
     )
+    # pylint: enable=duplicate-code
 
     cph_pred_vals = cph.predict_survival_function(
-        df_time_to_cancer_dx[["age", "famhistory", "marker"]],
-        times=[1.5]
+        df_time_to_cancer_dx[["age", "famhistory", "marker"]], times=[1.5]
     )
 
     df_time_to_cancer_dx["pr_failure18"] = 1 - cph_pred_vals.iloc[0, :]
@@ -325,18 +326,16 @@ def test_python_cross_validation():
     cv_predictions = []
 
     for train_index, test_index in rkf.split(df_cancer_dx):
-        train, test = df_cancer_dx.iloc[train_index], df_cancer_dx.iloc[test_index]
+        train = df_cancer_dx.iloc[train_index].copy()
+        test = df_cancer_dx.iloc[test_index].copy()
         model = sm.Logit.from_formula(formula, data=train).fit(disp=0)
-        test["cv_prediction"] = model.predict(test)
+        test.loc[:, "cv_prediction"] = model.predict(test)
         cv_predictions.append(test[["patientid", "cv_prediction"]])
 
     df_predictions = pd.concat(cv_predictions)
-    df_mean_predictions = (
-        df_predictions.groupby("patientid")["cv_prediction"].mean().reset_index()
-    )
+    df_mean_predictions = df_predictions.groupby("patientid")["cv_prediction"].mean().reset_index()
     df_cv_pred = pd.merge(df_cancer_dx, df_mean_predictions, on="patientid", how="left")
 
     df_dca_cv = dca(data=df_cv_pred, modelnames=["cv_prediction"], outcome="cancer")
 
     assert isinstance(df_dca_cv, pd.DataFrame), "df_dca_cv is not a pandas DataFrame"
-    

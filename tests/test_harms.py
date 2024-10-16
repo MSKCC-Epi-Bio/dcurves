@@ -28,9 +28,7 @@ def test_simple_binary_harms_1():
 
     for model in ["all", "none", "marker"]:
         for stat in ["net_benefit", "net_intervention_avoided", "tp_rate", "fp_rate"]:
-            p_model_stat_df = dca_harm_simple_df.loc[
-                dca_harm_simple_df.model == model, stat
-            ]
+            p_model_stat_df = dca_harm_simple_df.loc[dca_harm_simple_df.model == model, stat]
             p_model_stat_df = p_model_stat_df.round(decimals=6)
             p_model_stat_df = p_model_stat_df.reset_index(drop=True)
 
@@ -41,4 +39,3 @@ def test_simple_binary_harms_1():
             r_model_stat_df = r_model_stat_df.reset_index(drop=True)
 
             assert p_model_stat_df.equals(r_model_stat_df)
-            

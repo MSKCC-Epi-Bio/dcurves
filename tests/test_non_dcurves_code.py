@@ -7,14 +7,14 @@ import lifelines
 
 from .load_test_data import load_tutorial_coxph_pr_failure18_vals
 
+# pylint: enable=duplicate-code
+
 
 def test_tutorial_python_coxph():
     """
     Test the Cox Proportional Hazards model implementation against R benchmark results.
     """
-    r_coxph_pr_failure18_series = load_tutorial_coxph_pr_failure18_vals()[
-        "pr_failure18"
-    ]
+    r_coxph_pr_failure18_series = load_tutorial_coxph_pr_failure18_vals()["pr_failure18"]
 
     df_time_to_cancer_dx = pd.read_csv(
         "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/"
@@ -37,4 +37,6 @@ def test_tutorial_python_coxph():
         .round(decimals=4)
         .equals(r_coxph_pr_failure18_series.round(decimals=4))
     )
-    
+
+
+# pylint: enable=duplicate-code

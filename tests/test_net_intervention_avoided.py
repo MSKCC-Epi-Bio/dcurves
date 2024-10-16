@@ -65,4 +65,3 @@ def test_case2_surv_net_interventions_avoided():
             .reset_index(drop=True)
         )
         assert dca_model_nia.equals(r_model_nia)
-        

@@ -9,10 +9,11 @@ import pandas as pd
 import statsmodels.api as sm
 from numpy import ndarray
 
-
 def _get_colors(num_colors=None):
     """
-    Generate a random tuple of colors of length num_colors
+    Generate a tuple of colors of length num_colors.
+    The first four colors are predefined (red, green, blue, purple),
+    and any additional colors are randomly generated.
 
     Parameters
     ----------
@@ -23,7 +24,18 @@ def _get_colors(num_colors=None):
     -------
     tuple
     """
-    return [f"#{format(random.randint(0, 0xFFFFFF), '06x')}" for _ in range(num_colors)]
+    predefined_colors = ["#FF0000", "#00FF00", "#0000FF", "#800080"]  # Red, Green, Blue, Purple
+
+    if num_colors is None or num_colors <= 0:
+        return tuple()
+
+    colors = predefined_colors[:min(num_colors, 4)]
+
+    # Generate random colors for any additional colors needed
+    for _ in range(max(0, num_colors - 4)):
+        colors.append(f"#{format(random.randint(0, 0xFFFFFF), '06x')}")
+
+    return tuple(colors)
 
 
 def _plot_net_benefit(

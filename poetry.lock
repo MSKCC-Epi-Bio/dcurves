@@ -575,23 +575,6 @@ files = [
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
-name = "click-default-group"
-version = "1.2.4"
-description = "click_default_group"
-optional = false
-python-versions = ">=2.7"
-files = [
-    {file = "click_default_group-1.2.4-py2.py3-none-any.whl", hash = "sha256:9b60486923720e7fc61731bdb32b617039aba820e22e1c88766b1125592eaa5f"},
-    {file = "click_default_group-1.2.4.tar.gz", hash = "sha256:eb3f3c99ec0d456ca6cd2a7f08f7d4e91771bef51b01bdd9580cc6450fe1251e"},
-]
-
-[package.dependencies]
-click = "*"
-
-[package.extras]
-test = ["pytest"]
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -1141,24 +1124,6 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 enabler = ["pytest-enabler (>=2.2)"]
 test = ["jaraco.test (>=5.4)", "pytest (>=6,!=8.1.*)", "zipp (>=3.17)"]
 type = ["pytest-mypy"]
-
-[[package]]
-name = "incremental"
-version = "24.7.2"
-description = "A small library that versions your Python projects."
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "incremental-24.7.2-py3-none-any.whl", hash = "sha256:8cb2c3431530bec48ad70513931a760f446ad6c25e8333ca5d95e24b0ed7b8fe"},
-    {file = "incremental-24.7.2.tar.gz", hash = "sha256:fb4f1d47ee60efe87d4f6f0ebb5f70b9760db2b2574c59c8e8912be4ebd464c9"},
-]
-
-[package.dependencies]
-setuptools = ">=61.0"
-tomli = {version = "*", markers = "python_version < \"3.11\""}
-
-[package.extras]
-scripts = ["click (>=6.0)"]
 
 [[package]]
 name = "iniconfig"
@@ -3784,28 +3749,6 @@ files = [
 ]
 
 [[package]]
-name = "towncrier"
-version = "22.12.0"
-description = "Building newsfiles for your project."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "towncrier-22.12.0-py3-none-any.whl", hash = "sha256:9767a899a4d6856950f3598acd9e8f08da2663c49fdcda5ea0f9e6ba2afc8eea"},
-    {file = "towncrier-22.12.0.tar.gz", hash = "sha256:9c49d7e75f646a9aea02ae904c0bc1639c8fd14a01292d2b123b8d307564034d"},
-]
-
-[package.dependencies]
-click = "*"
-click-default-group = "*"
-incremental = "*"
-jinja2 = "*"
-setuptools = "*"
-tomli = {version = "*", markers = "python_version < \"3.11\""}
-
-[package.extras]
-dev = ["furo", "packaging", "sphinx (>=5)", "twisted"]
-
-[[package]]
 name = "tox"
 version = "4.22.0"
 description = "tox is a generic virtualenv management and test command line tool"
@@ -4237,4 +4180,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f15ddf9e85af39c4c4eeb490be8e9d8f6c2923af1260cb0268b74e49ba13db77"
+content-hash = "d950cc36ac3d11f6e49f3cdd7cf764672787f08021f5e45548218f031a6c75c0"

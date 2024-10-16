@@ -48,10 +48,3 @@ your use case by looking at the different pages.
 
 ## Note
 ###### setup.py is deprecated now that dependencies are managed by `poetry` package manager
-
-## Using towncrier to document changes for this project
-
-###### creating a newsfragment example (format is PR/Issue#.type for newsfragment): poetry run towncrier create -c "Added support for Python 3.11." 18.addition
-###### Make sure the newsfragments are tracked by git before building
-###### building newsfragments example (dryrun with draft): poetry run towncrier build --draft --version 1.0.6.4
-###### Creating custom towncrier types: check pyproject.toml for example, as all of those are custom types

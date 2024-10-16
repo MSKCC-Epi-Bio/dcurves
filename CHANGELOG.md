@@ -5,8 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic 
 Versioning](https://semver.org/spec/v2.0.0.html).
 
-Starting from version 1.0.6.5, this project uses [*towncrier*](https://towncrier.readthedocs.io/) for managing changelog entries.
-
 ## [1.0.6.5] - Release Date
 
 ### Feature
@@ -33,9 +31,4 @@ Starting from version 1.0.6.5, this project uses [*towncrier*](https://towncrier
 
 ### Removal
 - Removed support for Python 3.8. GH-18
-
-## Previous Versions
-
-Changes for versions prior to 1.0.6.5 were not managed with towncrier. Please refer to the commit history or previous release notes for details on 
-those versions.
 

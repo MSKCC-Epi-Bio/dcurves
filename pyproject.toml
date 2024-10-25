@@ -3,7 +3,7 @@ name = "dcurves"
 version = "1.1.1"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check RELEASE.md here: https://github.com/MSKCC-Epi-Bio/dcurves/RELEASE.md"
 authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
-readme = "docs/README.md"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"

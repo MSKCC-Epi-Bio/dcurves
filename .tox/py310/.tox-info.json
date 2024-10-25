@@ -12,7 +12,7 @@
       0
     ],
     "executable": "/opt/homebrew/Cellar/python@3.10/3.10.14_1/Frameworks/Python.framework/Versions/3.10/bin/python3.10",
-    "virtualenv version": "20.19.0"
+    "virtualenv version": "20.26.6"
   },
   "PythonRun": {
     "deps": {

@@ -4,9 +4,7 @@ Diagnostic and prognostic models are typically evaluated with measures of accura
 
 Decision Curve Analysis is a method for evaluating and comparing prediction models that incorporates clinical consequences, requiring only the data set on which the models are tested, and can be applied to models that have either continuous or dichotomous results. 
 
-The dca function performs decision curve analysis for binary and survival outcomes. Review the DCA tutorial for a detailed walk-through of various applications. Also, see www.decisioncurveanalysis.org for more information.
-
-## Project Overview
+## Functions
 
 dcurves is a Python package for performing Decision Curve Analysis (DCA). It evaluates and compares prediction models for both binary and survival outcomes.
 
@@ -60,7 +58,7 @@ plot_graphs(
 
 ![DCA Plot](./images/simple_binary_dca.png)
 
-## In-depth Tutorial and Explanations with Examples
+## In-depth Tutorial and Explanations with Examples, Relevant Literature, and Forumn for Personalized Help
 
 Visit https://www.decisioncurveanalysis.org 
 

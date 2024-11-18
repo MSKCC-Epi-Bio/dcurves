@@ -1,46 +1,31 @@
-# tests/test_data_loading.py
+"""
+This module contains tests for the data loading functions in the dcurves package.
+"""
 
-import pytest
 import pandas as pd
-import dcurves
+from dcurves.load_test_data import (
+    load_binary_df,
+    load_survival_df,
+    load_case_control_df,
+)
 
 
 def test_load_binary_df():
-    # Act
-
-    from dcurves.load_test_data import load_binary_df
-
+    """Test loading of binary data."""
     result = load_binary_df()
-
-    # Assert
     assert isinstance(result, pd.DataFrame)
     assert not result.empty
-    # Optionally, you can add more specific assertions on the shape, columns, or other properties of the DataFrame.
 
 
 def test_load_survival_df():
-    # Act
-    from dcurves.load_test_data import load_survival_df
-
+    """Test loading of survival data."""
     result = load_survival_df()
-
-    # Assert
     assert isinstance(result, pd.DataFrame)
     assert not result.empty
-    # Optionally, add more specific assertions
 
 
 def test_load_case_control_df():
-    # Act
-    from dcurves.load_test_data import load_case_control_df
-
+    """Test loading of case-control data."""
     result = load_case_control_df()
-
-    # Assert
     assert isinstance(result, pd.DataFrame)
     assert not result.empty
-    # Optionally, add more specific assertions
-
-
-# Running this will allow you to check the coverage.
-# pytest --cov=dcurves tests/

@@ -2,6 +2,7 @@
 This module houses plotting functions used in the user-facing plot_graphs() 
 function to plot net-benefit scores and net interventions avoided.
 """
+
 from typing import Optional, Iterable
 import random
 import matplotlib.pyplot as plt
@@ -10,20 +11,41 @@ import statsmodels.api as sm
 from numpy import ndarray
 
 
-def _get_colors(num_colors=None):
+def _get_colors(modelnames):
     """
-    Generate a random tuple of colors of length num_colors
+    Generate a tuple of colors based on the provided model names.
+    'none' is always blue, 'all' is always red, and up to 4 additional colors are predefined.
+    Any remaining colors are randomly generated.
 
     Parameters
     ----------
-    num_colors : int
-        Number of colors to be outputted in tuple form
+    modelnames : Iterable
+        Iterable of model names for which colors are needed
 
     Returns
     -------
     tuple
+        Tuple of color strings in the same order as the input modelnames
     """
-    return [f"#{format(random.randint(0, 0xFFFFFF), '06x')}" for _ in range(num_colors)]
+    color_dict = {
+        "none": "#0000FF",  # Blue
+        "all": "#FF0000",  # Red
+    }
+    predefined_colors = ["#00FF00", "#800080", "#FFA500", "#00FFFF"]  # Green, Purple, Orange, Cyan
+
+    colors = []
+    predefined_index = 0
+
+    for model in modelnames:
+        if model.lower() in color_dict:
+            colors.append(color_dict[model.lower()])
+        elif predefined_index < len(predefined_colors):
+            colors.append(predefined_colors[predefined_index])
+            predefined_index += 1
+        else:
+            colors.append(f"#{format(random.randint(0, 0xFFFFFF), '06x')}")
+
+    return tuple(colors)
 
 
 def _plot_net_benefit(
@@ -32,7 +54,7 @@ def _plot_net_benefit(
     color_names: Iterable = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smoothed_data: Optional[dict] = None,  # Corrected parameter
+    smoothed_data: Optional[dict] = None,
 ) -> None:
     """
     Plot net benefit values against threshold probability values. Can use pre-computed smoothed data if provided.
@@ -107,7 +129,7 @@ def _plot_net_intervention_avoided(
     color_names: Iterable = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smoothed_data: Optional[dict] = None  # Updated to accept smoothed data
+    smoothed_data: Optional[dict] = None,
 ) -> None:
     """
     Plot net interventions avoided values against threshold probability values. Can use pre-computed smoothed data if provided.
@@ -161,12 +183,16 @@ def _plot_net_intervention_avoided(
             continue
         if smoothed_data and modelname in smoothed_data:
             smoothed = smoothed_data[modelname]
-            if smoothed_data and modelname in smoothed_data:
-                if not isinstance(smoothed, ndarray):
-                    raise ValueError(f"Smoothed data for '{modelname}' must be a NumPy array.")
+            if not isinstance(smoothed, ndarray):
+                raise ValueError(f"Smoothed data for '{modelname}' must be a NumPy array.")
             plt.plot(smoothed[:, 0], smoothed[:, 1], color=color, label=modelname)
         else:
-            plt.plot(model_df["threshold"], model_df["net_intervention_avoided"], color=color, label=modelname)
+            plt.plot(
+                model_df["threshold"],
+                model_df["net_intervention_avoided"],
+                color=color,
+                label=modelname,
+            )
 
     plt.ylim(y_limits)
     if show_legend:
@@ -186,9 +212,9 @@ def plot_graphs(
     color_names: Optional[Iterable] = None,
     show_grid: bool = True,
     show_legend: bool = True,
-    smooth_frac: float = 0.0,  # Default to 0, indicating no smoothing unless specified
+    smooth_frac: float = 0.0,
     file_name: Optional[str] = None,
-    dpi: int = 100
+    dpi: int = 100,
 ) -> None:
     """
     Plot specified graph type for the given data, either net benefit or net interventions avoided,
@@ -246,7 +272,7 @@ def plot_graphs(
 
     modelnames = plot_df["model"].unique()
     if color_names is None:
-        color_names = _get_colors(num_colors=len(modelnames))
+        color_names = _get_colors(modelnames)
     elif len(color_names) < len(modelnames):
         raise ValueError("color_names must match the number of unique models in plot_df")
 
@@ -255,21 +281,27 @@ def plot_graphs(
         lowess = sm.nonparametric.lowess
         for modelname in plot_df["model"].unique():
             # Skip 'all' and 'none' models from smoothing
-            if modelname.lower() in ['all', 'none']:
+            if modelname.lower() in ["all", "none"]:
                 continue
 
             model_df = plot_df[plot_df["model"] == modelname]
             y_col = "net_benefit" if graph_type == "net_benefit" else "net_intervention_avoided"
-            smoothed_data[modelname] = lowess(model_df[y_col], model_df["threshold"], frac=smooth_frac)
+            smoothed_data[modelname] = lowess(
+                model_df[y_col], model_df["threshold"], frac=smooth_frac
+            )
 
-    plot_function = _plot_net_benefit if graph_type == "net_benefit" else _plot_net_intervention_avoided
+    plot_function = (
+        _plot_net_benefit if graph_type == "net_benefit" else _plot_net_intervention_avoided
+    )
     plot_function(
         plot_df=plot_df,
         y_limits=y_limits,
         color_names=color_names,
         show_grid=show_grid,
         show_legend=show_legend,
-        smoothed_data=smoothed_data if smooth_frac > 0 else None,  # Pass smoothed_data only if smoothing was applied
+        smoothed_data=smoothed_data
+        if smooth_frac > 0
+        else None,  # Pass smoothed_data only if smoothing was applied
     )
 
     if file_name:

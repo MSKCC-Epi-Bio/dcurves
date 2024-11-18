@@ -1,20 +1,25 @@
-# Load Data
-from .load_test_data import load_binary_df, load_survival_df
-from .load_test_data import load_r_case1_results
+"""
+Tests for prevalence calculation in binary and survival cases.
+"""
+
+# Third-party imports
+import pytest
 
 # Load _calc_prevalence, other necessary functions
 from dcurves.prevalence import _calc_prevalence
 
-# Load Tools
-# None
+# Load Data
+from .load_test_data import load_binary_df, load_survival_df
+from .load_test_data import load_r_case1_results
 
 
 def test_binary_prevalence():
+    """
+    Test prevalence calculation for binary outcome.
+    """
     data = load_binary_df()
     r_benchmark_results = load_r_case1_results()
     outcome = "cancer"
-    modelnames = ["cancerpredmarker"]
-    models_to_prob = None
     time = 1
     time_to_outcome_col = None
     prevalence = None
@@ -41,6 +46,9 @@ def test_binary_prevalence():
 
 
 def test_survival_prevalence():
+    """
+    Test prevalence calculation for survival outcome.
+    """
     surv_df = load_survival_df()
 
     local_prevalence_calc = _calc_prevalence(
@@ -54,16 +62,14 @@ def test_survival_prevalence():
     assert round(number=float(local_prevalence_calc), ndigits=6) == 0.147287
 
 
-import pytest
-
-
 def test_prevalence_in_survival_case():
+    """
+    Test that providing prevalence for survival outcomes raises an error.
+    """
     surv_df = load_survival_df()
 
     # This should raise an error since prevalence is supplied for survival outcomes
-    with pytest.raises(
-        ValueError, match="In survival outcomes, prevalence should not be supplied"
-    ):
+    with pytest.raises(ValueError, match="In survival outcomes, prevalence should not be supplied"):
         _calc_prevalence(
             risks_df=surv_df,
             outcome="cancer",

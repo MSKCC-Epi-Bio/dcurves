@@ -131,10 +131,12 @@ def test_python_joint():
     )
 
     df_cancer_dx["conditional"] = df_cancer_dx.apply(
-        lambda x: 1
-        if x["risk_group"] == "high"
-        or (x["risk_group"] == "intermediate" and x["cancerpredmarker"] > 0.15)
-        else 0,
+        lambda x: (
+            1
+            if x["risk_group"] == "high"
+            or (x["risk_group"] == "intermediate" and x["cancerpredmarker"] > 0.15)
+            else 0
+        ),
         axis=1,
     )
 
@@ -153,10 +155,12 @@ def test_python_dca_joint():
     )
 
     df_cancer_dx["conditional"] = df_cancer_dx.apply(
-        lambda x: 1
-        if x["risk_group"] == "high"
-        or (x["risk_group"] == "intermediate" and x["cancerpredmarker"] > 0.15)
-        else 0,
+        lambda x: (
+            1
+            if x["risk_group"] == "high"
+            or (x["risk_group"] == "intermediate" and x["cancerpredmarker"] > 0.15)
+            else 0
+        ),
         axis=1,
     )
 

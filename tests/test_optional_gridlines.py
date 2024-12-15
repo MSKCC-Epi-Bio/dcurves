@@ -1,6 +1,7 @@
 """
 This module contains tests for optional gridlines in plot functions.
 """
+
 import pytest
 import pandas as pd
 from dcurves.plot_graphs import _plot_net_benefit, _plot_net_intervention_avoided

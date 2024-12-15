@@ -12,10 +12,6 @@ matplotlib = "^3.7.1"
 pandas = ">=1.5.3,<3.0.0"
 statsmodels = "0.14.4"
 typing = "~3.7.4.3"
-mkdocs = "^1.4.2"
-mkdocstrings = {extras = ["python"], version = "^0.20.0"}
-mkdocs-material = "^9.0.14"
-setuptools = "^68.1.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"

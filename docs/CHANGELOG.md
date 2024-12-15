@@ -4,6 +4,21 @@ All notable changes to this project are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2024-12-15
+
+### Added
+- Support for Python 3.13.
+- Compatibility updates for Black formatting tool.
+
+### Changed
+- Updated project configuration to include Python 3.13 testing environment.
+- Removed unnecessary dependencies and imports.
+- Fixed broken link in project description.
+
+### Fixed
+- Resolved configuration issues for Python 3.13 compatibility.
+- Updated tox configuration and project dependencies.
+
 ## [1.1.1] - 2024-10-25
 
 ### Added

@@ -363,9 +363,9 @@ def _calc_initial_stats(
         )
 
         # .copy() below added to prevent chained indexing
-        initial_df.loc[
-            initial_df["model"] == model, "test_pos_rate"
-        ] = test_pos_rate.tolist().copy()
+        initial_df.loc[initial_df["model"] == model, "test_pos_rate"] = (
+            test_pos_rate.tolist().copy()
+        )
         initial_df.loc[initial_df["model"] == model, "tp_rate"] = tp_rate.tolist().copy()
         initial_df.loc[initial_df["model"] == model, "fp_rate"] = fp_rate.tolist().copy()
 

@@ -299,9 +299,9 @@ def plot_graphs(
         color_names=color_names,
         show_grid=show_grid,
         show_legend=show_legend,
-        smoothed_data=smoothed_data
-        if smooth_frac > 0
-        else None,  # Pass smoothed_data only if smoothing was applied
+        smoothed_data=(
+            smoothed_data if smooth_frac > 0 else None
+        ),  # Pass smoothed_data only if smoothing was applied
     )
 
     if file_name:

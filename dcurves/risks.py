@@ -4,7 +4,6 @@ binary and survival endpoints. It is kept in a separate module
 from dca.py to disperse the code and make clear its individual
 dependencies.
 """
-
 import sys
 from typing import Optional, Union
 import pandas as pd

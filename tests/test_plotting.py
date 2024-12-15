@@ -196,8 +196,9 @@ def test_plot_net_benefit_mismatched_color_names():
 def test_plot_net_benefit_grid_enabled():
     """Test plot net benefit with grid enabled."""
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.grid") as mock_grid, patch(
-        "matplotlib.pyplot.show"
+    with (
+        patch("matplotlib.pyplot.grid") as mock_grid,
+        patch("matplotlib.pyplot.show"),
     ):  # Mock plt.show() to prevent plot display
         _plot_net_benefit(
             SAMPLE_DATA_DF,
@@ -211,8 +212,9 @@ def test_plot_net_benefit_grid_enabled():
 def test_plot_net_benefit_show_legend_enabled():
     """Test plot net benefit with legend enabled."""
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
-        "matplotlib.pyplot.show"
+    with (
+        patch("matplotlib.pyplot.legend") as mock_legend,
+        patch("matplotlib.pyplot.show"),
     ):  # Mock plt.show() to prevent plot display
         _plot_net_benefit(
             SAMPLE_DATA_DF,
@@ -226,8 +228,9 @@ def test_plot_net_benefit_show_legend_enabled():
 def test_plot_net_benefit_show_legend_disabled():
     """Test plot net benefit with legend disabled."""
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
-        "matplotlib.pyplot.show"
+    with (
+        patch("matplotlib.pyplot.legend") as mock_legend,
+        patch("matplotlib.pyplot.show"),
     ):  # Mock plt.show() to prevent plot display
         _plot_net_benefit(
             SAMPLE_DATA_DF,
@@ -241,8 +244,9 @@ def test_plot_net_benefit_show_legend_disabled():
 def test_plot_net_intervention_avoided_show_legend_enabled():
     """Test plot net intervention avoided with legend enabled."""
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
-        "matplotlib.pyplot.show"
+    with (
+        patch("matplotlib.pyplot.legend") as mock_legend,
+        patch("matplotlib.pyplot.show"),
     ):  # Mock plt.show() to prevent plot display
         _plot_net_intervention_avoided(
             SAMPLE_DATA_DF,
@@ -256,8 +260,9 @@ def test_plot_net_intervention_avoided_show_legend_enabled():
 def test_plot_net_intervention_avoided_show_legend_disabled():
     """Test plot net intervention avoided with legend disabled."""
     plt.ioff()  # Turn off interactive mode
-    with patch("matplotlib.pyplot.legend") as mock_legend, patch(
-        "matplotlib.pyplot.show"
+    with (
+        patch("matplotlib.pyplot.legend") as mock_legend,
+        patch("matplotlib.pyplot.show"),
     ):  # Mock plt.show() to prevent plot display
         _plot_net_intervention_avoided(
             SAMPLE_DATA_DF,

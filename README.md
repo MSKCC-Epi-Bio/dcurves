@@ -22,9 +22,6 @@ This tutorial will guide you through installing and using the `dcurves` package 
 ```bash
 # Install dcurves for DCA
 pip install dcurves
-
-# Install other required packages
-pip install pandas numpy statsmodels lifelines
 ```
 
 ### DCA Example
@@ -32,8 +29,6 @@ pip install pandas numpy statsmodels lifelines
 ```python
 # Import Libraries
 from dcurves import dca, plot_graphs, load_test_data
-import pandas as pd
-import numpy as np
 
 # Load Package Simulation Data
 df_binary = load_test_data.load_binary_df()

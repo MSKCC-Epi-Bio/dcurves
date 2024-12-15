@@ -93,9 +93,9 @@ def test_case2_surv_risk_rate_among_test_positive():
     r_benchmark_results["risk_rate_among_test_pos"] = (
         r_benchmark_results.tp_rate / r_benchmark_results.test_pos_rate
     )
-    r_benchmark_results.loc[
-        r_benchmark_results.variable == "none", "risk_rate_among_test_pos"
-    ] = float(0)
+    r_benchmark_results.loc[r_benchmark_results.variable == "none", "risk_rate_among_test_pos"] = (
+        float(0)
+    )
 
     # Validate results against benchmarks
     for model in ["all", "none", "cancerpredmarker"]:

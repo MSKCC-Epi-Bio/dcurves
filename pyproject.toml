@@ -1,18 +1,44 @@
 [tool.poetry]
 name = "dcurves"
 version = "1.1.2"
-description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests. For RELEASE NOTES, check: https://github.com/MSKCC-Epi-Bio/dcurves/blob/main/docs/CHANGELOG.md"
-authors = ["shaunporwal <shaun.porwal@gmail.com>", "rohansingh <singhrohan@outlook.com>"]
+description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests."
+authors = [
+    "Shaun Porwal <shaun.porwal@gmail.com>", 
+    "Rohan Singh <singhrohan@outlook.com>"
+]
+maintainers = ["Shaun Porwal <shaun.porwal@gmail.com>"]
 readme = "README.md"
+homepage = "https://decisioncurveanalysis.org"
+repository = "https://github.com/MSKCC-Epi-Bio/dcurves"
+documentation = "https://github.com/MSKCC-Epi-Bio/dcurves/blob/main/docs/CHANGELOG.md"
+keywords = [
+    "decision-curve-analysis", 
+    "decision-curves", 
+    "net-benefit", 
+    "clinical", 
+    "consequences",
+    "andrew-vickers",
+    "shaun-porwal",
+    "rohan-singh"
+]
+include = ["images/simple_binary_dca.png"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Scientific/Engineering :: Medical Science Apps",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 lifelines = "~0.27.7"
 matplotlib = "^3.7.1"
-pandas = ">=1.5.3,<3.0.0"
 statsmodels = "0.14.4"
 typing = "~3.7.4.3"
 setuptools = "^75.6.0"
+pandas = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.2.1"
@@ -29,9 +55,6 @@ autopep8 = "^2.3.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[repositories]
-pypi = {url = "https://pypi.org/"}
 
 [tool.pytest.ini_options]
 filterwarnings = [

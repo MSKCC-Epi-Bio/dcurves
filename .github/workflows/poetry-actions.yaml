@@ -59,6 +59,12 @@ jobs:
       - name: Set Test PyPI Token
         run: poetry config pypi-token.testpypi ${{ secrets.TEST_PYPI_API_TOKEN }}
 
+      - name: Get package name
+        id: get-package-name
+        run: |
+          PACKAGE_NAME=$(poetry version | awk '{print $1}')
+          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> $GITHUB_ENV
+
       - name: Get current version
         id: get-version
         run: |
@@ -68,8 +74,7 @@ jobs:
       - name: Check version on Test PyPI
         id: version-check
         run: |
-          PACKAGE_NAME="funcshauns"
-          RESPONSE=$(curl -s https://test.pypi.org/pypi/${PACKAGE_NAME}/json || echo "error")
+          RESPONSE=$(curl -s https://test.pypi.org/pypi/${{ env.PACKAGE_NAME }}/json || echo "error")
           if [ "$RESPONSE" != "error" ] && echo "$RESPONSE" | jq -r '.releases | keys' | grep -q "\"${VERSION}\""; then
             echo "Version ${VERSION} already exists on Test PyPI."
             echo "skip=true" >> $GITHUB_ENV
@@ -109,6 +114,12 @@ jobs:
       - name: Set PyPI Token
         run: poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
 
+      - name: Get package name
+        id: get-package-name
+        run: |
+          PACKAGE_NAME=$(poetry version | awk '{print $1}')
+          echo "PACKAGE_NAME=${PACKAGE_NAME}" >> $GITHUB_ENV
+
       - name: Get current version
         id: get-version
         run: |
@@ -118,8 +129,7 @@ jobs:
       - name: Check version on PyPI
         id: version-check
         run: |
-          PACKAGE_NAME="funcshauns"
-          RESPONSE=$(curl -s https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "error")
+          RESPONSE=$(curl -s https://pypi.org/pypi/${{ env.PACKAGE_NAME }}/json || echo "error")
           if [ "$RESPONSE" != "error" ] && echo "$RESPONSE" | jq -r '.releases | keys' | grep -q "\"${VERSION}\""; then
             echo "Version ${VERSION} already exists on PyPI."
             echo "skip=true" >> $GITHUB_ENV

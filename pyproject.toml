@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dcurves"
-version = "1.1.2"
+version = "1.1.2.1"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests."
 authors = [
     "Shaun Porwal <shaun.porwal@gmail.com>", 

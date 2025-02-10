@@ -1,4 +1,5 @@
 # dcurves
+[![PyPI Downloads](https://static.pepy.tech/badge/dcurves)](https://pepy.tech/projects/dcurves)
 
 Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of additional information that may be cumbersome to apply to models that yield continuous results. 
 

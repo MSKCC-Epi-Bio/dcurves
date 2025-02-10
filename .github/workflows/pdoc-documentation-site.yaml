@@ -1,0 +1,38 @@
+permissions:
+  contents: write
+
+name: Generate Docs with pdoc
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install pdoc
+          pip install -e .
+
+      - name: Generate documentation with pdoc
+        run: |
+          REPO_NAME=${GITHUB_REPOSITORY##*/}
+          pdoc --output-dir docs "$REPO_NAME"
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs

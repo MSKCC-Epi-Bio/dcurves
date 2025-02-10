@@ -1,15 +1,17 @@
 # dcurves
+
 [![PyPI Downloads](https://static.pepy.tech/badge/dcurves)](https://pepy.tech/projects/dcurves)
 
-Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of additional information that may be cumbersome to apply to models that yield continuous results. 
+Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of additional information that may be cumbersome to apply to models that yield continuous results.
 
-Decision Curve Analysis is a method for evaluating and comparing prediction models that incorporates clinical consequences, requiring only the data set on which the models are tested, and can be applied to models that have either continuous or dichotomous results. 
+Decision Curve Analysis is a method for evaluating and comparing prediction models that incorporates clinical consequences, requiring only the data set on which the models are tested, and can be applied to models that have either continuous or dichotomous results.
 
 ## Functions
 
 dcurves is a Python package for performing Decision Curve Analysis (DCA). It evaluates and compares prediction models for both binary and survival outcomes.
 
 Main functions:
+
 - `dca()`: Performs Decision Curve Analysis, calculating net benefit and interventions avoided
 - `plot_graphs()`: Visualizes DCA results
 - `load_test_data()`: Provides sample data for testing and examples
@@ -56,7 +58,7 @@ plot_graphs(
 
 ## In-depth Tutorial and Explanations with Examples, Relevant Literature, and Forumn for Personalized Help
 
-Visit https://www.decisioncurveanalysis.org 
+Visit <https://www.decisioncurveanalysis.org>
 
 ## Contributing
 
@@ -66,8 +68,8 @@ Please make sure to update tests as appropriate.
 
 ## Contributors
 
-- Shaun Porwal (shaun.porwal@gmail.com)
-- Rohan Singh (singhrohan@outlook.com)
+- Shaun Porwal (<shaun.porwal@gmail.com>)
+- Rohan Singh (<singhrohan@outlook.com>)
 
 ## License
 

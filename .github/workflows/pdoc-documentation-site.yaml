@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "scipy<2.0" > constraints.txt
+          echo "scipy==1.10.1" > constraints.txt
           pip install -c constraints.txt pdoc
           pip install -c constraints.txt -e .
 

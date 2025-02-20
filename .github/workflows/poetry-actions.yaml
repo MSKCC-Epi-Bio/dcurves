@@ -131,6 +131,6 @@ jobs:
       - name: Publish to PyPI
         if: env.skip != 'true'
         run: |
-          poetry install --no-dev
+          poetry install
           poetry build
           poetry publish --repository pypi

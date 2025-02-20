@@ -10,7 +10,7 @@ Modules exported by this package:
 
 """
 
-__version__ = "1.1.1"
+__version__ = "1.1.2.2"
 
 import os
 from dcurves import load_test_data

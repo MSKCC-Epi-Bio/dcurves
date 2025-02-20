@@ -16,6 +16,10 @@ Main functions:
 - `plot_graphs()`: Visualizes DCA results
 - `load_test_data()`: Provides sample data for testing and examples
 
+## Quick-and-dirty Library Documentation
+
+https://mskcc-epi-bio.github.io/dcurves/
+
 ## Simple Tutorial
 
 This tutorial will guide you through installing and using the `dcurves` package to perform Decision Curve Analysis (DCA) with sample cancer diagnosis data.

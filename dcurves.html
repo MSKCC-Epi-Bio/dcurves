@@ -24,17 +24,18 @@
 
             <h2>Submodules</h2>
             <ul>
-                    <li><a href="dcurves/dca.html">dca</a></li>
                     <li><a href="dcurves/load_test_data.html">load_test_data</a></li>
+                    <li><a href="dcurves/dca.html">dca</a></li>
                     <li><a href="dcurves/plot_graphs.html">plot_graphs</a></li>
-                    <li><a href="dcurves/prevalence.html">prevalence</a></li>
-                    <li><a href="dcurves/risks.html">risks</a></li>
             </ul>
 
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="variable" href="#data">data</a>
+                    <a class="function" href="#dca">dca</a>
+            </li>
+            <li>
+                    <a class="function" href="#plot_graphs">plot_graphs</a>
             </li>
     </ul>
 
@@ -57,8 +58,8 @@ dcurves    </h1>
 <p>Modules exported by this package:</p>
 
 <ul>
-<li><code>dca</code></li>
-<li><code>plot_graphs</code></li>
+<li><code><a href="#dca">dca</a></code></li>
+<li><code><a href="#plot_graphs">plot_graphs</a></code></li>
 <li><code>prevalence</code></li>
 <li><code>risks</code></li>
 </ul>
@@ -80,28 +81,397 @@ dcurves    </h1>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.1.1&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_test_data</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves.dca</span><span class="w"> </span><span class="kn">import</span> <span class="n">dca</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves.plot_graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_graphs</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_test_data</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves.dca</span><span class="w"> </span><span class="kn">import</span> <span class="n">dca</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dcurves.plot_graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_graphs</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;load_test_data&quot;</span><span class="p">,</span> <span class="s2">&quot;dca&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_graphs&quot;</span><span class="p">]</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="n">data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
             </section>
-                <section id="data">
-                    <div class="attr variable">
-            <span class="name">data</span>        =
-<span class="default_value">&#39;/home/runner/work/dcurves/dcurves/dcurves/data&#39;</span>
+                <section id="dca">
+                            <input id="dca-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">dca</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span>,</span><span class="param">	<span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.26</span><span class="p">,</span> <span class="mf">0.27</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">,</span> <span class="mf">0.29</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.31</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.38</span><span class="p">,</span> <span class="mf">0.39</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.41</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mf">0.47</span><span class="p">,</span> <span class="mf">0.48</span><span class="p">,</span> <span class="mf">0.49</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.54</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.56</span><span class="p">,</span> <span class="mf">0.57</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.61</span><span class="p">,</span> <span class="mf">0.62</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">,</span> <span class="mf">0.64</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.66</span><span class="p">,</span> <span class="mf">0.67</span><span class="p">,</span> <span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.69</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.71</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="mf">0.77</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.81</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.83</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.86</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.93</span><span class="p">,</span> <span class="mf">0.94</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">,</span> <span class="mf">0.97</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]</span>,</span><span class="param">	<span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prevalence</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
-        
+                <label class="view-source-button" for="dca-view-source"><span>View Source</span></label>
+
     </div>
-    <a class="headerlink" href="#data"></a>
-    
-    
+    <a class="headerlink" href="#dca"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="dca-440"><a href="#dca-440"><span class="linenos">440</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dca</span><span class="p">(</span>
+</span><span id="dca-441"><a href="#dca-441"><span class="linenos">441</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="dca-442"><a href="#dca-442"><span class="linenos">442</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="dca-443"><a href="#dca-443"><span class="linenos">443</span></a>    <span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+</span><span id="dca-444"><a href="#dca-444"><span class="linenos">444</span></a>    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)],</span>
+</span><span id="dca-445"><a href="#dca-445"><span class="linenos">445</span></a>    <span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-446"><a href="#dca-446"><span class="linenos">446</span></a>    <span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-447"><a href="#dca-447"><span class="linenos">447</span></a>    <span class="n">prevalence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-448"><a href="#dca-448"><span class="linenos">448</span></a>    <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-449"><a href="#dca-449"><span class="linenos">449</span></a>    <span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-450"><a href="#dca-450"><span class="linenos">450</span></a>    <span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="dca-451"><a href="#dca-451"><span class="linenos">451</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="dca-452"><a href="#dca-452"><span class="linenos">452</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="dca-453"><a href="#dca-453"><span class="linenos">453</span></a><span class="sd">    Decision curve analysis is a method for evaluating and comparing prediction</span>
+</span><span id="dca-454"><a href="#dca-454"><span class="linenos">454</span></a><span class="sd">    models that incorporates clinical consequences, requiring only the data set</span>
+</span><span id="dca-455"><a href="#dca-455"><span class="linenos">455</span></a><span class="sd">    on which the models are tested, and can be applied to models that have eit-</span>
+</span><span id="dca-456"><a href="#dca-456"><span class="linenos">456</span></a><span class="sd">    her continuous or dichotomous results. The dca function performs decision</span>
+</span><span id="dca-457"><a href="#dca-457"><span class="linenos">457</span></a><span class="sd">    curve analysis for binary and survival outcomes.</span>
+</span><span id="dca-458"><a href="#dca-458"><span class="linenos">458</span></a>
+</span><span id="dca-459"><a href="#dca-459"><span class="linenos">459</span></a><span class="sd">    Parameters</span>
+</span><span id="dca-460"><a href="#dca-460"><span class="linenos">460</span></a><span class="sd">    ----------</span>
+</span><span id="dca-461"><a href="#dca-461"><span class="linenos">461</span></a><span class="sd">    data: pd.DataFrame</span>
+</span><span id="dca-462"><a href="#dca-462"><span class="linenos">462</span></a><span class="sd">        Initial raw data ideally containing risk scores (scores ranging from 0</span>
+</span><span id="dca-463"><a href="#dca-463"><span class="linenos">463</span></a><span class="sd">        to 1), or else predictor/model values, and outcome of interest</span>
+</span><span id="dca-464"><a href="#dca-464"><span class="linenos">464</span></a><span class="sd">    outcome: str</span>
+</span><span id="dca-465"><a href="#dca-465"><span class="linenos">465</span></a><span class="sd">        Column name of outcome of interest in risks_df</span>
+</span><span id="dca-466"><a href="#dca-466"><span class="linenos">466</span></a><span class="sd">    modelnames : list[str]</span>
+</span><span id="dca-467"><a href="#dca-467"><span class="linenos">467</span></a><span class="sd">        Column names from data that contain model risk scores or values</span>
+</span><span id="dca-468"><a href="#dca-468"><span class="linenos">468</span></a><span class="sd">    thresholds : Iterable</span>
+</span><span id="dca-469"><a href="#dca-469"><span class="linenos">469</span></a><span class="sd">        Threshold values (x values) at which net benefit and net interventions</span>
+</span><span id="dca-470"><a href="#dca-470"><span class="linenos">470</span></a><span class="sd">        avoided will be calculated</span>
+</span><span id="dca-471"><a href="#dca-471"><span class="linenos">471</span></a><span class="sd">    harm : dict[float]</span>
+</span><span id="dca-472"><a href="#dca-472"><span class="linenos">472</span></a><span class="sd">        Models with their associated harm values</span>
+</span><span id="dca-473"><a href="#dca-473"><span class="linenos">473</span></a><span class="sd">    models_to_prob : list[str]</span>
+</span><span id="dca-474"><a href="#dca-474"><span class="linenos">474</span></a><span class="sd">        Columns that need to be converted to risk scores from 0 to 1</span>
+</span><span id="dca-475"><a href="#dca-475"><span class="linenos">475</span></a><span class="sd">    prevalence : int or float</span>
+</span><span id="dca-476"><a href="#dca-476"><span class="linenos">476</span></a><span class="sd">        Value that indicates the prevalence among the population, only to be</span>
+</span><span id="dca-477"><a href="#dca-477"><span class="linenos">477</span></a><span class="sd">        specified in case-control situations</span>
+</span><span id="dca-478"><a href="#dca-478"><span class="linenos">478</span></a><span class="sd">    time : int or float</span>
+</span><span id="dca-479"><a href="#dca-479"><span class="linenos">479</span></a><span class="sd">        Time of interest in years, used in Survival DCA</span>
+</span><span id="dca-480"><a href="#dca-480"><span class="linenos">480</span></a><span class="sd">    time_to_outcome_col : str</span>
+</span><span id="dca-481"><a href="#dca-481"><span class="linenos">481</span></a><span class="sd">        Column name in data containing time to outcome values, used in Survival DCA</span>
+</span><span id="dca-482"><a href="#dca-482"><span class="linenos">482</span></a><span class="sd">    nper : int</span>
+</span><span id="dca-483"><a href="#dca-483"><span class="linenos">483</span></a><span class="sd">        Total number of interventions, multiplies proportion of interventions</span>
+</span><span id="dca-484"><a href="#dca-484"><span class="linenos">484</span></a><span class="sd">        avoided to get scaled plots</span>
+</span><span id="dca-485"><a href="#dca-485"><span class="linenos">485</span></a>
+</span><span id="dca-486"><a href="#dca-486"><span class="linenos">486</span></a><span class="sd">    Returns</span>
+</span><span id="dca-487"><a href="#dca-487"><span class="linenos">487</span></a><span class="sd">    -------</span>
+</span><span id="dca-488"><a href="#dca-488"><span class="linenos">488</span></a><span class="sd">    pd.DataFrame</span>
+</span><span id="dca-489"><a href="#dca-489"><span class="linenos">489</span></a><span class="sd">        Data containing net benefit and interventions avoided scores to be plotted</span>
+</span><span id="dca-490"><a href="#dca-490"><span class="linenos">490</span></a><span class="sd">        against threshold values</span>
+</span><span id="dca-491"><a href="#dca-491"><span class="linenos">491</span></a>
+</span><span id="dca-492"><a href="#dca-492"><span class="linenos">492</span></a><span class="sd">    Examples</span>
+</span><span id="dca-493"><a href="#dca-493"><span class="linenos">493</span></a><span class="sd">    --------</span>
+</span><span id="dca-494"><a href="#dca-494"><span class="linenos">494</span></a><span class="sd">    from dcurves import dca, plot_graphs, load_test_data</span>
+</span><span id="dca-495"><a href="#dca-495"><span class="linenos">495</span></a>
+</span><span id="dca-496"><a href="#dca-496"><span class="linenos">496</span></a><span class="sd">    import numpy as np</span>
+</span><span id="dca-497"><a href="#dca-497"><span class="linenos">497</span></a>
+</span><span id="dca-498"><a href="#dca-498"><span class="linenos">498</span></a><span class="sd">    |</span>
+</span><span id="dca-499"><a href="#dca-499"><span class="linenos">499</span></a>
+</span><span id="dca-500"><a href="#dca-500"><span class="linenos">500</span></a><span class="sd">    dca_results = \</span>
+</span><span id="dca-501"><a href="#dca-501"><span class="linenos">501</span></a><span class="sd">        dca(</span>
+</span><span id="dca-502"><a href="#dca-502"><span class="linenos">502</span></a><span class="sd">            data=load_test_data.load_binary_df(),</span>
+</span><span id="dca-503"><a href="#dca-503"><span class="linenos">503</span></a><span class="sd">            outcome=&#39;cancer&#39;,</span>
+</span><span id="dca-504"><a href="#dca-504"><span class="linenos">504</span></a><span class="sd">            modelnames=[&#39;famhistory&#39;],</span>
+</span><span id="dca-505"><a href="#dca-505"><span class="linenos">505</span></a><span class="sd">            thresholds=np.arange(0,0.45,0.01)</span>
+</span><span id="dca-506"><a href="#dca-506"><span class="linenos">506</span></a><span class="sd">        )</span>
+</span><span id="dca-507"><a href="#dca-507"><span class="linenos">507</span></a>
+</span><span id="dca-508"><a href="#dca-508"><span class="linenos">508</span></a><span class="sd">    |</span>
+</span><span id="dca-509"><a href="#dca-509"><span class="linenos">509</span></a>
+</span><span id="dca-510"><a href="#dca-510"><span class="linenos">510</span></a><span class="sd">    plot_graphs(</span>
+</span><span id="dca-511"><a href="#dca-511"><span class="linenos">511</span></a><span class="sd">        plot_df=dca_results,</span>
+</span><span id="dca-512"><a href="#dca-512"><span class="linenos">512</span></a><span class="sd">        graph_type=&#39;net_benefit&#39;,</span>
+</span><span id="dca-513"><a href="#dca-513"><span class="linenos">513</span></a><span class="sd">        y_limits=[-0.05, 0.15],</span>
+</span><span id="dca-514"><a href="#dca-514"><span class="linenos">514</span></a><span class="sd">        color_names=[&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;]</span>
+</span><span id="dca-515"><a href="#dca-515"><span class="linenos">515</span></a><span class="sd">    )</span>
+</span><span id="dca-516"><a href="#dca-516"><span class="linenos">516</span></a>
+</span><span id="dca-517"><a href="#dca-517"><span class="linenos">517</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="dca-518"><a href="#dca-518"><span class="linenos">518</span></a>
+</span><span id="dca-519"><a href="#dca-519"><span class="linenos">519</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="dca-520"><a href="#dca-520"><span class="linenos">520</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; must be a pandas DataFrame&quot;</span><span class="p">)</span>
+</span><span id="dca-521"><a href="#dca-521"><span class="linenos">521</span></a>
+</span><span id="dca-522"><a href="#dca-522"><span class="linenos">522</span></a>    <span class="n">risks_df</span> <span class="o">=</span> <span class="n">_create_risks_df</span><span class="p">(</span>
+</span><span id="dca-523"><a href="#dca-523"><span class="linenos">523</span></a>        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+</span><span id="dca-524"><a href="#dca-524"><span class="linenos">524</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-525"><a href="#dca-525"><span class="linenos">525</span></a>        <span class="n">models_to_prob</span><span class="o">=</span><span class="n">models_to_prob</span><span class="p">,</span>
+</span><span id="dca-526"><a href="#dca-526"><span class="linenos">526</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-527"><a href="#dca-527"><span class="linenos">527</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-528"><a href="#dca-528"><span class="linenos">528</span></a>    <span class="p">)</span>
+</span><span id="dca-529"><a href="#dca-529"><span class="linenos">529</span></a>
+</span><span id="dca-530"><a href="#dca-530"><span class="linenos">530</span></a>    <span class="n">rectified_risks_df</span> <span class="o">=</span> <span class="n">_rectify_model_risk_boundaries</span><span class="p">(</span><span class="n">risks_df</span><span class="o">=</span><span class="n">risks_df</span><span class="p">,</span> <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">)</span>
+</span><span id="dca-531"><a href="#dca-531"><span class="linenos">531</span></a>
+</span><span id="dca-532"><a href="#dca-532"><span class="linenos">532</span></a>    <span class="n">prevalence_value</span> <span class="o">=</span> <span class="n">_calc_prevalence</span><span class="p">(</span>
+</span><span id="dca-533"><a href="#dca-533"><span class="linenos">533</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="dca-534"><a href="#dca-534"><span class="linenos">534</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-535"><a href="#dca-535"><span class="linenos">535</span></a>        <span class="n">prevalence</span><span class="o">=</span><span class="n">prevalence</span><span class="p">,</span>
+</span><span id="dca-536"><a href="#dca-536"><span class="linenos">536</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-537"><a href="#dca-537"><span class="linenos">537</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-538"><a href="#dca-538"><span class="linenos">538</span></a>    <span class="p">)</span>
+</span><span id="dca-539"><a href="#dca-539"><span class="linenos">539</span></a>
+</span><span id="dca-540"><a href="#dca-540"><span class="linenos">540</span></a>    <span class="n">initial_df</span> <span class="o">=</span> <span class="n">_create_initial_df</span><span class="p">(</span>
+</span><span id="dca-541"><a href="#dca-541"><span class="linenos">541</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="dca-542"><a href="#dca-542"><span class="linenos">542</span></a>        <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">,</span>
+</span><span id="dca-543"><a href="#dca-543"><span class="linenos">543</span></a>        <span class="n">input_df_rownum</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rectified_risks_df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
+</span><span id="dca-544"><a href="#dca-544"><span class="linenos">544</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="dca-545"><a href="#dca-545"><span class="linenos">545</span></a>        <span class="n">harm</span><span class="o">=</span><span class="n">harm</span><span class="p">,</span>
+</span><span id="dca-546"><a href="#dca-546"><span class="linenos">546</span></a>    <span class="p">)</span>
+</span><span id="dca-547"><a href="#dca-547"><span class="linenos">547</span></a>
+</span><span id="dca-548"><a href="#dca-548"><span class="linenos">548</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">_calc_initial_stats</span><span class="p">(</span>
+</span><span id="dca-549"><a href="#dca-549"><span class="linenos">549</span></a>        <span class="n">initial_df</span><span class="o">=</span><span class="n">initial_df</span><span class="p">,</span>
+</span><span id="dca-550"><a href="#dca-550"><span class="linenos">550</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="dca-551"><a href="#dca-551"><span class="linenos">551</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="dca-552"><a href="#dca-552"><span class="linenos">552</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-553"><a href="#dca-553"><span class="linenos">553</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="dca-554"><a href="#dca-554"><span class="linenos">554</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-555"><a href="#dca-555"><span class="linenos">555</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-556"><a href="#dca-556"><span class="linenos">556</span></a>    <span class="p">)</span>
+</span><span id="dca-557"><a href="#dca-557"><span class="linenos">557</span></a>
+</span><span id="dca-558"><a href="#dca-558"><span class="linenos">558</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">_calc_more_stats</span><span class="p">(</span><span class="n">initial_stats_df</span><span class="o">=</span><span class="n">initial_stats_df</span><span class="p">,</span> <span class="n">nper</span><span class="o">=</span><span class="n">nper</span><span class="p">)</span>
+</span><span id="dca-559"><a href="#dca-559"><span class="linenos">559</span></a>
+</span><span id="dca-560"><a href="#dca-560"><span class="linenos">560</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Decision curve analysis is a method for evaluating and comparing prediction
+models that incorporates clinical consequences, requiring only the data set
+on which the models are tested, and can be applied to models that have eit-
+her continuous or dichotomous results. The dca function performs decision
+curve analysis for binary and survival outcomes.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>data: pd.DataFrame
+    Initial raw data ideally containing risk scores (scores ranging from 0
+    to 1), or else predictor/model values, and outcome of interest
+outcome: str
+    Column name of outcome of interest in risks_df
+modelnames : list[str]
+    Column names from data that contain model risk scores or values
+thresholds : Iterable
+    Threshold values (x values) at which net benefit and net interventions
+    avoided will be calculated
+harm : dict[float]
+    Models with their associated harm values
+models_to_prob : list[str]
+    Columns that need to be converted to risk scores from 0 to 1
+prevalence : int or float
+    Value that indicates the prevalence among the population, only to be
+    specified in case-control situations
+time : int or float
+    Time of interest in years, used in Survival DCA
+time_to_outcome_col : str
+    Column name in data containing time to outcome values, used in Survival DCA
+nper : int
+    Total number of interventions, multiplies proportion of interventions
+    avoided to get scaled plots</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>pd.DataFrame
+    Data containing net benefit and interventions avoided scores to be plotted
+    against threshold values</p>
+
+<h2 id="examples">Examples</h2>
+
+<p>from dcurves import dca, plot_graphs, load_test_data</p>
+
+<p>import numpy as np</p>
+
+<p>|</p>
+
+<p>dca_results =         dca(
+        data=load_test_data.load_binary_df(),
+        outcome='cancer',
+        modelnames=['famhistory'],
+        thresholds=np.arange(0,0.45,0.01)
+    )</p>
+
+<p>|</p>
+
+<p>plot_graphs(
+    plot_df=dca_results,
+    graph_type='net_benefit',
+    y_limits=[-0.05, 0.15],
+    color_names=['blue', 'red', 'green']
+)</p>
+</div>
+
+
+                </section>
+                <section id="plot_graphs">
+                            <input id="plot_graphs-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">plot_graphs</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">plot_df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">graph_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;net_benefit&#39;</span>,</span><span class="param">	<span class="n">y_limits</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>,</span><span class="param">	<span class="n">color_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">markers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">linestyles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">show_grid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">smooth_frac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>,</span><span class="param">	<span class="n">file_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="plot_graphs-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#plot_graphs"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="plot_graphs-256"><a href="#plot_graphs-256"><span class="linenos">256</span></a><span class="k">def</span><span class="w"> </span><span class="nf">plot_graphs</span><span class="p">(</span>
+</span><span id="plot_graphs-257"><a href="#plot_graphs-257"><span class="linenos">257</span></a>    <span class="n">plot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="plot_graphs-258"><a href="#plot_graphs-258"><span class="linenos">258</span></a>    <span class="n">graph_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;net_benefit&quot;</span><span class="p">,</span>
+</span><span id="plot_graphs-259"><a href="#plot_graphs-259"><span class="linenos">259</span></a>    <span class="n">y_limits</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+</span><span id="plot_graphs-260"><a href="#plot_graphs-260"><span class="linenos">260</span></a>    <span class="n">color_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-261"><a href="#plot_graphs-261"><span class="linenos">261</span></a>    <span class="n">markers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-262"><a href="#plot_graphs-262"><span class="linenos">262</span></a>    <span class="n">linestyles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-263"><a href="#plot_graphs-263"><span class="linenos">263</span></a>    <span class="n">show_grid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="plot_graphs-264"><a href="#plot_graphs-264"><span class="linenos">264</span></a>    <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="plot_graphs-265"><a href="#plot_graphs-265"><span class="linenos">265</span></a>    <span class="n">smooth_frac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+</span><span id="plot_graphs-266"><a href="#plot_graphs-266"><span class="linenos">266</span></a>    <span class="n">file_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-267"><a href="#plot_graphs-267"><span class="linenos">267</span></a>    <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+</span><span id="plot_graphs-268"><a href="#plot_graphs-268"><span class="linenos">268</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="plot_graphs-269"><a href="#plot_graphs-269"><span class="linenos">269</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="plot_graphs-270"><a href="#plot_graphs-270"><span class="linenos">270</span></a><span class="sd">    Plot specified graph type for the given data, either net benefit or net interventions avoided,</span>
+</span><span id="plot_graphs-271"><a href="#plot_graphs-271"><span class="linenos">271</span></a><span class="sd">    against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0 (excluding &#39;all&#39; and &#39;none&#39; models),</span>
+</span><span id="plot_graphs-272"><a href="#plot_graphs-272"><span class="linenos">272</span></a><span class="sd">    and allows custom markers and linestyles.</span>
+</span><span id="plot_graphs-273"><a href="#plot_graphs-273"><span class="linenos">273</span></a>
+</span><span id="plot_graphs-274"><a href="#plot_graphs-274"><span class="linenos">274</span></a><span class="sd">    Parameters</span>
+</span><span id="plot_graphs-275"><a href="#plot_graphs-275"><span class="linenos">275</span></a><span class="sd">    ----------</span>
+</span><span id="plot_graphs-276"><a href="#plot_graphs-276"><span class="linenos">276</span></a><span class="sd">    plot_df : pd.DataFrame</span>
+</span><span id="plot_graphs-277"><a href="#plot_graphs-277"><span class="linenos">277</span></a><span class="sd">        DataFrame containing &#39;threshold&#39;, &#39;model&#39;, and either &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39; columns.</span>
+</span><span id="plot_graphs-278"><a href="#plot_graphs-278"><span class="linenos">278</span></a><span class="sd">    graph_type : str, optional</span>
+</span><span id="plot_graphs-279"><a href="#plot_graphs-279"><span class="linenos">279</span></a><span class="sd">        Specifies the type of plot to generate. Options: &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39;.</span>
+</span><span id="plot_graphs-280"><a href="#plot_graphs-280"><span class="linenos">280</span></a><span class="sd">    y_limits : Iterable[float], optional</span>
+</span><span id="plot_graphs-281"><a href="#plot_graphs-281"><span class="linenos">281</span></a><span class="sd">        Two-element iterable specifying the lower and upper bounds of the y-axis.</span>
+</span><span id="plot_graphs-282"><a href="#plot_graphs-282"><span class="linenos">282</span></a><span class="sd">    color_names : Iterable[str], optional</span>
+</span><span id="plot_graphs-283"><a href="#plot_graphs-283"><span class="linenos">283</span></a><span class="sd">        List of colors to use for each line in the plot.</span>
+</span><span id="plot_graphs-284"><a href="#plot_graphs-284"><span class="linenos">284</span></a><span class="sd">    markers : Iterable[str], optional</span>
+</span><span id="plot_graphs-285"><a href="#plot_graphs-285"><span class="linenos">285</span></a><span class="sd">        List of marker symbols for each model.</span>
+</span><span id="plot_graphs-286"><a href="#plot_graphs-286"><span class="linenos">286</span></a><span class="sd">        Examples: [&#39;o&#39;, &#39;s&#39;, &#39;^&#39;].</span>
+</span><span id="plot_graphs-287"><a href="#plot_graphs-287"><span class="linenos">287</span></a><span class="sd">    linestyles : Iterable[str], optional</span>
+</span><span id="plot_graphs-288"><a href="#plot_graphs-288"><span class="linenos">288</span></a><span class="sd">        List of line styles for each model.</span>
+</span><span id="plot_graphs-289"><a href="#plot_graphs-289"><span class="linenos">289</span></a><span class="sd">        Examples: [&#39;-&#39;, &#39;--&#39;].</span>
+</span><span id="plot_graphs-290"><a href="#plot_graphs-290"><span class="linenos">290</span></a><span class="sd">    show_grid : bool, optional</span>
+</span><span id="plot_graphs-291"><a href="#plot_graphs-291"><span class="linenos">291</span></a><span class="sd">        If True, display grid lines on the plot.</span>
+</span><span id="plot_graphs-292"><a href="#plot_graphs-292"><span class="linenos">292</span></a><span class="sd">    show_legend : bool, optional</span>
+</span><span id="plot_graphs-293"><a href="#plot_graphs-293"><span class="linenos">293</span></a><span class="sd">        If True, display the legend on the plot.</span>
+</span><span id="plot_graphs-294"><a href="#plot_graphs-294"><span class="linenos">294</span></a><span class="sd">    smooth_frac : float, optional</span>
+</span><span id="plot_graphs-295"><a href="#plot_graphs-295"><span class="linenos">295</span></a><span class="sd">        Fraction of data used for LOWESS smoothing. Set to 0 for no smoothing.</span>
+</span><span id="plot_graphs-296"><a href="#plot_graphs-296"><span class="linenos">296</span></a><span class="sd">    file_name : str, optional</span>
+</span><span id="plot_graphs-297"><a href="#plot_graphs-297"><span class="linenos">297</span></a><span class="sd">        Path and file name to save the figure. If None, the figure is not saved.</span>
+</span><span id="plot_graphs-298"><a href="#plot_graphs-298"><span class="linenos">298</span></a><span class="sd">    dpi : int, optional</span>
+</span><span id="plot_graphs-299"><a href="#plot_graphs-299"><span class="linenos">299</span></a><span class="sd">        Resolution of the saved figure.</span>
+</span><span id="plot_graphs-300"><a href="#plot_graphs-300"><span class="linenos">300</span></a>
+</span><span id="plot_graphs-301"><a href="#plot_graphs-301"><span class="linenos">301</span></a><span class="sd">    Raises</span>
+</span><span id="plot_graphs-302"><a href="#plot_graphs-302"><span class="linenos">302</span></a><span class="sd">    ------</span>
+</span><span id="plot_graphs-303"><a href="#plot_graphs-303"><span class="linenos">303</span></a><span class="sd">    ValueError</span>
+</span><span id="plot_graphs-304"><a href="#plot_graphs-304"><span class="linenos">304</span></a><span class="sd">        For invalid graph_type, y_limits, smooth_frac, or empty input DataFrame.</span>
+</span><span id="plot_graphs-305"><a href="#plot_graphs-305"><span class="linenos">305</span></a>
+</span><span id="plot_graphs-306"><a href="#plot_graphs-306"><span class="linenos">306</span></a><span class="sd">    Returns</span>
+</span><span id="plot_graphs-307"><a href="#plot_graphs-307"><span class="linenos">307</span></a><span class="sd">    -------</span>
+</span><span id="plot_graphs-308"><a href="#plot_graphs-308"><span class="linenos">308</span></a><span class="sd">    None</span>
+</span><span id="plot_graphs-309"><a href="#plot_graphs-309"><span class="linenos">309</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="plot_graphs-310"><a href="#plot_graphs-310"><span class="linenos">310</span></a>    <span class="k">if</span> <span class="n">plot_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+</span><span id="plot_graphs-311"><a href="#plot_graphs-311"><span class="linenos">311</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The input DataFrame is empty.&quot;</span><span class="p">)</span>
+</span><span id="plot_graphs-312"><a href="#plot_graphs-312"><span class="linenos">312</span></a>
+</span><span id="plot_graphs-313"><a href="#plot_graphs-313"><span class="linenos">313</span></a>    <span class="k">if</span> <span class="n">graph_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;net_benefit&quot;</span><span class="p">,</span> <span class="s2">&quot;net_intervention_avoided&quot;</span><span class="p">]:</span>
+</span><span id="plot_graphs-314"><a href="#plot_graphs-314"><span class="linenos">314</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="plot_graphs-315"><a href="#plot_graphs-315"><span class="linenos">315</span></a>            <span class="s2">&quot;graph_type must be &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39;&quot;</span>
+</span><span id="plot_graphs-316"><a href="#plot_graphs-316"><span class="linenos">316</span></a>        <span class="p">)</span>
+</span><span id="plot_graphs-317"><a href="#plot_graphs-317"><span class="linenos">317</span></a>
+</span><span id="plot_graphs-318"><a href="#plot_graphs-318"><span class="linenos">318</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_limits</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">y_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">y_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+</span><span id="plot_graphs-319"><a href="#plot_graphs-319"><span class="linenos">319</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="plot_graphs-320"><a href="#plot_graphs-320"><span class="linenos">320</span></a>            <span class="s2">&quot;y_limits must contain two floats where the first is less than the second&quot;</span>
+</span><span id="plot_graphs-321"><a href="#plot_graphs-321"><span class="linenos">321</span></a>        <span class="p">)</span>
+</span><span id="plot_graphs-322"><a href="#plot_graphs-322"><span class="linenos">322</span></a>
+</span><span id="plot_graphs-323"><a href="#plot_graphs-323"><span class="linenos">323</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">smooth_frac</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="plot_graphs-324"><a href="#plot_graphs-324"><span class="linenos">324</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;smooth_frac must be between 0 and 1&quot;</span><span class="p">)</span>
+</span><span id="plot_graphs-325"><a href="#plot_graphs-325"><span class="linenos">325</span></a>
+</span><span id="plot_graphs-326"><a href="#plot_graphs-326"><span class="linenos">326</span></a>    <span class="n">modelnames</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</span><span id="plot_graphs-327"><a href="#plot_graphs-327"><span class="linenos">327</span></a>    <span class="k">if</span> <span class="n">color_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="plot_graphs-328"><a href="#plot_graphs-328"><span class="linenos">328</span></a>        <span class="n">color_names</span> <span class="o">=</span> <span class="n">_get_colors</span><span class="p">(</span><span class="n">modelnames</span><span class="p">)</span>
+</span><span id="plot_graphs-329"><a href="#plot_graphs-329"><span class="linenos">329</span></a>    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_names</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelnames</span><span class="p">):</span>
+</span><span id="plot_graphs-330"><a href="#plot_graphs-330"><span class="linenos">330</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="plot_graphs-331"><a href="#plot_graphs-331"><span class="linenos">331</span></a>            <span class="s2">&quot;color_names must match the number of unique models in plot_df&quot;</span>
+</span><span id="plot_graphs-332"><a href="#plot_graphs-332"><span class="linenos">332</span></a>        <span class="p">)</span>
+</span><span id="plot_graphs-333"><a href="#plot_graphs-333"><span class="linenos">333</span></a>
+</span><span id="plot_graphs-334"><a href="#plot_graphs-334"><span class="linenos">334</span></a>    <span class="n">smoothed_data</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="plot_graphs-335"><a href="#plot_graphs-335"><span class="linenos">335</span></a>    <span class="k">if</span> <span class="n">smooth_frac</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="plot_graphs-336"><a href="#plot_graphs-336"><span class="linenos">336</span></a>        <span class="n">lowess</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">nonparametric</span><span class="o">.</span><span class="n">lowess</span>
+</span><span id="plot_graphs-337"><a href="#plot_graphs-337"><span class="linenos">337</span></a>        <span class="k">for</span> <span class="n">modelname</span> <span class="ow">in</span> <span class="n">modelnames</span><span class="p">:</span>
+</span><span id="plot_graphs-338"><a href="#plot_graphs-338"><span class="linenos">338</span></a>            <span class="k">if</span> <span class="n">modelname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]:</span>
+</span><span id="plot_graphs-339"><a href="#plot_graphs-339"><span class="linenos">339</span></a>                <span class="k">continue</span>
+</span><span id="plot_graphs-340"><a href="#plot_graphs-340"><span class="linenos">340</span></a>            <span class="n">model_df</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="n">plot_df</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">modelname</span><span class="p">]</span>
+</span><span id="plot_graphs-341"><a href="#plot_graphs-341"><span class="linenos">341</span></a>            <span class="n">y_col</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="plot_graphs-342"><a href="#plot_graphs-342"><span class="linenos">342</span></a>                <span class="s2">&quot;net_benefit&quot;</span>
+</span><span id="plot_graphs-343"><a href="#plot_graphs-343"><span class="linenos">343</span></a>                <span class="k">if</span> <span class="n">graph_type</span> <span class="o">==</span> <span class="s2">&quot;net_benefit&quot;</span>
+</span><span id="plot_graphs-344"><a href="#plot_graphs-344"><span class="linenos">344</span></a>                <span class="k">else</span> <span class="s2">&quot;net_intervention_avoided&quot;</span>
+</span><span id="plot_graphs-345"><a href="#plot_graphs-345"><span class="linenos">345</span></a>            <span class="p">)</span>
+</span><span id="plot_graphs-346"><a href="#plot_graphs-346"><span class="linenos">346</span></a>            <span class="n">smoothed_data</span><span class="p">[</span><span class="n">modelname</span><span class="p">]</span> <span class="o">=</span> <span class="n">lowess</span><span class="p">(</span>
+</span><span id="plot_graphs-347"><a href="#plot_graphs-347"><span class="linenos">347</span></a>                <span class="n">model_df</span><span class="p">[</span><span class="n">y_col</span><span class="p">],</span> <span class="n">model_df</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span> <span class="n">frac</span><span class="o">=</span><span class="n">smooth_frac</span>
+</span><span id="plot_graphs-348"><a href="#plot_graphs-348"><span class="linenos">348</span></a>            <span class="p">)</span>
+</span><span id="plot_graphs-349"><a href="#plot_graphs-349"><span class="linenos">349</span></a>
+</span><span id="plot_graphs-350"><a href="#plot_graphs-350"><span class="linenos">350</span></a>    <span class="k">if</span> <span class="n">graph_type</span> <span class="o">==</span> <span class="s2">&quot;net_benefit&quot;</span><span class="p">:</span>
+</span><span id="plot_graphs-351"><a href="#plot_graphs-351"><span class="linenos">351</span></a>        <span class="n">_plot_net_benefit</span><span class="p">(</span>
+</span><span id="plot_graphs-352"><a href="#plot_graphs-352"><span class="linenos">352</span></a>            <span class="n">plot_df</span><span class="o">=</span><span class="n">plot_df</span><span class="p">,</span>
+</span><span id="plot_graphs-353"><a href="#plot_graphs-353"><span class="linenos">353</span></a>            <span class="n">y_limits</span><span class="o">=</span><span class="n">y_limits</span><span class="p">,</span>
+</span><span id="plot_graphs-354"><a href="#plot_graphs-354"><span class="linenos">354</span></a>            <span class="n">color_names</span><span class="o">=</span><span class="n">color_names</span><span class="p">,</span>
+</span><span id="plot_graphs-355"><a href="#plot_graphs-355"><span class="linenos">355</span></a>            <span class="n">markers</span><span class="o">=</span><span class="n">markers</span><span class="p">,</span>
+</span><span id="plot_graphs-356"><a href="#plot_graphs-356"><span class="linenos">356</span></a>            <span class="n">linestyles</span><span class="o">=</span><span class="n">linestyles</span><span class="p">,</span>
+</span><span id="plot_graphs-357"><a href="#plot_graphs-357"><span class="linenos">357</span></a>            <span class="n">show_grid</span><span class="o">=</span><span class="n">show_grid</span><span class="p">,</span>
+</span><span id="plot_graphs-358"><a href="#plot_graphs-358"><span class="linenos">358</span></a>            <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+</span><span id="plot_graphs-359"><a href="#plot_graphs-359"><span class="linenos">359</span></a>            <span class="n">smoothed_data</span><span class="o">=</span><span class="n">smoothed_data</span> <span class="k">if</span> <span class="n">smooth_frac</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-360"><a href="#plot_graphs-360"><span class="linenos">360</span></a>        <span class="p">)</span>
+</span><span id="plot_graphs-361"><a href="#plot_graphs-361"><span class="linenos">361</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="plot_graphs-362"><a href="#plot_graphs-362"><span class="linenos">362</span></a>        <span class="n">_plot_net_intervention_avoided</span><span class="p">(</span>
+</span><span id="plot_graphs-363"><a href="#plot_graphs-363"><span class="linenos">363</span></a>            <span class="n">plot_df</span><span class="o">=</span><span class="n">plot_df</span><span class="p">,</span>
+</span><span id="plot_graphs-364"><a href="#plot_graphs-364"><span class="linenos">364</span></a>            <span class="n">y_limits</span><span class="o">=</span><span class="n">y_limits</span><span class="p">,</span>
+</span><span id="plot_graphs-365"><a href="#plot_graphs-365"><span class="linenos">365</span></a>            <span class="n">color_names</span><span class="o">=</span><span class="n">color_names</span><span class="p">,</span>
+</span><span id="plot_graphs-366"><a href="#plot_graphs-366"><span class="linenos">366</span></a>            <span class="n">markers</span><span class="o">=</span><span class="n">markers</span><span class="p">,</span>
+</span><span id="plot_graphs-367"><a href="#plot_graphs-367"><span class="linenos">367</span></a>            <span class="n">linestyles</span><span class="o">=</span><span class="n">linestyles</span><span class="p">,</span>
+</span><span id="plot_graphs-368"><a href="#plot_graphs-368"><span class="linenos">368</span></a>            <span class="n">show_grid</span><span class="o">=</span><span class="n">show_grid</span><span class="p">,</span>
+</span><span id="plot_graphs-369"><a href="#plot_graphs-369"><span class="linenos">369</span></a>            <span class="n">show_legend</span><span class="o">=</span><span class="n">show_legend</span><span class="p">,</span>
+</span><span id="plot_graphs-370"><a href="#plot_graphs-370"><span class="linenos">370</span></a>            <span class="n">smoothed_data</span><span class="o">=</span><span class="n">smoothed_data</span> <span class="k">if</span> <span class="n">smooth_frac</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="plot_graphs-371"><a href="#plot_graphs-371"><span class="linenos">371</span></a>        <span class="p">)</span>
+</span><span id="plot_graphs-372"><a href="#plot_graphs-372"><span class="linenos">372</span></a>
+</span><span id="plot_graphs-373"><a href="#plot_graphs-373"><span class="linenos">373</span></a>    <span class="k">if</span> <span class="n">file_name</span><span class="p">:</span>
+</span><span id="plot_graphs-374"><a href="#plot_graphs-374"><span class="linenos">374</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="plot_graphs-375"><a href="#plot_graphs-375"><span class="linenos">375</span></a>            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+</span><span id="plot_graphs-376"><a href="#plot_graphs-376"><span class="linenos">376</span></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="plot_graphs-377"><a href="#plot_graphs-377"><span class="linenos">377</span></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error saving figure: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="plot_graphs-378"><a href="#plot_graphs-378"><span class="linenos">378</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Plot specified graph type for the given data, either net benefit or net interventions avoided,
+against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0 (excluding 'all' and 'none' models),
+and allows custom markers and linestyles.</p>
+
+<h2 id="parameters">Parameters</h2>
+
+<p>plot_df : pd.DataFrame
+    DataFrame containing 'threshold', 'model', and either 'net_benefit' or 'net_intervention_avoided' columns.
+graph_type : str, optional
+    Specifies the type of plot to generate. Options: 'net_benefit' or 'net_intervention_avoided'.
+y_limits : Iterable[float], optional
+    Two-element iterable specifying the lower and upper bounds of the y-axis.
+color_names : Iterable[str], optional
+    List of colors to use for each line in the plot.
+markers : Iterable[str], optional
+    List of marker symbols for each model.
+    Examples: ['o', 's', '^'].
+linestyles : Iterable[str], optional
+    List of line styles for each model.
+    Examples: ['-', '--'].
+show_grid : bool, optional
+    If True, display grid lines on the plot.
+show_legend : bool, optional
+    If True, display the legend on the plot.
+smooth_frac : float, optional
+    Fraction of data used for LOWESS smoothing. Set to 0 for no smoothing.
+file_name : str, optional
+    Path and file name to save the figure. If None, the figure is not saved.
+dpi : int, optional
+    Resolution of the saved figure.</p>
+
+<h2 id="raises">Raises</h2>
+
+<p>ValueError
+    For invalid graph_type, y_limits, smooth_frac, or empty input DataFrame.</p>
+
+<h2 id="returns">Returns</h2>
+
+<p>None</p>
+</div>
+
 
                 </section>
     </main>

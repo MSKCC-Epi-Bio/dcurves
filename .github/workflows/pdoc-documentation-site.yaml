@@ -22,9 +22,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pdoc
-          pip install -e .
-          pip install "scipy<2.0"
+          echo "scipy<2.0" > constraints.txt
+          pip install -c constraints.txt pdoc
+          pip install -c constraints.txt -e .
 
       - name: Generate documentation with pdoc
         run: |

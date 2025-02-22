@@ -1,16 +1,14 @@
 [project]
 name = "dcurves"
-dynamic = ["version"]
+version = "1.1.2.5"
 description = "A Python package for Decision Curve Analysis to evaluate prediction models, molecular markers, and diagnostic tests."
 readme = "README.md"
 license = "Apache-2.0"
 authors = [
   { name = "Shaun Porwal", email = "shaun.porwal@gmail.com" },
-  { name = "Rohan Singh", email = "singhrohan@outlook.com" }
+  { name = "Rohan Singh", email = "singhrohan@outlook.com" },
 ]
-maintainers = [
-  { name = "Shaun Porwal", email = "shaun.porwal@gmail.com" }
-]
+maintainers = [{ name = "Shaun Porwal", email = "shaun.porwal@gmail.com" }]
 keywords = [
   "decision-curve-analysis",
   "decision-curves",
@@ -19,13 +17,13 @@ keywords = [
   "consequences",
   "andrew-vickers",
   "shaun-porwal",
-  "rohan-singh"
+  "rohan-singh",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
   "License :: OSI Approved :: Apache Software License",
-  "Topic :: Software Development :: Libraries :: Python Modules"
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
@@ -74,7 +72,7 @@ filterwarnings = [
   "ignore::DeprecationWarning:patsy",
   "ignore:numpy.core.einsumfunc:DeprecationWarning",
   "ignore:pkg_resources is deprecated:DeprecationWarning",
-  "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning"
+  "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning",
 ]
 
 [build-system]

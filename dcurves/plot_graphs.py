@@ -282,10 +282,10 @@ def plot_graphs(
         List of colors to use for each line in the plot.
     markers : Iterable[str], optional
         List of marker symbols for each model.
-        Examples: ['o', 's', '^'].
+        Examples: ['o', 's', '^', 'v', 'D', 'x', '+', '*'].
     linestyles : Iterable[str], optional
         List of line styles for each model.
-        Examples: ['-', '--'].
+        Examples: ['-', '--', ':', '-.'].
     show_grid : bool, optional
         If True, display grid lines on the plot.
     show_legend : bool, optional

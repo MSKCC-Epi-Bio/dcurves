@@ -62,13 +62,14 @@ jobs:
       - name: Get current version
         id: get-version
         run: |
+          poetry build
           VERSION=$(poetry version -s)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Check version on Test PyPI
         id: version-check
         run: |
-          PACKAGE_NAME="funcshauns"
+          PACKAGE_NAME=$(poetry version | awk '{print $1}')
           RESPONSE=$(curl -s https://test.pypi.org/pypi/${PACKAGE_NAME}/json || echo "error")
           if [ "$RESPONSE" != "error" ] && echo "$RESPONSE" | jq -r '.releases | keys' | grep -q "\"${VERSION}\""; then
             echo "Version ${VERSION} already exists on Test PyPI."
@@ -81,7 +82,7 @@ jobs:
       - name: Publish to Test PyPI
         if: env.skip != 'true'
         run: |
-          poetry install --no-dev
+          poetry install
           poetry build
           poetry publish --repository testpypi
 
@@ -118,7 +119,7 @@ jobs:
       - name: Check version on PyPI
         id: version-check
         run: |
-          PACKAGE_NAME="funcshauns"
+          PACKAGE_NAME=$(poetry version | awk '{print $1}')
           RESPONSE=$(curl -s https://pypi.org/pypi/${PACKAGE_NAME}/json || echo "error")
           if [ "$RESPONSE" != "error" ] && echo "$RESPONSE" | jq -r '.releases | keys' | grep -q "\"${VERSION}\""; then
             echo "Version ${VERSION} already exists on PyPI."

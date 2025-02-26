@@ -326,14 +326,14 @@ function to plot net-benefit scores and net interventions avoided.</p>
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">    Plot specified graph type for the given data, either net benefit or net interventions avoided,</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">    against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0 (excluding &#39;all&#39; and &#39;none&#39; models),</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">    and allows custom markers and linestyles.</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a><span class="sd">    against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">    (excluding &#39;all&#39; and &#39;none&#39; models), and allows custom markers and linestyles.</span>
 </span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
 </span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">    Parameters</span>
 </span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">    ----------</span>
 </span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="sd">    plot_df : pd.DataFrame</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">        DataFrame containing &#39;threshold&#39;, &#39;model&#39;, and either &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39; columns.</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">    graph_type : str, optional</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">        DataFrame containing &#39;threshold&#39;, &#39;model&#39;, and either &#39;net_benefit&#39; or </span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">        &#39;net_intervention_avoided&#39; columns.</span>
 </span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="sd">        Specifies the type of plot to generate. Options: &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39;.</span>
 </span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">    y_limits : Iterable[float], optional</span>
 </span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">        Two-element iterable specifying the lower and upper bounds of the y-axis.</span>
@@ -464,14 +464,14 @@ function to plot net-benefit scores and net interventions avoided.</p>
 </span><span id="plot_graphs-268"><a href="#plot_graphs-268"><span class="linenos">268</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="plot_graphs-269"><a href="#plot_graphs-269"><span class="linenos">269</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="plot_graphs-270"><a href="#plot_graphs-270"><span class="linenos">270</span></a><span class="sd">    Plot specified graph type for the given data, either net benefit or net interventions avoided,</span>
-</span><span id="plot_graphs-271"><a href="#plot_graphs-271"><span class="linenos">271</span></a><span class="sd">    against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0 (excluding &#39;all&#39; and &#39;none&#39; models),</span>
-</span><span id="plot_graphs-272"><a href="#plot_graphs-272"><span class="linenos">272</span></a><span class="sd">    and allows custom markers and linestyles.</span>
+</span><span id="plot_graphs-271"><a href="#plot_graphs-271"><span class="linenos">271</span></a><span class="sd">    against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0</span>
+</span><span id="plot_graphs-272"><a href="#plot_graphs-272"><span class="linenos">272</span></a><span class="sd">    (excluding &#39;all&#39; and &#39;none&#39; models), and allows custom markers and linestyles.</span>
 </span><span id="plot_graphs-273"><a href="#plot_graphs-273"><span class="linenos">273</span></a>
 </span><span id="plot_graphs-274"><a href="#plot_graphs-274"><span class="linenos">274</span></a><span class="sd">    Parameters</span>
 </span><span id="plot_graphs-275"><a href="#plot_graphs-275"><span class="linenos">275</span></a><span class="sd">    ----------</span>
 </span><span id="plot_graphs-276"><a href="#plot_graphs-276"><span class="linenos">276</span></a><span class="sd">    plot_df : pd.DataFrame</span>
-</span><span id="plot_graphs-277"><a href="#plot_graphs-277"><span class="linenos">277</span></a><span class="sd">        DataFrame containing &#39;threshold&#39;, &#39;model&#39;, and either &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39; columns.</span>
-</span><span id="plot_graphs-278"><a href="#plot_graphs-278"><span class="linenos">278</span></a><span class="sd">    graph_type : str, optional</span>
+</span><span id="plot_graphs-277"><a href="#plot_graphs-277"><span class="linenos">277</span></a><span class="sd">        DataFrame containing &#39;threshold&#39;, &#39;model&#39;, and either &#39;net_benefit&#39; or </span>
+</span><span id="plot_graphs-278"><a href="#plot_graphs-278"><span class="linenos">278</span></a><span class="sd">        &#39;net_intervention_avoided&#39; columns.</span>
 </span><span id="plot_graphs-279"><a href="#plot_graphs-279"><span class="linenos">279</span></a><span class="sd">        Specifies the type of plot to generate. Options: &#39;net_benefit&#39; or &#39;net_intervention_avoided&#39;.</span>
 </span><span id="plot_graphs-280"><a href="#plot_graphs-280"><span class="linenos">280</span></a><span class="sd">    y_limits : Iterable[float], optional</span>
 </span><span id="plot_graphs-281"><a href="#plot_graphs-281"><span class="linenos">281</span></a><span class="sd">        Two-element iterable specifying the lower and upper bounds of the y-axis.</span>
@@ -576,14 +576,14 @@ function to plot net-benefit scores and net interventions avoided.</p>
 
 
             <div class="docstring"><p>Plot specified graph type for the given data, either net benefit or net interventions avoided,
-against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0 (excluding 'all' and 'none' models),
-and allows custom markers and linestyles.</p>
+against threshold probabilities. Applies LOWESS smoothing if smooth_frac &gt; 0
+(excluding 'all' and 'none' models), and allows custom markers and linestyles.</p>
 
 <h2 id="parameters">Parameters</h2>
 
 <p>plot_df : pd.DataFrame
-    DataFrame containing 'threshold', 'model', and either 'net_benefit' or 'net_intervention_avoided' columns.
-graph_type : str, optional
+    DataFrame containing 'threshold', 'model', and either 'net_benefit' or 
+    'net_intervention_avoided' columns.
     Specifies the type of plot to generate. Options: 'net_benefit' or 'net_intervention_avoided'.
 y_limits : Iterable[float], optional
     Two-element iterable specifying the lower and upper bounds of the y-axis.

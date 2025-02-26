@@ -267,14 +267,14 @@ def plot_graphs(
 ) -> None:
     """
     Plot specified graph type for the given data, either net benefit or net interventions avoided,
-    against threshold probabilities. Applies LOWESS smoothing if smooth_frac > 0 (excluding 'all' and 'none' models),
-    and allows custom markers and linestyles.
+    against threshold probabilities. Applies LOWESS smoothing if smooth_frac > 0
+    (excluding 'all' and 'none' models), and allows custom markers and linestyles.
 
     Parameters
     ----------
     plot_df : pd.DataFrame
-        DataFrame containing 'threshold', 'model', and either 'net_benefit' or 'net_intervention_avoided' columns.
-    graph_type : str, optional
+        DataFrame containing 'threshold', 'model', and either 'net_benefit' or 
+        'net_intervention_avoided' columns.
         Specifies the type of plot to generate. Options: 'net_benefit' or 'net_intervention_avoided'.
     y_limits : Iterable[float], optional
         Two-element iterable specifying the lower and upper bounds of the y-axis.

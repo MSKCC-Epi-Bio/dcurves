@@ -1,3 +1,7 @@
+
+# Don't need to include .venv
+.venv/
+
 # Byte-compiled / optimized / DLL files
 **/__pycache__/
 __pycache__/

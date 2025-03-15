@@ -27,13 +27,13 @@ classifiers = [
 ]
 requires-python = ">=3.9, <3.13"
 dependencies = [
-  "lifelines~=0.27.7",
+  "lifelines>=0.27.8",
   "matplotlib>=3.7.1",
   "statsmodels==0.14.4",
   "typing~=3.7.4.3",
   "setuptools>=75.6.0",
   "pandas>=2.2.3",
-  "scipy<1.11.0",
+  "scipy>=1.11.0",
 ]
 
 [project.optional-dependencies]

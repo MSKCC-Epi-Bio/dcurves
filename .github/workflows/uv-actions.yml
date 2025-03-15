@@ -174,4 +174,4 @@ jobs:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           source .venv/bin/activate
-          uv publish --publish-url https://pypi.org/legacy/
+          uv publish --publish-url https://upload.pypi.org/legacy/

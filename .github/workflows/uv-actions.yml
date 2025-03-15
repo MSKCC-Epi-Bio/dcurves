@@ -108,7 +108,7 @@ jobs:
           UV_PUBLISH_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
         run: |
           source .venv/bin/activate
-          uv publish --repository testpypi
+          uv publish --publish-url https://test.pypi.org/legacy/
 
   publish-to-pypi:
     name: Publish to PyPI
@@ -174,4 +174,4 @@ jobs:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           source .venv/bin/activate
-          uv publish 
+          uv publish --publish-url https://pypi.org/legacy/

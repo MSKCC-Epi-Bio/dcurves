@@ -6,17 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [1.1.3] - 2025-02-xx
+## [1.1.3] - 2025-03-15
 
 - **Added:**
-  - Black and white (bw) support for plotting to enhance visual clarity.
-  - pdoc action to automatically generate the documentation site for the library.
-  - Poetry dynamic versioning to set version using GitHub VCS (tags)
+  - Black and white (bw) support for plotting to enhance visual clarity
+  - pdoc action to automatically generate the documentation site for the library
 - **Changed:**
-  - CI/CD pipelines updated via GitHub Actions for testing, documentation generation, and package publishing using Poetry.
-  - Project metadata, documentation, and changelog updated to reflect broader improvements.
+  - Switched from Poetry to UV to manage dependencies
+  - CI/CD pipelines updated via GitHub Actions for testing, documentation generation, and package publishing using UV
+  - Project metadata, documentation, and changelog updated to reflect broader improvements
 - **Removed:**
-  - Black formatting tool along with unnecessary dependencies and redundant directories.
+  - Black formatting tool along with unnecessary dependencies and redundant directories
 
 ## [Released]
 

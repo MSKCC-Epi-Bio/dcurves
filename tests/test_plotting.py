@@ -24,6 +24,8 @@ from dcurves.plot_graphs import (
     _plot_net_benefit,
     _plot_net_intervention_avoided,
     _get_colors,
+    VALID_MARKERS,
+    _validate_markers,
 )
 from .load_test_data import load_binary_df
 
@@ -340,3 +342,46 @@ def test_plot_graphs_with_empty_dataframe():
     empty_df = pd.DataFrame()
     with pytest.raises(ValueError):
         plot_graphs(empty_df, "net_benefit")
+
+
+def test_validate_markers_valid():
+    """Test that valid markers are accepted."""
+    # Test with a subset of valid markers
+    valid_subset = ['o', '*', 's', 'D']
+    # This should not raise an exception
+    _validate_markers(valid_subset)
+    
+    # Test with None
+    _validate_markers(None)
+    
+    # Test with empty list
+    _validate_markers([])
+
+
+def test_validate_markers_invalid():
+    """Test that invalid markers raise a ValueError with appropriate message."""
+    invalid_markers = ['o', '-', '*']  # '-' is not a valid marker
+    
+    with pytest.raises(ValueError) as excinfo:
+        _validate_markers(invalid_markers)
+    
+    # Check that the error message contains the invalid marker
+    assert "'-'" in str(excinfo.value)
+    # Check that the error message mentions valid markers
+    assert "valid markers" in str(excinfo.value)
+    # Check that some valid markers are mentioned in the error message
+    for marker in ['o', '*', 's']:
+        assert f"'{marker}'" in str(excinfo.value)
+
+
+def test_plot_graphs_with_invalid_markers():
+    """Test that plot_graphs raises a ValueError when invalid markers are provided."""
+    df = get_dca_results(load_binary_df())
+    
+    with pytest.raises(ValueError) as excinfo:
+        plot_graphs(plot_df=df, markers=['*', 'd', '-'])
+    
+    # Check that the error message contains the invalid marker
+    assert "'-'" in str(excinfo.value)
+    # Check that the error message mentions valid markers
+    assert "valid markers" in str(excinfo.value)

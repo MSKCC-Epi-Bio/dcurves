@@ -3,13 +3,18 @@ This module houses plotting functions used in the user-facing plot_graphs()
 function to plot net-benefit scores and net interventions avoided.
 """
 
-from typing import Optional, Iterable
+from typing import Optional, Iterable, List
 import random
 import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
 from numpy import ndarray
 
+# Valid marker styles based on matplotlib's documentation
+VALID_MARKERS = [
+    '.', ',', 'o', 'v', '^', '<', '>', '1', '2', '3', '4', '8', 's', 'p',
+    '*', 'h', 'H', '+', 'x', 'D', 'd', '|', '_', 'P', 'X', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+]
 
 def _get_colors(modelnames):
     """
@@ -56,6 +61,32 @@ def _get_colors(modelnames):
             colors.append(f"#{format(random.randint(0, 0xFFFFFF), '06x')}")
 
     return tuple(colors)
+
+
+def _validate_markers(markers: List) -> None:
+    """
+    Validate that all provided markers are valid matplotlib marker styles.
+    
+    Parameters
+    ----------
+    markers : List
+        List of marker symbols to validate
+        
+    Raises
+    ------
+    ValueError
+        If any marker is not a valid matplotlib marker style
+    """
+    if markers is None:
+        return
+        
+    invalid_markers = [marker for marker in markers if marker not in VALID_MARKERS]
+    if invalid_markers:
+        valid_markers_str = ", ".join([f"'{m}'" if isinstance(m, str) else str(m) for m in VALID_MARKERS])
+        raise ValueError(
+            f"Invalid marker style(s): {invalid_markers}. "
+            f"Please use one of the following valid markers: {valid_markers_str}"
+        )
 
 
 def _plot_net_benefit(
@@ -300,7 +331,7 @@ def plot_graphs(
     Raises
     ------
     ValueError
-        For invalid graph_type, y_limits, smooth_frac, or empty input DataFrame.
+        For invalid graph_type, y_limits, smooth_frac, empty input DataFrame, or invalid marker styles.
 
     Returns
     -------
@@ -321,6 +352,9 @@ def plot_graphs(
 
     if not 0 <= smooth_frac <= 1:
         raise ValueError("smooth_frac must be between 0 and 1")
+        
+    # Validate marker styles
+    _validate_markers(markers)
 
     modelnames = plot_df["model"].unique()
     if color_names is None:

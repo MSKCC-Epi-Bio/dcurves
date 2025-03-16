@@ -2,7 +2,6 @@
 
 [![PyPI Latest Release](https://img.shields.io/pypi/v/dcurves.svg)](https://pypi.org/project/dcurves/) 
 [![PyPI Downloads Overall](https://static.pepy.tech/badge/dcurves)](https://pepy.tech/projects/dcurves)
-[![CI - Test](https://github.com/pandas-dev/pandas/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/pandas-dev/pandas/actions/workflows/unit-tests.yml)
 
 Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of additional information that may be cumbersome to apply to models that yield continuous results.
 

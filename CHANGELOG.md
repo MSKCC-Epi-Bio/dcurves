@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.1.4] - 2025-05-22
+
+### Added
+* `linewidths` parameter in plotting (`plot_graphs`, `_plot_net_benefit`, `_plot_net_intervention_avoided`).  Accepts either a single float applied to all models or a per-model list.
+* Comprehensive unit-tests for linewidth handling and updated marker/colour logic.
+* `docs/WORKFLOW.md` – end-to-end contributor guide.
+
+### Changed
+* `VALID_MARKERS` de-duplicated and centralised.
+* README expanded with badges, table-of-contents and clearer examples.
+* Jupyter notebooks folder renamed to `notebooks/`.
+* CI workflow (`uv-actions.yml`) simplified; dev dependencies installed via `.[dev]`.
+* Dynamic version retrieval in `dcurves/__init__.py` via `importlib.metadata` (removes hard-coded version string).
+* Development dependencies consolidated under `[project.optional-dependencies].dev`.
+
+### Removed
+* Legacy files: `.pylintrc`, `.coverage`, `poetry.lock`.
+
 ## [1.1.3] - 2025-03-15
 
 - **Added:**

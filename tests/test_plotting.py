@@ -24,7 +24,6 @@ from dcurves.plot_graphs import (
     _plot_net_benefit,
     _plot_net_intervention_avoided,
     _get_colors,
-    VALID_MARKERS,
     _validate_markers,
 )
 from .load_test_data import load_binary_df
@@ -84,7 +83,9 @@ def test_get_colors():
         assert re.match(r"^#[0-9A-Fa-f]{6}$", color), f"Invalid color code: {color}"
 
     random.seed(42)
-    assert colors == _get_colors(modelnames), "Expected the same colors with the same seed."
+    assert colors == _get_colors(modelnames), (
+        "Expected the same colors with the same seed."
+    )
 
     # Test that 'none' and 'all' get their specific colors
     special_modelnames = ["none", "all", "Model1", "Model2"]
@@ -108,7 +109,9 @@ def test_plot_functions(func, args):
 
 def test_invalid_graph_type():
     """Test invalid graph type."""
-    sample_df = pd.DataFrame({"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]})
+    sample_df = pd.DataFrame(
+        {"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]}
+    )
     with pytest.raises(
         ValueError,
         match="graph_type must be 'net_benefit' or 'net_intervention_avoided'",
@@ -125,16 +128,24 @@ def test_fewer_color_names_than_models():
             "net_benefit": [0.2, 0.3],
         }
     )
+    # A single color for multiple models is now acceptable; provide an invalid case
+    # where the length is neither 1 nor the number of models to ensure a ValueError.
     with pytest.raises(
         ValueError,
-        match="color_names must match the number of unique models in plot_df",
+        match="color_names must be either a single value or match the number of unique models",
     ):
-        plot_graphs(plot_df=sample_df, graph_type="net_benefit", color_names=["red"])
+        plot_graphs(
+            plot_df=sample_df,
+            graph_type="net_benefit",
+            color_names=["red", "blue", "green"],
+        )
 
 
 def test_custom_colors_net_benefit():
     """Test custom colors for net benefit."""
-    sample_df = pd.DataFrame({"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]})
+    sample_df = pd.DataFrame(
+        {"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]}
+    )
     with patch("matplotlib.pyplot.show"), patch("dcurves.plot_graphs"):
         plot_graphs(plot_df=sample_df, graph_type="net_benefit", color_names=["red"])
 
@@ -144,7 +155,10 @@ def test_custom_colors_net_intervention_avoided():
     sample_df = pd.DataFrame(
         {"model": ["model1"], "threshold": [0.1], "net_intervention_avoided": [0.3]}
     )
-    with patch("matplotlib.pyplot.show"), patch("dcurves.plot_graphs", return_value=None):
+    with (
+        patch("matplotlib.pyplot.show"),
+        patch("dcurves.plot_graphs", return_value=None),
+    ):
         plot_graphs(
             plot_df=sample_df,
             graph_type="net_intervention_avoided",
@@ -154,8 +168,13 @@ def test_custom_colors_net_intervention_avoided():
 
 def test_default_colors_net_benefit():
     """Test default colors for net benefit."""
-    sample_df = pd.DataFrame({"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]})
-    with patch("matplotlib.pyplot.show"), patch("dcurves.plot_graphs", return_value=None):
+    sample_df = pd.DataFrame(
+        {"model": ["model1"], "threshold": [0.1], "net_benefit": [0.2]}
+    )
+    with (
+        patch("matplotlib.pyplot.show"),
+        patch("dcurves.plot_graphs", return_value=None),
+    ):
         plot_graphs(plot_df=sample_df, graph_type="net_benefit", color_names=None)
 
 
@@ -164,17 +183,21 @@ def test_plot_net_benefit_missing_columns():
     df_missing_columns = pd.DataFrame({"model": ["model1"], "threshold": [0.1]})
     with pytest.raises(
         ValueError,
-        match="plot_df must contain the following columns: " "threshold, model, net_benefit",
+        match="plot_df must contain the following columns: "
+        "threshold, model, net_benefit",
     ):
         with patch("matplotlib.pyplot.show"):
-            _plot_net_benefit(df_missing_columns, y_limits=(-0.05, 1), color_names=["blue"])
+            _plot_net_benefit(
+                df_missing_columns, y_limits=(-0.05, 1), color_names=["blue"]
+            )
 
 
 def test_plot_net_benefit_invalid_y_limits():
     """Test plot net benefit with invalid y limits."""
     with pytest.raises(
         ValueError,
-        match="y_limits must contain two floats where the first " "is less than the second",
+        match="y_limits must contain two floats where the first "
+        "is less than the second",
     ):
         _plot_net_benefit(SAMPLE_DATA_DF, y_limits=(-1, -2), color_names=["blue"])
 
@@ -188,11 +211,14 @@ def test_plot_net_benefit_mismatched_color_names():
             "net_benefit": [0.3, 0.4],
         }
     )
+    # Expect error when color_names length is invalid (neither 1 nor number of models)
     with pytest.raises(
         ValueError,
-        match="The length of color_names must match the number " "of unique models",
+        match="color_names must be either a single value or match the number of unique models",
     ):
-        _plot_net_benefit(df_two_models, y_limits=(-0.05, 1), color_names=["blue"])
+        _plot_net_benefit(
+            df_two_models, y_limits=(-0.05, 1), color_names=["blue", "red", "green"]
+        )
 
 
 def test_plot_net_benefit_grid_enabled():
@@ -208,7 +234,9 @@ def test_plot_net_benefit_grid_enabled():
             color_names=["blue", "red"],
             show_grid=True,
         )
-        mock_grid.assert_called_with(color="black", which="both", axis="both", linewidth="0.3")
+        mock_grid.assert_called_with(
+            color="black", which="both", axis="both", linewidth="0.3"
+        )
 
 
 def test_plot_net_benefit_show_legend_enabled():
@@ -305,12 +333,12 @@ def test_plot_graphs_y_limits():
     assert current_axes.get_legend() is not None
 
     # Check if grid is enabled
-    assert any(
-        line.get_visible() for line in current_axes.xaxis.get_gridlines()
-    ), "X-axis grid is not visible"
-    assert any(
-        line.get_visible() for line in current_axes.yaxis.get_gridlines()
-    ), "Y-axis grid is not visible"
+    assert any(line.get_visible() for line in current_axes.xaxis.get_gridlines()), (
+        "X-axis grid is not visible"
+    )
+    assert any(line.get_visible() for line in current_axes.yaxis.get_gridlines()), (
+        "Y-axis grid is not visible"
+    )
 
     plt.close()  # Close the plot to free up memory
 
@@ -347,41 +375,74 @@ def test_plot_graphs_with_empty_dataframe():
 def test_validate_markers_valid():
     """Test that valid markers are accepted."""
     # Test with a subset of valid markers
-    valid_subset = ['o', '*', 's', 'D']
+    valid_subset = ["o", "*", "s", "D"]
     # This should not raise an exception
     _validate_markers(valid_subset)
-    
+
     # Test with None
     _validate_markers(None)
-    
+
     # Test with empty list
     _validate_markers([])
 
 
 def test_validate_markers_invalid():
     """Test that invalid markers raise a ValueError with appropriate message."""
-    invalid_markers = ['o', '-', '*']  # '-' is not a valid marker
-    
+    invalid_markers = ["o", "-", "*"]  # '-' is not a valid marker
+
     with pytest.raises(ValueError) as excinfo:
         _validate_markers(invalid_markers)
-    
+
     # Check that the error message contains the invalid marker
     assert "'-'" in str(excinfo.value)
     # Check that the error message mentions valid markers
     assert "valid markers" in str(excinfo.value)
     # Check that some valid markers are mentioned in the error message
-    for marker in ['o', '*', 's']:
+    for marker in ["o", "*", "s"]:
         assert f"'{marker}'" in str(excinfo.value)
 
 
 def test_plot_graphs_with_invalid_markers():
     """Test that plot_graphs raises a ValueError when invalid markers are provided."""
     df = get_dca_results(load_binary_df())
-    
+
     with pytest.raises(ValueError) as excinfo:
-        plot_graphs(plot_df=df, markers=['*', 'd', '-'])
-    
+        plot_graphs(plot_df=df, markers=["*", "d", "-"])
+
     # Check that the error message contains the invalid marker
     assert "'-'" in str(excinfo.value)
     # Check that the error message mentions valid markers
     assert "valid markers" in str(excinfo.value)
+
+
+def test_plot_graphs_linewidths_single_and_multiple(monkeypatch):
+    """Test that linewidths parameter is handled correctly for single and multiple values."""
+
+    sample_df = SAMPLE_DATA_DF.copy()
+
+    # Track calls to plt.plot
+    call_args = []
+
+    def fake_plot(*args, **kwargs):
+        call_args.append(kwargs)
+
+    monkeypatch.setattr(plt, "plot", fake_plot)
+    monkeypatch.setattr(plt, "show", lambda *args, **kwargs: None)
+
+    # Case 1: single linewidth applies to all models
+    call_args.clear()
+    plot_graphs(sample_df, linewidths=[2.0], show_legend=False)
+    assert all(kwargs.get("linewidth") == 2.0 for kwargs in call_args), (
+        "Single linewidth not applied to all lines"
+    )
+
+    # Case 2: list length equals number of models
+    call_args.clear()
+    plot_graphs(sample_df, linewidths=[1.0, 3.0], show_legend=False)
+    assert {kwargs.get("linewidth") for kwargs in call_args} == {1.0, 3.0}, (
+        "Line-specific linewidths not applied"
+    )
+
+    # Case 3: invalid length should raise error
+    with pytest.raises(ValueError):
+        plot_graphs(sample_df, linewidths=[1.0, 2.0, 3.0])

@@ -1,6 +1,21 @@
 # dcurves
 
-[![PyPI Downloads](https://static.pepy.tech/badge/dcurves)](https://pepy.tech/projects/dcurves)
+[![PyPI Latest Release](https://img.shields.io/pypi/v/dcurves.svg)](https://pypi.org/project/dcurves/)
+[![PyPI Downloads Overall](https://static.pepy.tech/badge/dcurves)](https://pepy.tech/projects/dcurves)
+
+## Table of Contents
+
+- [dcurves](#dcurves)
+  - [Table of Contents](#table-of-contents)
+  - [Functions](#functions)
+  - [Quick-and-dirty Library Documentation](#quick-and-dirty-library-documentation)
+  - [Simple Tutorial](#simple-tutorial)
+    - [Installation (bash)](#installation-bash)
+    - [DCA Example](#dca-example)
+  - [In-depth Tutorial and Explanations with Examples, Relevant Literature, and Forumn for Personalized Help](#in-depth-tutorial-and-explanations-with-examples-relevant-literature-and-forumn-for-personalized-help)
+  - [Contributing](#contributing)
+  - [Contributors](#contributors)
+  - [License](#license)
 
 Diagnostic and prognostic models are typically evaluated with measures of accuracy that do not address clinical consequences. Decision-analytic techniques allow assessment of clinical outcomes, but often require collection of additional information that may be cumbersome to apply to models that yield continuous results.
 

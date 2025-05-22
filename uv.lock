@@ -649,8 +649,6 @@ dev = [
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
-    { name = "pytest-mock" },
-    { name = "scikit-learn" },
 ]
 
 [package.metadata]
@@ -663,9 +661,8 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pathlib", marker = "extra == 'dev'", specifier = ">=1.0.1" },
     { name = "pylint", marker = "extra == 'dev'", specifier = ">=3.3.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = "~=7.2.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.2.2" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.0.0" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.11.1" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
     { name = "scikit-learn", marker = "extra == 'dev'", specifier = ">=1.6.1" },
     { name = "scipy", specifier = ">=1.11.0" },
@@ -678,11 +675,7 @@ requires-dist = [
 provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=7.2.2" },
-    { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "scikit-learn", specifier = ">=1.6.1" },
-]
+dev = [{ name = "pytest", specifier = ">=7.2.2" }]
 
 [[package]]
 name = "debugpy"

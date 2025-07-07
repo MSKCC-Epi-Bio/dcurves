@@ -73,7 +73,7 @@ plot_graphs(
 
 ```
 
-![DCA Plot](https://github.com/MSKCC-Epi-Bio/dcurves/raw/main/images/simple_binary_dca.png)
+![DCA Plot](https://github.com/MSKCC-Epi-Bio/dcurves/raw/main/public/simple_binary_dca.png)
 
 ## In-depth Tutorial and Explanations with Examples, Relevant Literature, and Forumn for Personalized Help
 

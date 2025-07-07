@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.1.5] - 2025-07-11
+
+### Changed
+- Moved `images/` directory to `public/` for better project organization.
+- Removed `.tox` and `.idea` directories from version control and updated `.gitignore`.
+
+### Fixed
+- Updated statsmodels dependency from `==0.14.4` to `>=0.14.5` to fix compatibility with scipy>=1.14.0. The issue was caused by statsmodels using scipy's private `_lazywhere` function which was removed in scipy 1.14.0. This fix ensures dcurves works with the latest scipy versions.
+
 ## [1.1.4] - 2025-05-22
 
 ### Added

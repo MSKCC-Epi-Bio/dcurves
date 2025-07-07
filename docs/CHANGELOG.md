@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - Updated statsmodels dependency from `==0.14.4` to `>=0.14.5` to fix compatibility with scipy>=1.14.0. The issue was caused by statsmodels using scipy's private `_lazywhere` function which was removed in scipy 1.14.0. This fix ensures dcurves works with the latest scipy versions.
+- Fixed missing data files in package distribution. Added `dcurves/data/*.csv` to package includes to ensure test data files are properly distributed with the package.
 
 ## [1.1.4] - 2025-05-22
 

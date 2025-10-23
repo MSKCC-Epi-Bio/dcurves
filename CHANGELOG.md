@@ -4,8 +4,6 @@ All notable changes to this project are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
 ## [1.1.6] - 2025-10-23
 
 ### Added
@@ -70,8 +68,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Project metadata, documentation, and changelog updated to reflect broader improvements
 - **Removed:**
   - Black formatting tool along with unnecessary dependencies and redundant directories
-
-## [Released]
 
 ## [1.1.1] - 2024-10-25
 

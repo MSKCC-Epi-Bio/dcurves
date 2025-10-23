@@ -472,151 +472,132 @@ and survival outcomes.</p>
 </span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>
 </span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">initial_stats_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;net_benefit_all&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>
-</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>    <span class="c1"># initial_stats_df[&#39;neg_rate&#39;] = 1 - initial_stats_df[&#39;prevalence&#39;]</span>
-</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>    <span class="c1"># initial_stats_df[&#39;fn_rate&#39;] = initial_stats_df[&#39;prevalence&#39;] - initial_stats_df[&#39;tp_rate&#39;]</span>
-</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>    <span class="c1"># initial_stats_df[&#39;tn_rate&#39;] = initial_stats_df[&#39;neg_rate&#39;] - initial_stats_df[&#39;fp_rate&#39;]</span>
-</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>    <span class="c1">#</span>
-</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>    <span class="c1">#</span>
-</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>    <span class="c1"># initial_stats_df[&#39;test_neg_rate&#39;] = initial_stats_df[&#39;fn_rate&#39;] + initial_stats_df[&#39;tn_rate&#39;]</span>
-</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>    <span class="c1"># initial_stats_df[&#39;ppv&#39;] = initial_stats_df[&#39;tp_rate&#39;] /\</span>
-</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>    <span class="c1">#                               (initial_stats_df[&#39;tp_rate&#39;] + initial_stats_df[&#39;fp_rate&#39;])</span>
-</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>    <span class="c1"># initial_stats_df[&#39;npv&#39;] = initial_stats_df[&#39;tn_rate&#39;] /\</span>
-</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>    <span class="c1">#                               (initial_stats_df[&#39;tn_rate&#39;] + initial_stats_df[&#39;fn_rate&#39;])</span>
-</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>    <span class="c1"># initial_stats_df[&#39;sens&#39;] = initial_stats_df[&#39;tp_rate&#39;] /\</span>
-</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="c1">#                                (initial_stats_df[&#39;tp_rate&#39;] + initial_stats_df[&#39;fn_rate&#39;])</span>
-</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>    <span class="c1"># initial_stats_df[&#39;spec&#39;] = initial_stats_df[&#39;tn_rate&#39;] /\</span>
-</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="c1">#                                (initial_stats_df[&#39;tn_rate&#39;] + initial_stats_df[&#39;fp_rate&#39;])</span>
-</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>    <span class="c1"># initial_stats_df[&#39;lr_pos&#39;] = initial_stats_df[&#39;sens&#39;] /\</span>
-</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>    <span class="c1">#                                  (1 - initial_stats_df[&#39;spec&#39;])</span>
-</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>    <span class="c1"># initial_stats_df[&#39;lr_neg&#39;] = (1 - initial_stats_df[&#39;sens&#39;]) /\</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>    <span class="c1">#                                  initial_stats_df[&#39;spec&#39;]</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>
-</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">initial_stats_df</span>
-</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>
-</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
-</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>
+</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">initial_stats_df</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
+</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>
+</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dca</span><span class="p">(</span>
+</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>    <span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)],</span>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>    <span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>    <span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>    <span class="n">prevalence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>    <span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>    <span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a><span class="sd">    Decision curve analysis is a method for evaluating and comparing prediction</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a><span class="sd">    models that incorporates clinical consequences, requiring only the data set</span>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a><span class="sd">    on which the models are tested, and can be applied to models that have eit-</span>
+</span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a><span class="sd">    her continuous or dichotomous results. The dca function performs decision</span>
+</span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a><span class="sd">    curve analysis for binary and survival outcomes.</span>
 </span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a>
-</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dca</span><span class="p">(</span>
-</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>    <span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)],</span>
-</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>    <span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>    <span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a>    <span class="n">prevalence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>    <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>    <span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a>    <span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a><span class="sd">    Decision curve analysis is a method for evaluating and comparing prediction</span>
-</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="sd">    models that incorporates clinical consequences, requiring only the data set</span>
-</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a><span class="sd">    on which the models are tested, and can be applied to models that have eit-</span>
-</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a><span class="sd">    her continuous or dichotomous results. The dca function performs decision</span>
-</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a><span class="sd">    curve analysis for binary and survival outcomes.</span>
-</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>
-</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a><span class="sd">    Parameters</span>
-</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a><span class="sd">    ----------</span>
-</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a><span class="sd">    data: pd.DataFrame</span>
-</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a><span class="sd">        Initial raw data ideally containing risk scores (scores ranging from 0</span>
-</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a><span class="sd">        to 1), or else predictor/model values, and outcome of interest</span>
-</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a><span class="sd">    outcome: str</span>
-</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a><span class="sd">        Column name of outcome of interest in risks_df</span>
-</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a><span class="sd">    modelnames : list[str]</span>
-</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a><span class="sd">        Column names from data that contain model risk scores or values</span>
-</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a><span class="sd">    thresholds : Iterable</span>
-</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a><span class="sd">        Threshold values (x values) at which net benefit and net interventions</span>
-</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a><span class="sd">        avoided will be calculated</span>
-</span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a><span class="sd">    harm : dict[float]</span>
-</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a><span class="sd">        Models with their associated harm values</span>
-</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a><span class="sd">    models_to_prob : list[str]</span>
-</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a><span class="sd">        Columns that need to be converted to risk scores from 0 to 1</span>
-</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="sd">    prevalence : int or float</span>
-</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a><span class="sd">        Value that indicates the prevalence among the population, only to be</span>
-</span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a><span class="sd">        specified in case-control situations</span>
-</span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a><span class="sd">    time : int or float</span>
-</span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a><span class="sd">        Time of interest in years, used in Survival DCA</span>
-</span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a><span class="sd">    time_to_outcome_col : str</span>
-</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a><span class="sd">        Column name in data containing time to outcome values, used in Survival DCA</span>
-</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="sd">    nper : int</span>
-</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a><span class="sd">        Total number of interventions, multiplies proportion of interventions</span>
-</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a><span class="sd">        avoided to get scaled plots</span>
-</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a>
-</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="sd">    Returns</span>
-</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a><span class="sd">    -------</span>
-</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a><span class="sd">    pd.DataFrame</span>
-</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="sd">        Data containing net benefit and interventions avoided scores to be plotted</span>
-</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a><span class="sd">        against threshold values</span>
-</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>
-</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a><span class="sd">    Examples</span>
-</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a><span class="sd">    --------</span>
-</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a><span class="sd">    from dcurves import dca, plot_graphs, load_test_data</span>
-</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
-</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="sd">    import numpy as np</span>
+</span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a><span class="sd">    Parameters</span>
+</span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a><span class="sd">    ----------</span>
+</span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a><span class="sd">    data: pd.DataFrame</span>
+</span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a><span class="sd">        Initial raw data ideally containing risk scores (scores ranging from 0</span>
+</span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a><span class="sd">        to 1), or else predictor/model values, and outcome of interest</span>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="sd">    outcome: str</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="sd">        Column name of outcome of interest in risks_df</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="sd">    modelnames : list[str]</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a><span class="sd">        Column names from data that contain model risk scores or values</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a><span class="sd">    thresholds : Iterable</span>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a><span class="sd">        Threshold values (x values) at which net benefit and net interventions</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="sd">        avoided will be calculated</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a><span class="sd">    harm : dict[float]</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a><span class="sd">        Models with their associated harm values</span>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="sd">    models_to_prob : list[str]</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a><span class="sd">        Columns that need to be converted to risk scores from 0 to 1</span>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a><span class="sd">    prevalence : int or float</span>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a><span class="sd">        Value that indicates the prevalence among the population, only to be</span>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a><span class="sd">        specified in case-control situations</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a><span class="sd">    time : int or float</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a><span class="sd">        Time of interest in years, used in Survival DCA</span>
+</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a><span class="sd">    time_to_outcome_col : str</span>
+</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a><span class="sd">        Column name in data containing time to outcome values, used in Survival DCA</span>
+</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a><span class="sd">    nper : int</span>
+</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a><span class="sd">        Total number of interventions, multiplies proportion of interventions</span>
+</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a><span class="sd">        avoided to get scaled plots</span>
+</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>
+</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a><span class="sd">    Returns</span>
+</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a><span class="sd">    -------</span>
+</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a><span class="sd">    pd.DataFrame</span>
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a><span class="sd">        Data containing net benefit and interventions avoided scores to be plotted</span>
+</span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a><span class="sd">        against threshold values</span>
+</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>
+</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a><span class="sd">    Examples</span>
+</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a><span class="sd">    --------</span>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a><span class="sd">    from dcurves import dca, plot_graphs, load_test_data</span>
+</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>
+</span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a><span class="sd">    import numpy as np</span>
+</span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>
+</span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a><span class="sd">    |</span>
+</span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a>
+</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a><span class="sd">    dca_results = \</span>
+</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="sd">        dca(</span>
+</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a><span class="sd">            data=load_test_data.load_binary_df(),</span>
+</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a><span class="sd">            outcome=&#39;cancer&#39;,</span>
+</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a><span class="sd">            modelnames=[&#39;famhistory&#39;],</span>
+</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="sd">            thresholds=np.arange(0,0.45,0.01)</span>
+</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a><span class="sd">        )</span>
+</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>
+</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="sd">    |</span>
+</span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a>
+</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a><span class="sd">    plot_graphs(</span>
+</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a><span class="sd">        plot_df=dca_results,</span>
+</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a><span class="sd">        graph_type=&#39;net_benefit&#39;,</span>
+</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a><span class="sd">        y_limits=[-0.05, 0.15],</span>
+</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a><span class="sd">        color_names=[&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;]</span>
+</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a><span class="sd">    )</span>
 </span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="sd">    |</span>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>
-</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a><span class="sd">    dca_results = \</span>
-</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a><span class="sd">        dca(</span>
-</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a><span class="sd">            data=load_test_data.load_binary_df(),</span>
-</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a><span class="sd">            outcome=&#39;cancer&#39;,</span>
-</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a><span class="sd">            modelnames=[&#39;famhistory&#39;],</span>
-</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a><span class="sd">            thresholds=np.arange(0,0.45,0.01)</span>
-</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a><span class="sd">        )</span>
-</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a>
-</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a><span class="sd">    |</span>
-</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>
-</span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a><span class="sd">    plot_graphs(</span>
-</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a><span class="sd">        plot_df=dca_results,</span>
-</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a><span class="sd">        graph_type=&#39;net_benefit&#39;,</span>
-</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a><span class="sd">        y_limits=[-0.05, 0.15],</span>
-</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a><span class="sd">        color_names=[&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;]</span>
-</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a><span class="sd">    )</span>
-</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a>
-</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a>
-</span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; must be a pandas DataFrame&quot;</span><span class="p">)</span>
-</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a>
-</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>    <span class="n">risks_df</span> <span class="o">=</span> <span class="n">_create_risks_df</span><span class="p">(</span>
-</span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a>        <span class="n">models_to_prob</span><span class="o">=</span><span class="n">models_to_prob</span><span class="p">,</span>
-</span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="L-527"><a href="#L-527"><span class="linenos">527</span></a>    <span class="p">)</span>
-</span><span id="L-528"><a href="#L-528"><span class="linenos">528</span></a>
-</span><span id="L-529"><a href="#L-529"><span class="linenos">529</span></a>    <span class="n">rectified_risks_df</span> <span class="o">=</span> <span class="n">_rectify_model_risk_boundaries</span><span class="p">(</span><span class="n">risks_df</span><span class="o">=</span><span class="n">risks_df</span><span class="p">,</span> <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">)</span>
-</span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a>
-</span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a>    <span class="n">prevalence_value</span> <span class="o">=</span> <span class="n">_calc_prevalence</span><span class="p">(</span>
-</span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
-</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="L-534"><a href="#L-534"><span class="linenos">534</span></a>        <span class="n">prevalence</span><span class="o">=</span><span class="n">prevalence</span><span class="p">,</span>
-</span><span id="L-535"><a href="#L-535"><span class="linenos">535</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a>    <span class="p">)</span>
-</span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a>
-</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a>    <span class="n">initial_df</span> <span class="o">=</span> <span class="n">_create_initial_df</span><span class="p">(</span>
-</span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
-</span><span id="L-541"><a href="#L-541"><span class="linenos">541</span></a>        <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">,</span>
-</span><span id="L-542"><a href="#L-542"><span class="linenos">542</span></a>        <span class="n">input_df_rownum</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rectified_risks_df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
-</span><span id="L-543"><a href="#L-543"><span class="linenos">543</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
-</span><span id="L-544"><a href="#L-544"><span class="linenos">544</span></a>        <span class="n">harm</span><span class="o">=</span><span class="n">harm</span><span class="p">,</span>
-</span><span id="L-545"><a href="#L-545"><span class="linenos">545</span></a>    <span class="p">)</span>
-</span><span id="L-546"><a href="#L-546"><span class="linenos">546</span></a>
-</span><span id="L-547"><a href="#L-547"><span class="linenos">547</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">_calc_initial_stats</span><span class="p">(</span>
-</span><span id="L-548"><a href="#L-548"><span class="linenos">548</span></a>        <span class="n">initial_df</span><span class="o">=</span><span class="n">initial_df</span><span class="p">,</span>
-</span><span id="L-549"><a href="#L-549"><span class="linenos">549</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
-</span><span id="L-550"><a href="#L-550"><span class="linenos">550</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
-</span><span id="L-551"><a href="#L-551"><span class="linenos">551</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="L-552"><a href="#L-552"><span class="linenos">552</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
-</span><span id="L-553"><a href="#L-553"><span class="linenos">553</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="L-554"><a href="#L-554"><span class="linenos">554</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="L-555"><a href="#L-555"><span class="linenos">555</span></a>    <span class="p">)</span>
-</span><span id="L-556"><a href="#L-556"><span class="linenos">556</span></a>
-</span><span id="L-557"><a href="#L-557"><span class="linenos">557</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">_calc_more_stats</span><span class="p">(</span><span class="n">initial_stats_df</span><span class="o">=</span><span class="n">initial_stats_df</span><span class="p">,</span> <span class="n">nper</span><span class="o">=</span><span class="n">nper</span><span class="p">)</span>
-</span><span id="L-558"><a href="#L-558"><span class="linenos">558</span></a>
-</span><span id="L-559"><a href="#L-559"><span class="linenos">559</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
+</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; must be a pandas DataFrame&quot;</span><span class="p">)</span>
+</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>
+</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>    <span class="n">risks_df</span> <span class="o">=</span> <span class="n">_create_risks_df</span><span class="p">(</span>
+</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>        <span class="n">models_to_prob</span><span class="o">=</span><span class="n">models_to_prob</span><span class="p">,</span>
+</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>    <span class="p">)</span>
+</span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>
+</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>    <span class="n">rectified_risks_df</span> <span class="o">=</span> <span class="n">_rectify_model_risk_boundaries</span><span class="p">(</span><span class="n">risks_df</span><span class="o">=</span><span class="n">risks_df</span><span class="p">,</span> <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">)</span>
+</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>
+</span><span id="L-512"><a href="#L-512"><span class="linenos">512</span></a>    <span class="n">prevalence_value</span> <span class="o">=</span> <span class="n">_calc_prevalence</span><span class="p">(</span>
+</span><span id="L-513"><a href="#L-513"><span class="linenos">513</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="L-514"><a href="#L-514"><span class="linenos">514</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="L-515"><a href="#L-515"><span class="linenos">515</span></a>        <span class="n">prevalence</span><span class="o">=</span><span class="n">prevalence</span><span class="p">,</span>
+</span><span id="L-516"><a href="#L-516"><span class="linenos">516</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="L-517"><a href="#L-517"><span class="linenos">517</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="L-518"><a href="#L-518"><span class="linenos">518</span></a>    <span class="p">)</span>
+</span><span id="L-519"><a href="#L-519"><span class="linenos">519</span></a>
+</span><span id="L-520"><a href="#L-520"><span class="linenos">520</span></a>    <span class="n">initial_df</span> <span class="o">=</span> <span class="n">_create_initial_df</span><span class="p">(</span>
+</span><span id="L-521"><a href="#L-521"><span class="linenos">521</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="L-522"><a href="#L-522"><span class="linenos">522</span></a>        <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">,</span>
+</span><span id="L-523"><a href="#L-523"><span class="linenos">523</span></a>        <span class="n">input_df_rownum</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rectified_risks_df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
+</span><span id="L-524"><a href="#L-524"><span class="linenos">524</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="L-525"><a href="#L-525"><span class="linenos">525</span></a>        <span class="n">harm</span><span class="o">=</span><span class="n">harm</span><span class="p">,</span>
+</span><span id="L-526"><a href="#L-526"><span class="linenos">526</span></a>    <span class="p">)</span>
+</span><span id="L-527"><a href="#L-527"><span class="linenos">527</span></a>
+</span><span id="L-528"><a href="#L-528"><span class="linenos">528</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">_calc_initial_stats</span><span class="p">(</span>
+</span><span id="L-529"><a href="#L-529"><span class="linenos">529</span></a>        <span class="n">initial_df</span><span class="o">=</span><span class="n">initial_df</span><span class="p">,</span>
+</span><span id="L-530"><a href="#L-530"><span class="linenos">530</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="L-531"><a href="#L-531"><span class="linenos">531</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="L-532"><a href="#L-532"><span class="linenos">532</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="L-533"><a href="#L-533"><span class="linenos">533</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="L-534"><a href="#L-534"><span class="linenos">534</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="L-535"><a href="#L-535"><span class="linenos">535</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="L-536"><a href="#L-536"><span class="linenos">536</span></a>    <span class="p">)</span>
+</span><span id="L-537"><a href="#L-537"><span class="linenos">537</span></a>
+</span><span id="L-538"><a href="#L-538"><span class="linenos">538</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">_calc_more_stats</span><span class="p">(</span><span class="n">initial_stats_df</span><span class="o">=</span><span class="n">initial_stats_df</span><span class="p">,</span> <span class="n">nper</span><span class="o">=</span><span class="n">nper</span><span class="p">)</span>
+</span><span id="L-539"><a href="#L-539"><span class="linenos">539</span></a>
+</span><span id="L-540"><a href="#L-540"><span class="linenos">540</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
 </span></pre></div>
 
 
@@ -632,127 +613,127 @@ and survival outcomes.</p>
 
     </div>
     <a class="headerlink" href="#dca"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="dca-440"><a href="#dca-440"><span class="linenos">440</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dca</span><span class="p">(</span>
-</span><span id="dca-441"><a href="#dca-441"><span class="linenos">441</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="dca-442"><a href="#dca-442"><span class="linenos">442</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="dca-443"><a href="#dca-443"><span class="linenos">443</span></a>    <span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-</span><span id="dca-444"><a href="#dca-444"><span class="linenos">444</span></a>    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)],</span>
-</span><span id="dca-445"><a href="#dca-445"><span class="linenos">445</span></a>    <span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="dca-446"><a href="#dca-446"><span class="linenos">446</span></a>    <span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="dca-447"><a href="#dca-447"><span class="linenos">447</span></a>    <span class="n">prevalence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="dca-448"><a href="#dca-448"><span class="linenos">448</span></a>    <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="dca-449"><a href="#dca-449"><span class="linenos">449</span></a>    <span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="dca-450"><a href="#dca-450"><span class="linenos">450</span></a>    <span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-</span><span id="dca-451"><a href="#dca-451"><span class="linenos">451</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="dca-452"><a href="#dca-452"><span class="linenos">452</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="dca-453"><a href="#dca-453"><span class="linenos">453</span></a><span class="sd">    Decision curve analysis is a method for evaluating and comparing prediction</span>
-</span><span id="dca-454"><a href="#dca-454"><span class="linenos">454</span></a><span class="sd">    models that incorporates clinical consequences, requiring only the data set</span>
-</span><span id="dca-455"><a href="#dca-455"><span class="linenos">455</span></a><span class="sd">    on which the models are tested, and can be applied to models that have eit-</span>
-</span><span id="dca-456"><a href="#dca-456"><span class="linenos">456</span></a><span class="sd">    her continuous or dichotomous results. The dca function performs decision</span>
-</span><span id="dca-457"><a href="#dca-457"><span class="linenos">457</span></a><span class="sd">    curve analysis for binary and survival outcomes.</span>
-</span><span id="dca-458"><a href="#dca-458"><span class="linenos">458</span></a>
-</span><span id="dca-459"><a href="#dca-459"><span class="linenos">459</span></a><span class="sd">    Parameters</span>
-</span><span id="dca-460"><a href="#dca-460"><span class="linenos">460</span></a><span class="sd">    ----------</span>
-</span><span id="dca-461"><a href="#dca-461"><span class="linenos">461</span></a><span class="sd">    data: pd.DataFrame</span>
-</span><span id="dca-462"><a href="#dca-462"><span class="linenos">462</span></a><span class="sd">        Initial raw data ideally containing risk scores (scores ranging from 0</span>
-</span><span id="dca-463"><a href="#dca-463"><span class="linenos">463</span></a><span class="sd">        to 1), or else predictor/model values, and outcome of interest</span>
-</span><span id="dca-464"><a href="#dca-464"><span class="linenos">464</span></a><span class="sd">    outcome: str</span>
-</span><span id="dca-465"><a href="#dca-465"><span class="linenos">465</span></a><span class="sd">        Column name of outcome of interest in risks_df</span>
-</span><span id="dca-466"><a href="#dca-466"><span class="linenos">466</span></a><span class="sd">    modelnames : list[str]</span>
-</span><span id="dca-467"><a href="#dca-467"><span class="linenos">467</span></a><span class="sd">        Column names from data that contain model risk scores or values</span>
-</span><span id="dca-468"><a href="#dca-468"><span class="linenos">468</span></a><span class="sd">    thresholds : Iterable</span>
-</span><span id="dca-469"><a href="#dca-469"><span class="linenos">469</span></a><span class="sd">        Threshold values (x values) at which net benefit and net interventions</span>
-</span><span id="dca-470"><a href="#dca-470"><span class="linenos">470</span></a><span class="sd">        avoided will be calculated</span>
-</span><span id="dca-471"><a href="#dca-471"><span class="linenos">471</span></a><span class="sd">    harm : dict[float]</span>
-</span><span id="dca-472"><a href="#dca-472"><span class="linenos">472</span></a><span class="sd">        Models with their associated harm values</span>
-</span><span id="dca-473"><a href="#dca-473"><span class="linenos">473</span></a><span class="sd">    models_to_prob : list[str]</span>
-</span><span id="dca-474"><a href="#dca-474"><span class="linenos">474</span></a><span class="sd">        Columns that need to be converted to risk scores from 0 to 1</span>
-</span><span id="dca-475"><a href="#dca-475"><span class="linenos">475</span></a><span class="sd">    prevalence : int or float</span>
-</span><span id="dca-476"><a href="#dca-476"><span class="linenos">476</span></a><span class="sd">        Value that indicates the prevalence among the population, only to be</span>
-</span><span id="dca-477"><a href="#dca-477"><span class="linenos">477</span></a><span class="sd">        specified in case-control situations</span>
-</span><span id="dca-478"><a href="#dca-478"><span class="linenos">478</span></a><span class="sd">    time : int or float</span>
-</span><span id="dca-479"><a href="#dca-479"><span class="linenos">479</span></a><span class="sd">        Time of interest in years, used in Survival DCA</span>
-</span><span id="dca-480"><a href="#dca-480"><span class="linenos">480</span></a><span class="sd">    time_to_outcome_col : str</span>
-</span><span id="dca-481"><a href="#dca-481"><span class="linenos">481</span></a><span class="sd">        Column name in data containing time to outcome values, used in Survival DCA</span>
-</span><span id="dca-482"><a href="#dca-482"><span class="linenos">482</span></a><span class="sd">    nper : int</span>
-</span><span id="dca-483"><a href="#dca-483"><span class="linenos">483</span></a><span class="sd">        Total number of interventions, multiplies proportion of interventions</span>
-</span><span id="dca-484"><a href="#dca-484"><span class="linenos">484</span></a><span class="sd">        avoided to get scaled plots</span>
-</span><span id="dca-485"><a href="#dca-485"><span class="linenos">485</span></a>
-</span><span id="dca-486"><a href="#dca-486"><span class="linenos">486</span></a><span class="sd">    Returns</span>
-</span><span id="dca-487"><a href="#dca-487"><span class="linenos">487</span></a><span class="sd">    -------</span>
-</span><span id="dca-488"><a href="#dca-488"><span class="linenos">488</span></a><span class="sd">    pd.DataFrame</span>
-</span><span id="dca-489"><a href="#dca-489"><span class="linenos">489</span></a><span class="sd">        Data containing net benefit and interventions avoided scores to be plotted</span>
-</span><span id="dca-490"><a href="#dca-490"><span class="linenos">490</span></a><span class="sd">        against threshold values</span>
-</span><span id="dca-491"><a href="#dca-491"><span class="linenos">491</span></a>
-</span><span id="dca-492"><a href="#dca-492"><span class="linenos">492</span></a><span class="sd">    Examples</span>
-</span><span id="dca-493"><a href="#dca-493"><span class="linenos">493</span></a><span class="sd">    --------</span>
-</span><span id="dca-494"><a href="#dca-494"><span class="linenos">494</span></a><span class="sd">    from dcurves import dca, plot_graphs, load_test_data</span>
-</span><span id="dca-495"><a href="#dca-495"><span class="linenos">495</span></a>
-</span><span id="dca-496"><a href="#dca-496"><span class="linenos">496</span></a><span class="sd">    import numpy as np</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="dca-421"><a href="#dca-421"><span class="linenos">421</span></a><span class="k">def</span><span class="w"> </span><span class="nf">dca</span><span class="p">(</span>
+</span><span id="dca-422"><a href="#dca-422"><span class="linenos">422</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="dca-423"><a href="#dca-423"><span class="linenos">423</span></a>    <span class="n">outcome</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="dca-424"><a href="#dca-424"><span class="linenos">424</span></a>    <span class="n">modelnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+</span><span id="dca-425"><a href="#dca-425"><span class="linenos">425</span></a>    <span class="n">thresholds</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)],</span>
+</span><span id="dca-426"><a href="#dca-426"><span class="linenos">426</span></a>    <span class="n">harm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-427"><a href="#dca-427"><span class="linenos">427</span></a>    <span class="n">models_to_prob</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-428"><a href="#dca-428"><span class="linenos">428</span></a>    <span class="n">prevalence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-429"><a href="#dca-429"><span class="linenos">429</span></a>    <span class="n">time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-430"><a href="#dca-430"><span class="linenos">430</span></a>    <span class="n">time_to_outcome_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="dca-431"><a href="#dca-431"><span class="linenos">431</span></a>    <span class="n">nper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="dca-432"><a href="#dca-432"><span class="linenos">432</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="dca-433"><a href="#dca-433"><span class="linenos">433</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="dca-434"><a href="#dca-434"><span class="linenos">434</span></a><span class="sd">    Decision curve analysis is a method for evaluating and comparing prediction</span>
+</span><span id="dca-435"><a href="#dca-435"><span class="linenos">435</span></a><span class="sd">    models that incorporates clinical consequences, requiring only the data set</span>
+</span><span id="dca-436"><a href="#dca-436"><span class="linenos">436</span></a><span class="sd">    on which the models are tested, and can be applied to models that have eit-</span>
+</span><span id="dca-437"><a href="#dca-437"><span class="linenos">437</span></a><span class="sd">    her continuous or dichotomous results. The dca function performs decision</span>
+</span><span id="dca-438"><a href="#dca-438"><span class="linenos">438</span></a><span class="sd">    curve analysis for binary and survival outcomes.</span>
+</span><span id="dca-439"><a href="#dca-439"><span class="linenos">439</span></a>
+</span><span id="dca-440"><a href="#dca-440"><span class="linenos">440</span></a><span class="sd">    Parameters</span>
+</span><span id="dca-441"><a href="#dca-441"><span class="linenos">441</span></a><span class="sd">    ----------</span>
+</span><span id="dca-442"><a href="#dca-442"><span class="linenos">442</span></a><span class="sd">    data: pd.DataFrame</span>
+</span><span id="dca-443"><a href="#dca-443"><span class="linenos">443</span></a><span class="sd">        Initial raw data ideally containing risk scores (scores ranging from 0</span>
+</span><span id="dca-444"><a href="#dca-444"><span class="linenos">444</span></a><span class="sd">        to 1), or else predictor/model values, and outcome of interest</span>
+</span><span id="dca-445"><a href="#dca-445"><span class="linenos">445</span></a><span class="sd">    outcome: str</span>
+</span><span id="dca-446"><a href="#dca-446"><span class="linenos">446</span></a><span class="sd">        Column name of outcome of interest in risks_df</span>
+</span><span id="dca-447"><a href="#dca-447"><span class="linenos">447</span></a><span class="sd">    modelnames : list[str]</span>
+</span><span id="dca-448"><a href="#dca-448"><span class="linenos">448</span></a><span class="sd">        Column names from data that contain model risk scores or values</span>
+</span><span id="dca-449"><a href="#dca-449"><span class="linenos">449</span></a><span class="sd">    thresholds : Iterable</span>
+</span><span id="dca-450"><a href="#dca-450"><span class="linenos">450</span></a><span class="sd">        Threshold values (x values) at which net benefit and net interventions</span>
+</span><span id="dca-451"><a href="#dca-451"><span class="linenos">451</span></a><span class="sd">        avoided will be calculated</span>
+</span><span id="dca-452"><a href="#dca-452"><span class="linenos">452</span></a><span class="sd">    harm : dict[float]</span>
+</span><span id="dca-453"><a href="#dca-453"><span class="linenos">453</span></a><span class="sd">        Models with their associated harm values</span>
+</span><span id="dca-454"><a href="#dca-454"><span class="linenos">454</span></a><span class="sd">    models_to_prob : list[str]</span>
+</span><span id="dca-455"><a href="#dca-455"><span class="linenos">455</span></a><span class="sd">        Columns that need to be converted to risk scores from 0 to 1</span>
+</span><span id="dca-456"><a href="#dca-456"><span class="linenos">456</span></a><span class="sd">    prevalence : int or float</span>
+</span><span id="dca-457"><a href="#dca-457"><span class="linenos">457</span></a><span class="sd">        Value that indicates the prevalence among the population, only to be</span>
+</span><span id="dca-458"><a href="#dca-458"><span class="linenos">458</span></a><span class="sd">        specified in case-control situations</span>
+</span><span id="dca-459"><a href="#dca-459"><span class="linenos">459</span></a><span class="sd">    time : int or float</span>
+</span><span id="dca-460"><a href="#dca-460"><span class="linenos">460</span></a><span class="sd">        Time of interest in years, used in Survival DCA</span>
+</span><span id="dca-461"><a href="#dca-461"><span class="linenos">461</span></a><span class="sd">    time_to_outcome_col : str</span>
+</span><span id="dca-462"><a href="#dca-462"><span class="linenos">462</span></a><span class="sd">        Column name in data containing time to outcome values, used in Survival DCA</span>
+</span><span id="dca-463"><a href="#dca-463"><span class="linenos">463</span></a><span class="sd">    nper : int</span>
+</span><span id="dca-464"><a href="#dca-464"><span class="linenos">464</span></a><span class="sd">        Total number of interventions, multiplies proportion of interventions</span>
+</span><span id="dca-465"><a href="#dca-465"><span class="linenos">465</span></a><span class="sd">        avoided to get scaled plots</span>
+</span><span id="dca-466"><a href="#dca-466"><span class="linenos">466</span></a>
+</span><span id="dca-467"><a href="#dca-467"><span class="linenos">467</span></a><span class="sd">    Returns</span>
+</span><span id="dca-468"><a href="#dca-468"><span class="linenos">468</span></a><span class="sd">    -------</span>
+</span><span id="dca-469"><a href="#dca-469"><span class="linenos">469</span></a><span class="sd">    pd.DataFrame</span>
+</span><span id="dca-470"><a href="#dca-470"><span class="linenos">470</span></a><span class="sd">        Data containing net benefit and interventions avoided scores to be plotted</span>
+</span><span id="dca-471"><a href="#dca-471"><span class="linenos">471</span></a><span class="sd">        against threshold values</span>
+</span><span id="dca-472"><a href="#dca-472"><span class="linenos">472</span></a>
+</span><span id="dca-473"><a href="#dca-473"><span class="linenos">473</span></a><span class="sd">    Examples</span>
+</span><span id="dca-474"><a href="#dca-474"><span class="linenos">474</span></a><span class="sd">    --------</span>
+</span><span id="dca-475"><a href="#dca-475"><span class="linenos">475</span></a><span class="sd">    from dcurves import dca, plot_graphs, load_test_data</span>
+</span><span id="dca-476"><a href="#dca-476"><span class="linenos">476</span></a>
+</span><span id="dca-477"><a href="#dca-477"><span class="linenos">477</span></a><span class="sd">    import numpy as np</span>
+</span><span id="dca-478"><a href="#dca-478"><span class="linenos">478</span></a>
+</span><span id="dca-479"><a href="#dca-479"><span class="linenos">479</span></a><span class="sd">    |</span>
+</span><span id="dca-480"><a href="#dca-480"><span class="linenos">480</span></a>
+</span><span id="dca-481"><a href="#dca-481"><span class="linenos">481</span></a><span class="sd">    dca_results = \</span>
+</span><span id="dca-482"><a href="#dca-482"><span class="linenos">482</span></a><span class="sd">        dca(</span>
+</span><span id="dca-483"><a href="#dca-483"><span class="linenos">483</span></a><span class="sd">            data=load_test_data.load_binary_df(),</span>
+</span><span id="dca-484"><a href="#dca-484"><span class="linenos">484</span></a><span class="sd">            outcome=&#39;cancer&#39;,</span>
+</span><span id="dca-485"><a href="#dca-485"><span class="linenos">485</span></a><span class="sd">            modelnames=[&#39;famhistory&#39;],</span>
+</span><span id="dca-486"><a href="#dca-486"><span class="linenos">486</span></a><span class="sd">            thresholds=np.arange(0,0.45,0.01)</span>
+</span><span id="dca-487"><a href="#dca-487"><span class="linenos">487</span></a><span class="sd">        )</span>
+</span><span id="dca-488"><a href="#dca-488"><span class="linenos">488</span></a>
+</span><span id="dca-489"><a href="#dca-489"><span class="linenos">489</span></a><span class="sd">    |</span>
+</span><span id="dca-490"><a href="#dca-490"><span class="linenos">490</span></a>
+</span><span id="dca-491"><a href="#dca-491"><span class="linenos">491</span></a><span class="sd">    plot_graphs(</span>
+</span><span id="dca-492"><a href="#dca-492"><span class="linenos">492</span></a><span class="sd">        plot_df=dca_results,</span>
+</span><span id="dca-493"><a href="#dca-493"><span class="linenos">493</span></a><span class="sd">        graph_type=&#39;net_benefit&#39;,</span>
+</span><span id="dca-494"><a href="#dca-494"><span class="linenos">494</span></a><span class="sd">        y_limits=[-0.05, 0.15],</span>
+</span><span id="dca-495"><a href="#dca-495"><span class="linenos">495</span></a><span class="sd">        color_names=[&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;]</span>
+</span><span id="dca-496"><a href="#dca-496"><span class="linenos">496</span></a><span class="sd">    )</span>
 </span><span id="dca-497"><a href="#dca-497"><span class="linenos">497</span></a>
-</span><span id="dca-498"><a href="#dca-498"><span class="linenos">498</span></a><span class="sd">    |</span>
+</span><span id="dca-498"><a href="#dca-498"><span class="linenos">498</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="dca-499"><a href="#dca-499"><span class="linenos">499</span></a>
-</span><span id="dca-500"><a href="#dca-500"><span class="linenos">500</span></a><span class="sd">    dca_results = \</span>
-</span><span id="dca-501"><a href="#dca-501"><span class="linenos">501</span></a><span class="sd">        dca(</span>
-</span><span id="dca-502"><a href="#dca-502"><span class="linenos">502</span></a><span class="sd">            data=load_test_data.load_binary_df(),</span>
-</span><span id="dca-503"><a href="#dca-503"><span class="linenos">503</span></a><span class="sd">            outcome=&#39;cancer&#39;,</span>
-</span><span id="dca-504"><a href="#dca-504"><span class="linenos">504</span></a><span class="sd">            modelnames=[&#39;famhistory&#39;],</span>
-</span><span id="dca-505"><a href="#dca-505"><span class="linenos">505</span></a><span class="sd">            thresholds=np.arange(0,0.45,0.01)</span>
-</span><span id="dca-506"><a href="#dca-506"><span class="linenos">506</span></a><span class="sd">        )</span>
-</span><span id="dca-507"><a href="#dca-507"><span class="linenos">507</span></a>
-</span><span id="dca-508"><a href="#dca-508"><span class="linenos">508</span></a><span class="sd">    |</span>
-</span><span id="dca-509"><a href="#dca-509"><span class="linenos">509</span></a>
-</span><span id="dca-510"><a href="#dca-510"><span class="linenos">510</span></a><span class="sd">    plot_graphs(</span>
-</span><span id="dca-511"><a href="#dca-511"><span class="linenos">511</span></a><span class="sd">        plot_df=dca_results,</span>
-</span><span id="dca-512"><a href="#dca-512"><span class="linenos">512</span></a><span class="sd">        graph_type=&#39;net_benefit&#39;,</span>
-</span><span id="dca-513"><a href="#dca-513"><span class="linenos">513</span></a><span class="sd">        y_limits=[-0.05, 0.15],</span>
-</span><span id="dca-514"><a href="#dca-514"><span class="linenos">514</span></a><span class="sd">        color_names=[&#39;blue&#39;, &#39;red&#39;, &#39;green&#39;]</span>
-</span><span id="dca-515"><a href="#dca-515"><span class="linenos">515</span></a><span class="sd">    )</span>
-</span><span id="dca-516"><a href="#dca-516"><span class="linenos">516</span></a>
-</span><span id="dca-517"><a href="#dca-517"><span class="linenos">517</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="dca-518"><a href="#dca-518"><span class="linenos">518</span></a>
-</span><span id="dca-519"><a href="#dca-519"><span class="linenos">519</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-</span><span id="dca-520"><a href="#dca-520"><span class="linenos">520</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; must be a pandas DataFrame&quot;</span><span class="p">)</span>
-</span><span id="dca-521"><a href="#dca-521"><span class="linenos">521</span></a>
-</span><span id="dca-522"><a href="#dca-522"><span class="linenos">522</span></a>    <span class="n">risks_df</span> <span class="o">=</span> <span class="n">_create_risks_df</span><span class="p">(</span>
-</span><span id="dca-523"><a href="#dca-523"><span class="linenos">523</span></a>        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-</span><span id="dca-524"><a href="#dca-524"><span class="linenos">524</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="dca-525"><a href="#dca-525"><span class="linenos">525</span></a>        <span class="n">models_to_prob</span><span class="o">=</span><span class="n">models_to_prob</span><span class="p">,</span>
-</span><span id="dca-526"><a href="#dca-526"><span class="linenos">526</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="dca-527"><a href="#dca-527"><span class="linenos">527</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="dca-528"><a href="#dca-528"><span class="linenos">528</span></a>    <span class="p">)</span>
-</span><span id="dca-529"><a href="#dca-529"><span class="linenos">529</span></a>
-</span><span id="dca-530"><a href="#dca-530"><span class="linenos">530</span></a>    <span class="n">rectified_risks_df</span> <span class="o">=</span> <span class="n">_rectify_model_risk_boundaries</span><span class="p">(</span><span class="n">risks_df</span><span class="o">=</span><span class="n">risks_df</span><span class="p">,</span> <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">)</span>
-</span><span id="dca-531"><a href="#dca-531"><span class="linenos">531</span></a>
-</span><span id="dca-532"><a href="#dca-532"><span class="linenos">532</span></a>    <span class="n">prevalence_value</span> <span class="o">=</span> <span class="n">_calc_prevalence</span><span class="p">(</span>
-</span><span id="dca-533"><a href="#dca-533"><span class="linenos">533</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
-</span><span id="dca-534"><a href="#dca-534"><span class="linenos">534</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="dca-535"><a href="#dca-535"><span class="linenos">535</span></a>        <span class="n">prevalence</span><span class="o">=</span><span class="n">prevalence</span><span class="p">,</span>
-</span><span id="dca-536"><a href="#dca-536"><span class="linenos">536</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="dca-537"><a href="#dca-537"><span class="linenos">537</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="dca-538"><a href="#dca-538"><span class="linenos">538</span></a>    <span class="p">)</span>
-</span><span id="dca-539"><a href="#dca-539"><span class="linenos">539</span></a>
-</span><span id="dca-540"><a href="#dca-540"><span class="linenos">540</span></a>    <span class="n">initial_df</span> <span class="o">=</span> <span class="n">_create_initial_df</span><span class="p">(</span>
-</span><span id="dca-541"><a href="#dca-541"><span class="linenos">541</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
-</span><span id="dca-542"><a href="#dca-542"><span class="linenos">542</span></a>        <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">,</span>
-</span><span id="dca-543"><a href="#dca-543"><span class="linenos">543</span></a>        <span class="n">input_df_rownum</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rectified_risks_df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
-</span><span id="dca-544"><a href="#dca-544"><span class="linenos">544</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
-</span><span id="dca-545"><a href="#dca-545"><span class="linenos">545</span></a>        <span class="n">harm</span><span class="o">=</span><span class="n">harm</span><span class="p">,</span>
-</span><span id="dca-546"><a href="#dca-546"><span class="linenos">546</span></a>    <span class="p">)</span>
-</span><span id="dca-547"><a href="#dca-547"><span class="linenos">547</span></a>
-</span><span id="dca-548"><a href="#dca-548"><span class="linenos">548</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">_calc_initial_stats</span><span class="p">(</span>
-</span><span id="dca-549"><a href="#dca-549"><span class="linenos">549</span></a>        <span class="n">initial_df</span><span class="o">=</span><span class="n">initial_df</span><span class="p">,</span>
-</span><span id="dca-550"><a href="#dca-550"><span class="linenos">550</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
-</span><span id="dca-551"><a href="#dca-551"><span class="linenos">551</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
-</span><span id="dca-552"><a href="#dca-552"><span class="linenos">552</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
-</span><span id="dca-553"><a href="#dca-553"><span class="linenos">553</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
-</span><span id="dca-554"><a href="#dca-554"><span class="linenos">554</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
-</span><span id="dca-555"><a href="#dca-555"><span class="linenos">555</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
-</span><span id="dca-556"><a href="#dca-556"><span class="linenos">556</span></a>    <span class="p">)</span>
-</span><span id="dca-557"><a href="#dca-557"><span class="linenos">557</span></a>
-</span><span id="dca-558"><a href="#dca-558"><span class="linenos">558</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">_calc_more_stats</span><span class="p">(</span><span class="n">initial_stats_df</span><span class="o">=</span><span class="n">initial_stats_df</span><span class="p">,</span> <span class="n">nper</span><span class="o">=</span><span class="n">nper</span><span class="p">)</span>
-</span><span id="dca-559"><a href="#dca-559"><span class="linenos">559</span></a>
-</span><span id="dca-560"><a href="#dca-560"><span class="linenos">560</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
+</span><span id="dca-500"><a href="#dca-500"><span class="linenos">500</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="dca-501"><a href="#dca-501"><span class="linenos">501</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; must be a pandas DataFrame&quot;</span><span class="p">)</span>
+</span><span id="dca-502"><a href="#dca-502"><span class="linenos">502</span></a>
+</span><span id="dca-503"><a href="#dca-503"><span class="linenos">503</span></a>    <span class="n">risks_df</span> <span class="o">=</span> <span class="n">_create_risks_df</span><span class="p">(</span>
+</span><span id="dca-504"><a href="#dca-504"><span class="linenos">504</span></a>        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+</span><span id="dca-505"><a href="#dca-505"><span class="linenos">505</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-506"><a href="#dca-506"><span class="linenos">506</span></a>        <span class="n">models_to_prob</span><span class="o">=</span><span class="n">models_to_prob</span><span class="p">,</span>
+</span><span id="dca-507"><a href="#dca-507"><span class="linenos">507</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-508"><a href="#dca-508"><span class="linenos">508</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-509"><a href="#dca-509"><span class="linenos">509</span></a>    <span class="p">)</span>
+</span><span id="dca-510"><a href="#dca-510"><span class="linenos">510</span></a>
+</span><span id="dca-511"><a href="#dca-511"><span class="linenos">511</span></a>    <span class="n">rectified_risks_df</span> <span class="o">=</span> <span class="n">_rectify_model_risk_boundaries</span><span class="p">(</span><span class="n">risks_df</span><span class="o">=</span><span class="n">risks_df</span><span class="p">,</span> <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">)</span>
+</span><span id="dca-512"><a href="#dca-512"><span class="linenos">512</span></a>
+</span><span id="dca-513"><a href="#dca-513"><span class="linenos">513</span></a>    <span class="n">prevalence_value</span> <span class="o">=</span> <span class="n">_calc_prevalence</span><span class="p">(</span>
+</span><span id="dca-514"><a href="#dca-514"><span class="linenos">514</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="dca-515"><a href="#dca-515"><span class="linenos">515</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-516"><a href="#dca-516"><span class="linenos">516</span></a>        <span class="n">prevalence</span><span class="o">=</span><span class="n">prevalence</span><span class="p">,</span>
+</span><span id="dca-517"><a href="#dca-517"><span class="linenos">517</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-518"><a href="#dca-518"><span class="linenos">518</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-519"><a href="#dca-519"><span class="linenos">519</span></a>    <span class="p">)</span>
+</span><span id="dca-520"><a href="#dca-520"><span class="linenos">520</span></a>
+</span><span id="dca-521"><a href="#dca-521"><span class="linenos">521</span></a>    <span class="n">initial_df</span> <span class="o">=</span> <span class="n">_create_initial_df</span><span class="p">(</span>
+</span><span id="dca-522"><a href="#dca-522"><span class="linenos">522</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="dca-523"><a href="#dca-523"><span class="linenos">523</span></a>        <span class="n">modelnames</span><span class="o">=</span><span class="n">modelnames</span><span class="p">,</span>
+</span><span id="dca-524"><a href="#dca-524"><span class="linenos">524</span></a>        <span class="n">input_df_rownum</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">rectified_risks_df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
+</span><span id="dca-525"><a href="#dca-525"><span class="linenos">525</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="dca-526"><a href="#dca-526"><span class="linenos">526</span></a>        <span class="n">harm</span><span class="o">=</span><span class="n">harm</span><span class="p">,</span>
+</span><span id="dca-527"><a href="#dca-527"><span class="linenos">527</span></a>    <span class="p">)</span>
+</span><span id="dca-528"><a href="#dca-528"><span class="linenos">528</span></a>
+</span><span id="dca-529"><a href="#dca-529"><span class="linenos">529</span></a>    <span class="n">initial_stats_df</span> <span class="o">=</span> <span class="n">_calc_initial_stats</span><span class="p">(</span>
+</span><span id="dca-530"><a href="#dca-530"><span class="linenos">530</span></a>        <span class="n">initial_df</span><span class="o">=</span><span class="n">initial_df</span><span class="p">,</span>
+</span><span id="dca-531"><a href="#dca-531"><span class="linenos">531</span></a>        <span class="n">risks_df</span><span class="o">=</span><span class="n">rectified_risks_df</span><span class="p">,</span>
+</span><span id="dca-532"><a href="#dca-532"><span class="linenos">532</span></a>        <span class="n">thresholds</span><span class="o">=</span><span class="n">thresholds</span><span class="p">,</span>
+</span><span id="dca-533"><a href="#dca-533"><span class="linenos">533</span></a>        <span class="n">outcome</span><span class="o">=</span><span class="n">outcome</span><span class="p">,</span>
+</span><span id="dca-534"><a href="#dca-534"><span class="linenos">534</span></a>        <span class="n">prevalence_value</span><span class="o">=</span><span class="n">prevalence_value</span><span class="p">,</span>
+</span><span id="dca-535"><a href="#dca-535"><span class="linenos">535</span></a>        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+</span><span id="dca-536"><a href="#dca-536"><span class="linenos">536</span></a>        <span class="n">time_to_outcome_col</span><span class="o">=</span><span class="n">time_to_outcome_col</span><span class="p">,</span>
+</span><span id="dca-537"><a href="#dca-537"><span class="linenos">537</span></a>    <span class="p">)</span>
+</span><span id="dca-538"><a href="#dca-538"><span class="linenos">538</span></a>
+</span><span id="dca-539"><a href="#dca-539"><span class="linenos">539</span></a>    <span class="n">final_dca_df</span> <span class="o">=</span> <span class="n">_calc_more_stats</span><span class="p">(</span><span class="n">initial_stats_df</span><span class="o">=</span><span class="n">initial_stats_df</span><span class="p">,</span> <span class="n">nper</span><span class="o">=</span><span class="n">nper</span><span class="p">)</span>
+</span><span id="dca-540"><a href="#dca-540"><span class="linenos">540</span></a>
+</span><span id="dca-541"><a href="#dca-541"><span class="linenos">541</span></a>    <span class="k">return</span> <span class="n">final_dca_df</span>
 </span></pre></div>
 
 

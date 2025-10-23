@@ -412,25 +412,6 @@ def _calc_more_stats(initial_stats_df: pd.DataFrame, nper: int = 1) -> pd.DataFr
 
     initial_stats_df = initial_stats_df.drop(columns="net_benefit_all").copy()
 
-    # initial_stats_df['neg_rate'] = 1 - initial_stats_df['prevalence']
-    # initial_stats_df['fn_rate'] = initial_stats_df['prevalence'] - initial_stats_df['tp_rate']
-    # initial_stats_df['tn_rate'] = initial_stats_df['neg_rate'] - initial_stats_df['fp_rate']
-    #
-    #
-    # initial_stats_df['test_neg_rate'] = initial_stats_df['fn_rate'] + initial_stats_df['tn_rate']
-    # initial_stats_df['ppv'] = initial_stats_df['tp_rate'] /\
-    #                               (initial_stats_df['tp_rate'] + initial_stats_df['fp_rate'])
-    # initial_stats_df['npv'] = initial_stats_df['tn_rate'] /\
-    #                               (initial_stats_df['tn_rate'] + initial_stats_df['fn_rate'])
-    # initial_stats_df['sens'] = initial_stats_df['tp_rate'] /\
-    #                                (initial_stats_df['tp_rate'] + initial_stats_df['fn_rate'])
-    # initial_stats_df['spec'] = initial_stats_df['tn_rate'] /\
-    #                                (initial_stats_df['tn_rate'] + initial_stats_df['fp_rate'])
-    # initial_stats_df['lr_pos'] = initial_stats_df['sens'] /\
-    #                                  (1 - initial_stats_df['spec'])
-    # initial_stats_df['lr_neg'] = (1 - initial_stats_df['sens']) /\
-    #                                  initial_stats_df['spec']
-
     final_dca_df = initial_stats_df
 
     return final_dca_df

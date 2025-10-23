@@ -23,6 +23,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Redundant runtime dependencies: typing, setuptools, scipy (indirect via lifelines/statsmodels)
 - Redundant dev dependency: pathlib (built-in since Python 3.4)
 - Duplicate test setup code in test_binary_consequences.py
+- Redundant test files: test_load_test_data.py, test_non_dcurves_code.py (4 tests)
+- Duplicate plotting test files: test_optional_gridlines.py, test_plot_saving.py (5 tests)
+- Split large test_plotting.py into test_plotting_core.py and test_plotting_options.py for clarity
+- Result: 78 tests (from 89) in 13 files (from 16)
 
 ## [1.1.5] - 2025-07-11
 

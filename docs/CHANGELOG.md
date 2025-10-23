@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.1.6] - 2025-10-23
+
+### Added
+- Support for Python 3.13 (all 89 tests pass)
+- Session-scoped pytest fixtures in conftest.py for all test data files
+- Python version classifiers (3.9-3.13) to pyproject.toml
+
+### Changed
+- Updated GitHub Actions to test on Python 3.13
+- Centralized test data loading via fixtures (18 session-scoped fixtures)
+- Updated test files to use conftest fixtures instead of direct load_data() calls
+- Improved test efficiency through fixture reuse
+
+### Removed
+- Redundant runtime dependencies: typing, setuptools, scipy (indirect via lifelines/statsmodels)
+- Redundant dev dependency: pathlib (built-in since Python 3.4)
+- Duplicate test setup code in test_binary_consequences.py
+
 ## [1.1.5] - 2025-07-11
 
 ### Changed

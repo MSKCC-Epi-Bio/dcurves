@@ -4,12 +4,11 @@ import numpy as np
 import pandas as pd
 import pytest
 from dcurves import dca
-from .load_test_data import load_data
 
 
-def test_load_data_binary():
+def test_load_data_binary(df_binary):
     """Test loading binary data from CSV file."""
-    data = load_data("df_binary.csv")
+    data = df_binary
 
     assert isinstance(data, pd.DataFrame), "Data loaded is not a DataFrame"
     assert not data.empty, "Loaded data is empty"
@@ -21,9 +20,9 @@ def test_load_data_binary():
     assert "cancer" in data.columns, "'cancer' column not found in the dataframe"
 
 
-def test_dca_binary():
+def test_dca_binary(df_binary):
     """Test DCA function with binary data."""
-    data = load_data("df_binary.csv")
+    data = df_binary
     dca_results = dca(
         data=data,
         outcome="cancer",
@@ -34,9 +33,9 @@ def test_dca_binary():
     assert isinstance(dca_results, pd.DataFrame), "DCA results are not a DataFrame"
 
 
-def test_load_data_surv():
+def test_load_data_surv(df_surv):
     """Test loading survival data from CSV file."""
-    data = load_data("df_surv.csv")
+    data = df_surv
 
     assert isinstance(data, pd.DataFrame), "Data loaded is not a DataFrame"
     assert not data.empty, "Loaded data is empty"
@@ -54,9 +53,9 @@ def test_load_data_surv():
         ), f"Expected numerical data type for '{col}'"
 
 
-def test_dca_surv():
+def test_dca_surv(df_surv):
     """Test DCA function with survival data."""
-    data = load_data("df_surv.csv")
+    data = df_surv
     dca_results = dca(
         data=data,
         outcome="cancer",
@@ -70,9 +69,9 @@ def test_dca_surv():
     assert isinstance(dca_results, pd.DataFrame), "DCA results are not a DataFrame"
 
 
-def test_error_handling():
+def test_error_handling(df_binary):
     """Test error handling for invalid inputs in DCA function."""
-    data = load_data("df_binary.csv")
+    data = df_binary
 
     with pytest.raises(KeyError):
         dca(data=data, outcome="nonexistent_column", modelnames=["famhistory"])

@@ -4,6 +4,7 @@ It compares the results of various calculations against R benchmark results.
 """
 
 import pandas as pd
+import pytest
 
 from dcurves.dca import (
     _calc_tp_rate,
@@ -15,22 +16,26 @@ from dcurves.dca import (
     _rectify_model_risk_boundaries,
 )
 from dcurves.risks import _create_risks_df
-from .load_test_data import load_r_case1_results, load_binary_df
 
 
-def _setup_common_variables():
-    """Set up common variables used across multiple tests."""
-    data = load_binary_df()
-    outcome = "cancer"
-    modelnames = ["famhistory"]
-    thresholds = [i / 100 for i in range(0, 100)]
-    return data, outcome, modelnames, thresholds
+@pytest.fixture
+def case1_setup(df_binary):
+    """Common setup for case 1 binary tests."""
+    return {
+        'data': df_binary,
+        'outcome': 'cancer',
+        'modelnames': ['famhistory'],
+        'thresholds': [i / 100 for i in range(0, 100)],
+    }
 
 
-def test_case1_binary_test_pos_rate():
+def test_case1_binary_test_pos_rate(case1_setup, r_case1_results):
     """Test the test positive rate calculation for binary case 1."""
-    data, outcome, modelnames, thresholds = _setup_common_variables()
-    r_benchmark_results = load_r_case1_results()
+    data = case1_setup['data']
+    outcome = case1_setup['outcome']
+    modelnames = case1_setup['modelnames']
+    thresholds = case1_setup['thresholds']
+    r_benchmark_results = r_case1_results
 
     r_benchmark_test_pos_rates_df = pd.DataFrame(
         {
@@ -87,10 +92,13 @@ def test_case1_binary_test_pos_rate():
         )
 
 
-def test_case1_binary_tp_rate():
+def test_case1_binary_tp_rate(case1_setup, r_case1_results):
     """Test the true positive rate calculation for binary case 1."""
-    data, outcome, modelnames, thresholds = _setup_common_variables()
-    r_benchmark_results_df = load_r_case1_results()
+    data = case1_setup['data']
+    outcome = case1_setup['outcome']
+    modelnames = case1_setup['modelnames']
+    thresholds = case1_setup['thresholds']
+    r_benchmark_results_df = r_case1_results
 
     risks_df = _create_risks_df(data=data, outcome=outcome)
     rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
@@ -111,10 +119,13 @@ def test_case1_binary_tp_rate():
     assert bm_tp_rate.round(decimals=6).equals(p_tp_rate.round(decimals=6))
 
 
-def test_case1_binary_fp_rate():
+def test_case1_binary_fp_rate(case1_setup, r_case1_results):
     """Test the false positive rate calculation for binary case 1."""
-    data, outcome, modelnames, thresholds = _setup_common_variables()
-    r_benchmark_results_df = load_r_case1_results()
+    data = case1_setup['data']
+    outcome = case1_setup['outcome']
+    modelnames = case1_setup['modelnames']
+    thresholds = case1_setup['thresholds']
+    r_benchmark_results_df = r_case1_results
 
     risks_df = _create_risks_df(data=data, outcome=outcome)
     rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
@@ -135,10 +146,13 @@ def test_case1_binary_fp_rate():
     assert bm_fp_rate.round(decimals=6).equals(p_fp_rate.round(decimals=6))
 
 
-def test_case1_binary_calc_initial_stats():
+def test_case1_binary_calc_initial_stats(case1_setup, r_case1_results):
     """Test the initial statistics calculation for binary case 1."""
-    data, outcome, modelnames, thresholds = _setup_common_variables()
-    r_benchmark_results_df = load_r_case1_results()
+    data = case1_setup['data']
+    outcome = case1_setup['outcome']
+    modelnames = case1_setup['modelnames']
+    thresholds = case1_setup['thresholds']
+    r_benchmark_results_df = r_case1_results
 
     risks_df = _create_risks_df(data=data, outcome=outcome)
     rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)
@@ -172,10 +186,13 @@ def test_case1_binary_calc_initial_stats():
             assert model_df.equals(benchmark_df)
 
 
-def test_case1_binary_calc_more_stats():
+def test_case1_binary_calc_more_stats(case1_setup, r_case1_results):
     """Test the calculation of additional statistics for binary case 1."""
-    data, outcome, modelnames, thresholds = _setup_common_variables()
-    r_benchmark_results_df = load_r_case1_results()
+    data = case1_setup['data']
+    outcome = case1_setup['outcome']
+    modelnames = case1_setup['modelnames']
+    thresholds = case1_setup['thresholds']
+    r_benchmark_results_df = r_case1_results
 
     risks_df = _create_risks_df(data=data, outcome=outcome)
     rectified_risks_df = _rectify_model_risk_boundaries(risks_df=risks_df, modelnames=modelnames)

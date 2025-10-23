@@ -29,7 +29,6 @@ Main functions:
 
 - `dca()`: Performs Decision Curve Analysis, calculating net benefit and interventions avoided
 - `plot_graphs()`: Visualizes DCA results
-- `load_test_data()`: Provides sample data for testing and examples
 
 ## Quick-and-dirty Library Documentation
 
@@ -50,19 +49,22 @@ pip install dcurves
 
 ```python
 # Import Libraries
-from dcurves import dca, plot_graphs, load_test_data
+from dcurves import dca, plot_graphs
+import pandas as pd
+import numpy as np
 
-# Load Package Simulation Data
-df_binary = load_test_data.load_binary_df()
+# Load Sample Data (or use your own)
+df_binary = pd.read_csv(
+    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_binary.csv"
+)
 
 # Perform Decision Curve Analysis
-df_dca = \
-        dca(
-            data=df_binary,
-            outcome='cancer',
-            modelnames=['famhistory'],
-            thresholds=np.arange(0, 0.36, 0.01),
-        )
+df_dca = dca(
+    data=df_binary,
+    outcome='cancer',
+    modelnames=['famhistory'],
+    thresholds=np.arange(0, 0.36, 0.01),
+)
 
 # Standard DCA Plot
 plot_graphs(

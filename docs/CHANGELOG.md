@@ -26,7 +26,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Redundant test files: test_load_test_data.py, test_non_dcurves_code.py (4 tests)
 - Duplicate plotting test files: test_optional_gridlines.py, test_plot_saving.py (5 tests)
 - Split large test_plotting.py into test_plotting_core.py and test_plotting_options.py for clarity
-- Result: 78 tests (from 89) in 13 files (from 16)
+- Dead code: _validate.py (195 lines of commented validation functions)
+- Dead code: load_test_data.py from main package (moved to tests/load_test_data.py)
+- Commented code block in dca.py (18 lines of unused statistical calculations)
+- Result: 78 tests (from 89) in 13 files (from 16), -263 lines of dead code from package
 
 ## [1.1.5] - 2025-07-11
 

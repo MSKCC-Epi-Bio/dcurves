@@ -3,16 +3,12 @@ Decision Curve Analysis in Python
 
 Functions exported by this package:
 
-- `dca`
-- `plot_graphs`
-- `load_test_data.load_binary_df`
-- `load_test_data.load_survival_df`
-- `load_test_data.load_case_control_df`
+- `dca` - Decision curve analysis for binary and survival outcomes
+- `plot_graphs` - Plot net benefit or net intervention avoided
 
 """
 
 import os
-from dcurves import load_test_data
 from dcurves.dca import dca
 from dcurves.plot_graphs import plot_graphs
 

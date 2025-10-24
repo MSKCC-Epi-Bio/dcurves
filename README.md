@@ -55,7 +55,7 @@ import numpy as np
 
 # Load Sample Data (or use your own)
 df_binary = pd.read_csv(
-    "https://raw.githubusercontent.com/ddsjoberg/dca-tutorial/main/data/df_binary.csv"
+    "https://raw.githubusercontent.com/MSKCC-Epi-Bio/dcurves/main/dcurves/data/df_binary.csv"
 )
 
 # Perform Decision Curve Analysis

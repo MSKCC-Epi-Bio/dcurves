@@ -706,7 +706,7 @@ wheels = [
 
 [[package]]
 name = "dcurves"
-version = "1.1.6"
+version = "1.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "lifelines" },
